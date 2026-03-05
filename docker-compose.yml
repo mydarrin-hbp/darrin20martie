@@ -1,0 +1,2 @@
+DATABASE_URL=postgresql+psycopg://mydarrin:mydarrin@localhost:5432/mydarrin
+JWT_SECRET=super-secret-change-me

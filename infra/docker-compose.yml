@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: mydarrin-postgres
+
+    environment:
+      POSTGRES_USER: mydarrin
+      POSTGRES_PASSWORD: mydarrin
+      POSTGRES_DB: mydarrin
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
