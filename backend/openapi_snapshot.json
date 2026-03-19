@@ -1,0 +1,1660 @@
+﻿{
+    "openapi":  "3.1.0",
+    "info":  {
+                 "title":  "My Darrin API",
+                 "version":  "0.1.0"
+             },
+    "paths":  {
+                  "/api/v1/auth/register":  {
+                                                "post":  {
+                                                             "tags":  [
+                                                                          "Authentication",
+                                                                          "Auth"
+                                                                      ],
+                                                             "summary":  "Register",
+                                                             "operationId":  "register_api_v1_auth_register_post",
+                                                             "requestBody":  {
+                                                                                 "content":  {
+                                                                                                 "application/json":  {
+                                                                                                                          "schema":  {
+                                                                                                                                         "$ref":  "#/components/schemas/RegisterRequest"
+                                                                                                                                     }
+                                                                                                                      }
+                                                                                             },
+                                                                                 "required":  true
+                                                                             },
+                                                             "responses":  {
+                                                                               "200":  {
+                                                                                           "description":  "Successful Response",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       },
+                                                                               "422":  {
+                                                                                           "description":  "Validation Error",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       }
+                                                                           }
+                                                         }
+                                            },
+                  "/api/v1/auth/login":  {
+                                             "post":  {
+                                                          "tags":  [
+                                                                       "Authentication",
+                                                                       "Auth"
+                                                                   ],
+                                                          "summary":  "Login",
+                                                          "operationId":  "login_api_v1_auth_login_post",
+                                                          "requestBody":  {
+                                                                              "content":  {
+                                                                                              "application/json":  {
+                                                                                                                       "schema":  {
+                                                                                                                                      "$ref":  "#/components/schemas/LoginRequest"
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                          },
+                                                                              "required":  true
+                                                                          },
+                                                          "responses":  {
+                                                                            "200":  {
+                                                                                        "description":  "Successful Response",
+                                                                                        "content":  {
+                                                                                                        "application/json":  {
+                                                                                                                                 "schema":  {
+
+                                                                                                                                            }
+                                                                                                                             }
+                                                                                                    }
+                                                                                    },
+                                                                            "422":  {
+                                                                                        "description":  "Validation Error",
+                                                                                        "content":  {
+                                                                                                        "application/json":  {
+                                                                                                                                 "schema":  {
+                                                                                                                                                "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                            }
+                                                                                                                             }
+                                                                                                    }
+                                                                                    }
+                                                                        }
+                                                      }
+                                         },
+                  "/api/v1/admin/users":  {
+                                              "get":  {
+                                                          "tags":  [
+                                                                       "Admin",
+                                                                       "Admin"
+                                                                   ],
+                                                          "summary":  "Get All Users",
+                                                          "operationId":  "get_all_users_api_v1_admin_users_get",
+                                                          "responses":  {
+                                                                            "200":  {
+                                                                                        "description":  "Successful Response",
+                                                                                        "content":  {
+                                                                                                        "application/json":  {
+                                                                                                                                 "schema":  {
+
+                                                                                                                                            }
+                                                                                                                             }
+                                                                                                    }
+                                                                                    }
+                                                                        },
+                                                          "security":  [
+                                                                           {
+                                                                               "HTTPBearer":  [
+
+                                                                                              ]
+                                                                           }
+                                                                       ]
+                                                      }
+                                          },
+                  "/api/v1/admin/users/pending":  {
+                                                      "get":  {
+                                                                  "tags":  [
+                                                                               "Admin",
+                                                                               "Admin"
+                                                                           ],
+                                                                  "summary":  "Get Pending Users",
+                                                                  "operationId":  "get_pending_users_api_v1_admin_users_pending_get",
+                                                                  "responses":  {
+                                                                                    "200":  {
+                                                                                                "description":  "Successful Response",
+                                                                                                "content":  {
+                                                                                                                "application/json":  {
+                                                                                                                                         "schema":  {
+
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                            }
+                                                                                            }
+                                                                                },
+                                                                  "security":  [
+                                                                                   {
+                                                                                       "HTTPBearer":  [
+
+                                                                                                      ]
+                                                                                   }
+                                                                               ]
+                                                              }
+                                                  },
+                  "/api/v1/admin/users/{user_id}":  {
+                                                        "get":  {
+                                                                    "tags":  [
+                                                                                 "Admin",
+                                                                                 "Admin"
+                                                                             ],
+                                                                    "summary":  "Get User",
+                                                                    "operationId":  "get_user_api_v1_admin_users__user_id__get",
+                                                                    "security":  [
+                                                                                     {
+                                                                                         "HTTPBearer":  [
+
+                                                                                                        ]
+                                                                                     }
+                                                                                 ],
+                                                                    "parameters":  [
+                                                                                       {
+                                                                                           "name":  "user_id",
+                                                                                           "in":  "path",
+                                                                                           "required":  true,
+                                                                                           "schema":  {
+                                                                                                          "type":  "integer",
+                                                                                                          "title":  "User Id"
+                                                                                                      }
+                                                                                       }
+                                                                                   ],
+                                                                    "responses":  {
+                                                                                      "200":  {
+                                                                                                  "description":  "Successful Response",
+                                                                                                  "content":  {
+                                                                                                                  "application/json":  {
+                                                                                                                                           "schema":  {
+
+                                                                                                                                                      }
+                                                                                                                                       }
+                                                                                                              }
+                                                                                              },
+                                                                                      "422":  {
+                                                                                                  "description":  "Validation Error",
+                                                                                                  "content":  {
+                                                                                                                  "application/json":  {
+                                                                                                                                           "schema":  {
+                                                                                                                                                          "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                      }
+                                                                                                                                       }
+                                                                                                              }
+                                                                                              }
+                                                                                  }
+                                                                }
+                                                    },
+                  "/api/v1/admin/users/{user_id}/activate":  {
+                                                                 "put":  {
+                                                                             "tags":  [
+                                                                                          "Admin",
+                                                                                          "Admin"
+                                                                                      ],
+                                                                             "summary":  "Activate User",
+                                                                             "operationId":  "activate_user_api_v1_admin_users__user_id__activate_put",
+                                                                             "security":  [
+                                                                                              {
+                                                                                                  "HTTPBearer":  [
+
+                                                                                                                 ]
+                                                                                              }
+                                                                                          ],
+                                                                             "parameters":  [
+                                                                                                {
+                                                                                                    "name":  "user_id",
+                                                                                                    "in":  "path",
+                                                                                                    "required":  true,
+                                                                                                    "schema":  {
+                                                                                                                   "type":  "integer",
+                                                                                                                   "title":  "User Id"
+                                                                                                               }
+                                                                                                }
+                                                                                            ],
+                                                                             "responses":  {
+                                                                                               "200":  {
+                                                                                                           "description":  "Successful Response",
+                                                                                                           "content":  {
+                                                                                                                           "application/json":  {
+                                                                                                                                                    "schema":  {
+
+                                                                                                                                                               }
+                                                                                                                                                }
+                                                                                                                       }
+                                                                                                       },
+                                                                                               "422":  {
+                                                                                                           "description":  "Validation Error",
+                                                                                                           "content":  {
+                                                                                                                           "application/json":  {
+                                                                                                                                                    "schema":  {
+                                                                                                                                                                   "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                               }
+                                                                                                                                                }
+                                                                                                                       }
+                                                                                                       }
+                                                                                           }
+                                                                         }
+                                                             },
+                  "/api/v1/admin/users/{user_id}/deactivate":  {
+                                                                   "put":  {
+                                                                               "tags":  [
+                                                                                            "Admin",
+                                                                                            "Admin"
+                                                                                        ],
+                                                                               "summary":  "Deactivate User",
+                                                                               "operationId":  "deactivate_user_api_v1_admin_users__user_id__deactivate_put",
+                                                                               "security":  [
+                                                                                                {
+                                                                                                    "HTTPBearer":  [
+
+                                                                                                                   ]
+                                                                                                }
+                                                                                            ],
+                                                                               "parameters":  [
+                                                                                                  {
+                                                                                                      "name":  "user_id",
+                                                                                                      "in":  "path",
+                                                                                                      "required":  true,
+                                                                                                      "schema":  {
+                                                                                                                     "type":  "integer",
+                                                                                                                     "title":  "User Id"
+                                                                                                                 }
+                                                                                                  }
+                                                                                              ],
+                                                                               "responses":  {
+                                                                                                 "200":  {
+                                                                                                             "description":  "Successful Response",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         },
+                                                                                                 "422":  {
+                                                                                                             "description":  "Validation Error",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+                                                                                                                                                                     "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         }
+                                                                                             }
+                                                                           }
+                                                               },
+                  "/api/v1/catalog/domains":  {
+                                                  "get":  {
+                                                              "tags":  [
+                                                                           "Catalog"
+                                                                       ],
+                                                              "summary":  "List Domains",
+                                                              "operationId":  "list_domains_api_v1_catalog_domains_get",
+                                                              "responses":  {
+                                                                                "200":  {
+                                                                                            "description":  "Successful Response",
+                                                                                            "content":  {
+                                                                                                            "application/json":  {
+                                                                                                                                     "schema":  {
+                                                                                                                                                    "items":  {
+                                                                                                                                                                  "$ref":  "#/components/schemas/DomainResponse"
+                                                                                                                                                              },
+                                                                                                                                                    "type":  "array",
+                                                                                                                                                    "title":  "Response List Domains Api V1 Catalog Domains Get"
+                                                                                                                                                }
+                                                                                                                                 }
+                                                                                                        }
+                                                                                        }
+                                                                            }
+                                                          },
+                                                  "post":  {
+                                                               "tags":  [
+                                                                            "Catalog"
+                                                                        ],
+                                                               "summary":  "Create New Domain",
+                                                               "operationId":  "create_new_domain_api_v1_catalog_domains_post",
+                                                               "requestBody":  {
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/DomainCreate"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               },
+                                                                                   "required":  true
+                                                                               },
+                                                               "responses":  {
+                                                                                 "201":  {
+                                                                                             "description":  "Successful Response",
+                                                                                             "content":  {
+                                                                                                             "application/json":  {
+                                                                                                                                      "schema":  {
+                                                                                                                                                     "$ref":  "#/components/schemas/DomainResponse"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                         }
+                                                                                         },
+                                                                                 "422":  {
+                                                                                             "description":  "Validation Error",
+                                                                                             "content":  {
+                                                                                                             "application/json":  {
+                                                                                                                                      "schema":  {
+                                                                                                                                                     "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                         }
+                                                                                         }
+                                                                             }
+                                                           }
+                                              },
+                  "/api/v1/catalog/domains/{domain_id}":  {
+                                                              "get":  {
+                                                                          "tags":  [
+                                                                                       "Catalog"
+                                                                                   ],
+                                                                          "summary":  "Read Domain",
+                                                                          "operationId":  "read_domain_api_v1_catalog_domains__domain_id__get",
+                                                                          "parameters":  [
+                                                                                             {
+                                                                                                 "name":  "domain_id",
+                                                                                                 "in":  "path",
+                                                                                                 "required":  true,
+                                                                                                 "schema":  {
+                                                                                                                "type":  "integer",
+                                                                                                                "title":  "Domain Id"
+                                                                                                            }
+                                                                                             }
+                                                                                         ],
+                                                                          "responses":  {
+                                                                                            "200":  {
+                                                                                                        "description":  "Successful Response",
+                                                                                                        "content":  {
+                                                                                                                        "application/json":  {
+                                                                                                                                                 "schema":  {
+                                                                                                                                                                "$ref":  "#/components/schemas/DomainResponse"
+                                                                                                                                                            }
+                                                                                                                                             }
+                                                                                                                    }
+                                                                                                    },
+                                                                                            "422":  {
+                                                                                                        "description":  "Validation Error",
+                                                                                                        "content":  {
+                                                                                                                        "application/json":  {
+                                                                                                                                                 "schema":  {
+                                                                                                                                                                "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                            }
+                                                                                                                                             }
+                                                                                                                    }
+                                                                                                    }
+                                                                                        }
+                                                                      },
+                                                              "put":  {
+                                                                          "tags":  [
+                                                                                       "Catalog"
+                                                                                   ],
+                                                                          "summary":  "Update Existing Domain",
+                                                                          "operationId":  "update_existing_domain_api_v1_catalog_domains__domain_id__put",
+                                                                          "parameters":  [
+                                                                                             {
+                                                                                                 "name":  "domain_id",
+                                                                                                 "in":  "path",
+                                                                                                 "required":  true,
+                                                                                                 "schema":  {
+                                                                                                                "type":  "integer",
+                                                                                                                "title":  "Domain Id"
+                                                                                                            }
+                                                                                             }
+                                                                                         ],
+                                                                          "requestBody":  {
+                                                                                              "required":  true,
+                                                                                              "content":  {
+                                                                                                              "application/json":  {
+                                                                                                                                       "schema":  {
+                                                                                                                                                      "$ref":  "#/components/schemas/DomainUpdate"
+                                                                                                                                                  }
+                                                                                                                                   }
+                                                                                                          }
+                                                                                          },
+                                                                          "responses":  {
+                                                                                            "200":  {
+                                                                                                        "description":  "Successful Response",
+                                                                                                        "content":  {
+                                                                                                                        "application/json":  {
+                                                                                                                                                 "schema":  {
+                                                                                                                                                                "$ref":  "#/components/schemas/DomainResponse"
+                                                                                                                                                            }
+                                                                                                                                             }
+                                                                                                                    }
+                                                                                                    },
+                                                                                            "422":  {
+                                                                                                        "description":  "Validation Error",
+                                                                                                        "content":  {
+                                                                                                                        "application/json":  {
+                                                                                                                                                 "schema":  {
+                                                                                                                                                                "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                            }
+                                                                                                                                             }
+                                                                                                                    }
+                                                                                                    }
+                                                                                        }
+                                                                      },
+                                                              "delete":  {
+                                                                             "tags":  [
+                                                                                          "Catalog"
+                                                                                      ],
+                                                                             "summary":  "Remove Domain",
+                                                                             "operationId":  "remove_domain_api_v1_catalog_domains__domain_id__delete",
+                                                                             "parameters":  [
+                                                                                                {
+                                                                                                    "name":  "domain_id",
+                                                                                                    "in":  "path",
+                                                                                                    "required":  true,
+                                                                                                    "schema":  {
+                                                                                                                   "type":  "integer",
+                                                                                                                   "title":  "Domain Id"
+                                                                                                               }
+                                                                                                }
+                                                                                            ],
+                                                                             "responses":  {
+                                                                                               "200":  {
+                                                                                                           "description":  "Successful Response",
+                                                                                                           "content":  {
+                                                                                                                           "application/json":  {
+                                                                                                                                                    "schema":  {
+
+                                                                                                                                                               }
+                                                                                                                                                }
+                                                                                                                       }
+                                                                                                       },
+                                                                                               "422":  {
+                                                                                                           "description":  "Validation Error",
+                                                                                                           "content":  {
+                                                                                                                           "application/json":  {
+                                                                                                                                                    "schema":  {
+                                                                                                                                                                   "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                               }
+                                                                                                                                                }
+                                                                                                                       }
+                                                                                                       }
+                                                                                           }
+                                                                         }
+                                                          },
+                  "/api/v1/catalog/categories":  {
+                                                     "get":  {
+                                                                 "tags":  [
+                                                                              "Catalog"
+                                                                          ],
+                                                                 "summary":  "List Categories",
+                                                                 "operationId":  "list_categories_api_v1_catalog_categories_get",
+                                                                 "responses":  {
+                                                                                   "200":  {
+                                                                                               "description":  "Successful Response",
+                                                                                               "content":  {
+                                                                                                               "application/json":  {
+                                                                                                                                        "schema":  {
+                                                                                                                                                       "items":  {
+                                                                                                                                                                     "$ref":  "#/components/schemas/CategoryResponse"
+                                                                                                                                                                 },
+                                                                                                                                                       "type":  "array",
+                                                                                                                                                       "title":  "Response List Categories Api V1 Catalog Categories Get"
+                                                                                                                                                   }
+                                                                                                                                    }
+                                                                                                           }
+                                                                                           }
+                                                                               }
+                                                             },
+                                                     "post":  {
+                                                                  "tags":  [
+                                                                               "Catalog"
+                                                                           ],
+                                                                  "summary":  "Create New Category",
+                                                                  "operationId":  "create_new_category_api_v1_catalog_categories_post",
+                                                                  "requestBody":  {
+                                                                                      "content":  {
+                                                                                                      "application/json":  {
+                                                                                                                               "schema":  {
+                                                                                                                                              "$ref":  "#/components/schemas/CategoryCreate"
+                                                                                                                                          }
+                                                                                                                           }
+                                                                                                  },
+                                                                                      "required":  true
+                                                                                  },
+                                                                  "responses":  {
+                                                                                    "201":  {
+                                                                                                "description":  "Successful Response",
+                                                                                                "content":  {
+                                                                                                                "application/json":  {
+                                                                                                                                         "schema":  {
+                                                                                                                                                        "$ref":  "#/components/schemas/CategoryResponse"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                            }
+                                                                                            },
+                                                                                    "422":  {
+                                                                                                "description":  "Validation Error",
+                                                                                                "content":  {
+                                                                                                                "application/json":  {
+                                                                                                                                         "schema":  {
+                                                                                                                                                        "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                            }
+                                                                                            }
+                                                                                }
+                                                              }
+                                                 },
+                  "/api/v1/catalog/categories/{category_id}":  {
+                                                                   "get":  {
+                                                                               "tags":  [
+                                                                                            "Catalog"
+                                                                                        ],
+                                                                               "summary":  "Read Category",
+                                                                               "operationId":  "read_category_api_v1_catalog_categories__category_id__get",
+                                                                               "parameters":  [
+                                                                                                  {
+                                                                                                      "name":  "category_id",
+                                                                                                      "in":  "path",
+                                                                                                      "required":  true,
+                                                                                                      "schema":  {
+                                                                                                                     "type":  "integer",
+                                                                                                                     "title":  "Category Id"
+                                                                                                                 }
+                                                                                                  }
+                                                                                              ],
+                                                                               "responses":  {
+                                                                                                 "200":  {
+                                                                                                             "description":  "Successful Response",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+                                                                                                                                                                     "$ref":  "#/components/schemas/CategoryResponse"
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         },
+                                                                                                 "422":  {
+                                                                                                             "description":  "Validation Error",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+                                                                                                                                                                     "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         }
+                                                                                             }
+                                                                           },
+                                                                   "put":  {
+                                                                               "tags":  [
+                                                                                            "Catalog"
+                                                                                        ],
+                                                                               "summary":  "Update Existing Category",
+                                                                               "operationId":  "update_existing_category_api_v1_catalog_categories__category_id__put",
+                                                                               "parameters":  [
+                                                                                                  {
+                                                                                                      "name":  "category_id",
+                                                                                                      "in":  "path",
+                                                                                                      "required":  true,
+                                                                                                      "schema":  {
+                                                                                                                     "type":  "integer",
+                                                                                                                     "title":  "Category Id"
+                                                                                                                 }
+                                                                                                  }
+                                                                                              ],
+                                                                               "requestBody":  {
+                                                                                                   "required":  true,
+                                                                                                   "content":  {
+                                                                                                                   "application/json":  {
+                                                                                                                                            "schema":  {
+                                                                                                                                                           "$ref":  "#/components/schemas/CategoryUpdate"
+                                                                                                                                                       }
+                                                                                                                                        }
+                                                                                                               }
+                                                                                               },
+                                                                               "responses":  {
+                                                                                                 "200":  {
+                                                                                                             "description":  "Successful Response",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+                                                                                                                                                                     "$ref":  "#/components/schemas/CategoryResponse"
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         },
+                                                                                                 "422":  {
+                                                                                                             "description":  "Validation Error",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+                                                                                                                                                                     "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         }
+                                                                                             }
+                                                                           },
+                                                                   "delete":  {
+                                                                                  "tags":  [
+                                                                                               "Catalog"
+                                                                                           ],
+                                                                                  "summary":  "Remove Category",
+                                                                                  "operationId":  "remove_category_api_v1_catalog_categories__category_id__delete",
+                                                                                  "parameters":  [
+                                                                                                     {
+                                                                                                         "name":  "category_id",
+                                                                                                         "in":  "path",
+                                                                                                         "required":  true,
+                                                                                                         "schema":  {
+                                                                                                                        "type":  "integer",
+                                                                                                                        "title":  "Category Id"
+                                                                                                                    }
+                                                                                                     }
+                                                                                                 ],
+                                                                                  "responses":  {
+                                                                                                    "200":  {
+                                                                                                                "description":  "Successful Response",
+                                                                                                                "content":  {
+                                                                                                                                "application/json":  {
+                                                                                                                                                         "schema":  {
+
+                                                                                                                                                                    }
+                                                                                                                                                     }
+                                                                                                                            }
+                                                                                                            },
+                                                                                                    "422":  {
+                                                                                                                "description":  "Validation Error",
+                                                                                                                "content":  {
+                                                                                                                                "application/json":  {
+                                                                                                                                                         "schema":  {
+                                                                                                                                                                        "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                    }
+                                                                                                                                                     }
+                                                                                                                            }
+                                                                                                            }
+                                                                                                }
+                                                                              }
+                                                               },
+                  "/api/v1/catalog/subcategories":  {
+                                                        "get":  {
+                                                                    "tags":  [
+                                                                                 "Catalog"
+                                                                             ],
+                                                                    "summary":  "List Subcategories",
+                                                                    "operationId":  "list_subcategories_api_v1_catalog_subcategories_get",
+                                                                    "responses":  {
+                                                                                      "200":  {
+                                                                                                  "description":  "Successful Response",
+                                                                                                  "content":  {
+                                                                                                                  "application/json":  {
+                                                                                                                                           "schema":  {
+                                                                                                                                                          "items":  {
+                                                                                                                                                                        "$ref":  "#/components/schemas/SubcategoryResponse"
+                                                                                                                                                                    },
+                                                                                                                                                          "type":  "array",
+                                                                                                                                                          "title":  "Response List Subcategories Api V1 Catalog Subcategories Get"
+                                                                                                                                                      }
+                                                                                                                                       }
+                                                                                                              }
+                                                                                              }
+                                                                                  }
+                                                                },
+                                                        "post":  {
+                                                                     "tags":  [
+                                                                                  "Catalog"
+                                                                              ],
+                                                                     "summary":  "Create New Subcategory",
+                                                                     "operationId":  "create_new_subcategory_api_v1_catalog_subcategories_post",
+                                                                     "requestBody":  {
+                                                                                         "content":  {
+                                                                                                         "application/json":  {
+                                                                                                                                  "schema":  {
+                                                                                                                                                 "$ref":  "#/components/schemas/SubcategoryCreate"
+                                                                                                                                             }
+                                                                                                                              }
+                                                                                                     },
+                                                                                         "required":  true
+                                                                                     },
+                                                                     "responses":  {
+                                                                                       "201":  {
+                                                                                                   "description":  "Successful Response",
+                                                                                                   "content":  {
+                                                                                                                   "application/json":  {
+                                                                                                                                            "schema":  {
+                                                                                                                                                           "$ref":  "#/components/schemas/SubcategoryResponse"
+                                                                                                                                                       }
+                                                                                                                                        }
+                                                                                                               }
+                                                                                               },
+                                                                                       "422":  {
+                                                                                                   "description":  "Validation Error",
+                                                                                                   "content":  {
+                                                                                                                   "application/json":  {
+                                                                                                                                            "schema":  {
+                                                                                                                                                           "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                       }
+                                                                                                                                        }
+                                                                                                               }
+                                                                                               }
+                                                                                   }
+                                                                 }
+                                                    },
+                  "/api/v1/catalog/subcategories/{subcategory_id}":  {
+                                                                         "get":  {
+                                                                                     "tags":  [
+                                                                                                  "Catalog"
+                                                                                              ],
+                                                                                     "summary":  "Read Subcategory",
+                                                                                     "operationId":  "read_subcategory_api_v1_catalog_subcategories__subcategory_id__get",
+                                                                                     "parameters":  [
+                                                                                                        {
+                                                                                                            "name":  "subcategory_id",
+                                                                                                            "in":  "path",
+                                                                                                            "required":  true,
+                                                                                                            "schema":  {
+                                                                                                                           "type":  "integer",
+                                                                                                                           "title":  "Subcategory Id"
+                                                                                                                       }
+                                                                                                        }
+                                                                                                    ],
+                                                                                     "responses":  {
+                                                                                                       "200":  {
+                                                                                                                   "description":  "Successful Response",
+                                                                                                                   "content":  {
+                                                                                                                                   "application/json":  {
+                                                                                                                                                            "schema":  {
+                                                                                                                                                                           "$ref":  "#/components/schemas/SubcategoryResponse"
+                                                                                                                                                                       }
+                                                                                                                                                        }
+                                                                                                                               }
+                                                                                                               },
+                                                                                                       "422":  {
+                                                                                                                   "description":  "Validation Error",
+                                                                                                                   "content":  {
+                                                                                                                                   "application/json":  {
+                                                                                                                                                            "schema":  {
+                                                                                                                                                                           "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                       }
+                                                                                                                                                        }
+                                                                                                                               }
+                                                                                                               }
+                                                                                                   }
+                                                                                 },
+                                                                         "put":  {
+                                                                                     "tags":  [
+                                                                                                  "Catalog"
+                                                                                              ],
+                                                                                     "summary":  "Update Existing Subcategory",
+                                                                                     "operationId":  "update_existing_subcategory_api_v1_catalog_subcategories__subcategory_id__put",
+                                                                                     "parameters":  [
+                                                                                                        {
+                                                                                                            "name":  "subcategory_id",
+                                                                                                            "in":  "path",
+                                                                                                            "required":  true,
+                                                                                                            "schema":  {
+                                                                                                                           "type":  "integer",
+                                                                                                                           "title":  "Subcategory Id"
+                                                                                                                       }
+                                                                                                        }
+                                                                                                    ],
+                                                                                     "requestBody":  {
+                                                                                                         "required":  true,
+                                                                                                         "content":  {
+                                                                                                                         "application/json":  {
+                                                                                                                                                  "schema":  {
+                                                                                                                                                                 "$ref":  "#/components/schemas/SubcategoryUpdate"
+                                                                                                                                                             }
+                                                                                                                                              }
+                                                                                                                     }
+                                                                                                     },
+                                                                                     "responses":  {
+                                                                                                       "200":  {
+                                                                                                                   "description":  "Successful Response",
+                                                                                                                   "content":  {
+                                                                                                                                   "application/json":  {
+                                                                                                                                                            "schema":  {
+                                                                                                                                                                           "$ref":  "#/components/schemas/SubcategoryResponse"
+                                                                                                                                                                       }
+                                                                                                                                                        }
+                                                                                                                               }
+                                                                                                               },
+                                                                                                       "422":  {
+                                                                                                                   "description":  "Validation Error",
+                                                                                                                   "content":  {
+                                                                                                                                   "application/json":  {
+                                                                                                                                                            "schema":  {
+                                                                                                                                                                           "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                       }
+                                                                                                                                                        }
+                                                                                                                               }
+                                                                                                               }
+                                                                                                   }
+                                                                                 },
+                                                                         "delete":  {
+                                                                                        "tags":  [
+                                                                                                     "Catalog"
+                                                                                                 ],
+                                                                                        "summary":  "Remove Subcategory",
+                                                                                        "operationId":  "remove_subcategory_api_v1_catalog_subcategories__subcategory_id__delete",
+                                                                                        "parameters":  [
+                                                                                                           {
+                                                                                                               "name":  "subcategory_id",
+                                                                                                               "in":  "path",
+                                                                                                               "required":  true,
+                                                                                                               "schema":  {
+                                                                                                                              "type":  "integer",
+                                                                                                                              "title":  "Subcategory Id"
+                                                                                                                          }
+                                                                                                           }
+                                                                                                       ],
+                                                                                        "responses":  {
+                                                                                                          "200":  {
+                                                                                                                      "description":  "Successful Response",
+                                                                                                                      "content":  {
+                                                                                                                                      "application/json":  {
+                                                                                                                                                               "schema":  {
+
+                                                                                                                                                                          }
+                                                                                                                                                           }
+                                                                                                                                  }
+                                                                                                                  },
+                                                                                                          "422":  {
+                                                                                                                      "description":  "Validation Error",
+                                                                                                                      "content":  {
+                                                                                                                                      "application/json":  {
+                                                                                                                                                               "schema":  {
+                                                                                                                                                                              "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                          }
+                                                                                                                                                           }
+                                                                                                                                  }
+                                                                                                                  }
+                                                                                                      }
+                                                                                    }
+                                                                     },
+                  "/api/v1/catalog/services":  {
+                                                   "get":  {
+                                                               "tags":  [
+                                                                            "Catalog"
+                                                                        ],
+                                                               "summary":  "List Services",
+                                                               "operationId":  "list_services_api_v1_catalog_services_get",
+                                                               "responses":  {
+                                                                                 "200":  {
+                                                                                             "description":  "Successful Response",
+                                                                                             "content":  {
+                                                                                                             "application/json":  {
+                                                                                                                                      "schema":  {
+                                                                                                                                                     "items":  {
+                                                                                                                                                                   "$ref":  "#/components/schemas/ServiceResponse"
+                                                                                                                                                               },
+                                                                                                                                                     "type":  "array",
+                                                                                                                                                     "title":  "Response List Services Api V1 Catalog Services Get"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                         }
+                                                                                         }
+                                                                             }
+                                                           },
+                                                   "post":  {
+                                                                "tags":  [
+                                                                             "Catalog"
+                                                                         ],
+                                                                "summary":  "Create New Service",
+                                                                "operationId":  "create_new_service_api_v1_catalog_services_post",
+                                                                "requestBody":  {
+                                                                                    "content":  {
+                                                                                                    "application/json":  {
+                                                                                                                             "schema":  {
+                                                                                                                                            "$ref":  "#/components/schemas/ServiceCreate"
+                                                                                                                                        }
+                                                                                                                         }
+                                                                                                },
+                                                                                    "required":  true
+                                                                                },
+                                                                "responses":  {
+                                                                                  "201":  {
+                                                                                              "description":  "Successful Response",
+                                                                                              "content":  {
+                                                                                                              "application/json":  {
+                                                                                                                                       "schema":  {
+                                                                                                                                                      "$ref":  "#/components/schemas/ServiceResponse"
+                                                                                                                                                  }
+                                                                                                                                   }
+                                                                                                          }
+                                                                                          },
+                                                                                  "422":  {
+                                                                                              "description":  "Validation Error",
+                                                                                              "content":  {
+                                                                                                              "application/json":  {
+                                                                                                                                       "schema":  {
+                                                                                                                                                      "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                  }
+                                                                                                                                   }
+                                                                                                          }
+                                                                                          }
+                                                                              }
+                                                            }
+                                               },
+                  "/api/v1/catalog/services/{service_id}":  {
+                                                                "get":  {
+                                                                            "tags":  [
+                                                                                         "Catalog"
+                                                                                     ],
+                                                                            "summary":  "Read Service",
+                                                                            "operationId":  "read_service_api_v1_catalog_services__service_id__get",
+                                                                            "parameters":  [
+                                                                                               {
+                                                                                                   "name":  "service_id",
+                                                                                                   "in":  "path",
+                                                                                                   "required":  true,
+                                                                                                   "schema":  {
+                                                                                                                  "type":  "integer",
+                                                                                                                  "title":  "Service Id"
+                                                                                                              }
+                                                                                               }
+                                                                                           ],
+                                                                            "responses":  {
+                                                                                              "200":  {
+                                                                                                          "description":  "Successful Response",
+                                                                                                          "content":  {
+                                                                                                                          "application/json":  {
+                                                                                                                                                   "schema":  {
+                                                                                                                                                                  "$ref":  "#/components/schemas/ServiceResponse"
+                                                                                                                                                              }
+                                                                                                                                               }
+                                                                                                                      }
+                                                                                                      },
+                                                                                              "422":  {
+                                                                                                          "description":  "Validation Error",
+                                                                                                          "content":  {
+                                                                                                                          "application/json":  {
+                                                                                                                                                   "schema":  {
+                                                                                                                                                                  "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                              }
+                                                                                                                                               }
+                                                                                                                      }
+                                                                                                      }
+                                                                                          }
+                                                                        },
+                                                                "put":  {
+                                                                            "tags":  [
+                                                                                         "Catalog"
+                                                                                     ],
+                                                                            "summary":  "Update Existing Service",
+                                                                            "operationId":  "update_existing_service_api_v1_catalog_services__service_id__put",
+                                                                            "parameters":  [
+                                                                                               {
+                                                                                                   "name":  "service_id",
+                                                                                                   "in":  "path",
+                                                                                                   "required":  true,
+                                                                                                   "schema":  {
+                                                                                                                  "type":  "integer",
+                                                                                                                  "title":  "Service Id"
+                                                                                                              }
+                                                                                               }
+                                                                                           ],
+                                                                            "requestBody":  {
+                                                                                                "required":  true,
+                                                                                                "content":  {
+                                                                                                                "application/json":  {
+                                                                                                                                         "schema":  {
+                                                                                                                                                        "$ref":  "#/components/schemas/ServiceUpdate"
+                                                                                                                                                    }
+                                                                                                                                     }
+                                                                                                            }
+                                                                                            },
+                                                                            "responses":  {
+                                                                                              "200":  {
+                                                                                                          "description":  "Successful Response",
+                                                                                                          "content":  {
+                                                                                                                          "application/json":  {
+                                                                                                                                                   "schema":  {
+                                                                                                                                                                  "$ref":  "#/components/schemas/ServiceResponse"
+                                                                                                                                                              }
+                                                                                                                                               }
+                                                                                                                      }
+                                                                                                      },
+                                                                                              "422":  {
+                                                                                                          "description":  "Validation Error",
+                                                                                                          "content":  {
+                                                                                                                          "application/json":  {
+                                                                                                                                                   "schema":  {
+                                                                                                                                                                  "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                              }
+                                                                                                                                               }
+                                                                                                                      }
+                                                                                                      }
+                                                                                          }
+                                                                        },
+                                                                "delete":  {
+                                                                               "tags":  [
+                                                                                            "Catalog"
+                                                                                        ],
+                                                                               "summary":  "Remove Service",
+                                                                               "operationId":  "remove_service_api_v1_catalog_services__service_id__delete",
+                                                                               "parameters":  [
+                                                                                                  {
+                                                                                                      "name":  "service_id",
+                                                                                                      "in":  "path",
+                                                                                                      "required":  true,
+                                                                                                      "schema":  {
+                                                                                                                     "type":  "integer",
+                                                                                                                     "title":  "Service Id"
+                                                                                                                 }
+                                                                                                  }
+                                                                                              ],
+                                                                               "responses":  {
+                                                                                                 "200":  {
+                                                                                                             "description":  "Successful Response",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         },
+                                                                                                 "422":  {
+                                                                                                             "description":  "Validation Error",
+                                                                                                             "content":  {
+                                                                                                                             "application/json":  {
+                                                                                                                                                      "schema":  {
+                                                                                                                                                                     "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                                 }
+                                                                                                                                                  }
+                                                                                                                         }
+                                                                                                         }
+                                                                                             }
+                                                                           }
+                                                            },
+                  "/health":  {
+                                  "get":  {
+                                              "summary":  "Health",
+                                              "operationId":  "health_health_get",
+                                              "responses":  {
+                                                                "200":  {
+                                                                            "description":  "Successful Response",
+                                                                            "content":  {
+                                                                                            "application/json":  {
+                                                                                                                     "schema":  {
+
+                                                                                                                                }
+                                                                                                                 }
+                                                                                        }
+                                                                        }
+                                                            }
+                                          }
+                              }
+              },
+    "components":  {
+                       "schemas":  {
+                                       "CategoryCreate":  {
+                                                              "properties":  {
+                                                                                 "domain_id":  {
+                                                                                                   "type":  "integer",
+                                                                                                   "title":  "Domain Id"
+                                                                                               },
+                                                                                 "name":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Name"
+                                                                                          },
+                                                                                 "slug":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Slug"
+                                                                                          },
+                                                                                 "is_active":  {
+                                                                                                   "type":  "boolean",
+                                                                                                   "title":  "Is Active",
+                                                                                                   "default":  true
+                                                                                               }
+                                                                             },
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "domain_id",
+                                                                               "name",
+                                                                               "slug"
+                                                                           ],
+                                                              "title":  "CategoryCreate"
+                                                          },
+                                       "CategoryResponse":  {
+                                                                "properties":  {
+                                                                                   "domain_id":  {
+                                                                                                     "type":  "integer",
+                                                                                                     "title":  "Domain Id"
+                                                                                                 },
+                                                                                   "name":  {
+                                                                                                "type":  "string",
+                                                                                                "title":  "Name"
+                                                                                            },
+                                                                                   "slug":  {
+                                                                                                "type":  "string",
+                                                                                                "title":  "Slug"
+                                                                                            },
+                                                                                   "is_active":  {
+                                                                                                     "type":  "boolean",
+                                                                                                     "title":  "Is Active",
+                                                                                                     "default":  true
+                                                                                                 },
+                                                                                   "id":  {
+                                                                                              "type":  "integer",
+                                                                                              "title":  "Id"
+                                                                                          }
+                                                                               },
+                                                                "type":  "object",
+                                                                "required":  [
+                                                                                 "domain_id",
+                                                                                 "name",
+                                                                                 "slug",
+                                                                                 "id"
+                                                                             ],
+                                                                "title":  "CategoryResponse"
+                                                            },
+                                       "CategoryUpdate":  {
+                                                              "properties":  {
+                                                                                 "domain_id":  {
+                                                                                                   "anyOf":  [
+                                                                                                                 {
+                                                                                                                     "type":  "integer"
+                                                                                                                 },
+                                                                                                                 {
+                                                                                                                     "type":  "null"
+                                                                                                                 }
+                                                                                                             ],
+                                                                                                   "title":  "Domain Id"
+                                                                                               },
+                                                                                 "name":  {
+                                                                                              "anyOf":  [
+                                                                                                            {
+                                                                                                                "type":  "string"
+                                                                                                            },
+                                                                                                            {
+                                                                                                                "type":  "null"
+                                                                                                            }
+                                                                                                        ],
+                                                                                              "title":  "Name"
+                                                                                          },
+                                                                                 "slug":  {
+                                                                                              "anyOf":  [
+                                                                                                            {
+                                                                                                                "type":  "string"
+                                                                                                            },
+                                                                                                            {
+                                                                                                                "type":  "null"
+                                                                                                            }
+                                                                                                        ],
+                                                                                              "title":  "Slug"
+                                                                                          },
+                                                                                 "is_active":  {
+                                                                                                   "anyOf":  [
+                                                                                                                 {
+                                                                                                                     "type":  "boolean"
+                                                                                                                 },
+                                                                                                                 {
+                                                                                                                     "type":  "null"
+                                                                                                                 }
+                                                                                                             ],
+                                                                                                   "title":  "Is Active"
+                                                                                               }
+                                                                             },
+                                                              "type":  "object",
+                                                              "title":  "CategoryUpdate"
+                                                          },
+                                       "DomainCreate":  {
+                                                            "properties":  {
+                                                                               "name":  {
+                                                                                            "type":  "string",
+                                                                                            "title":  "Name"
+                                                                                        },
+                                                                               "slug":  {
+                                                                                            "type":  "string",
+                                                                                            "title":  "Slug"
+                                                                                        },
+                                                                               "is_active":  {
+                                                                                                 "type":  "boolean",
+                                                                                                 "title":  "Is Active",
+                                                                                                 "default":  true
+                                                                                             }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "name",
+                                                                             "slug"
+                                                                         ],
+                                                            "title":  "DomainCreate"
+                                                        },
+                                       "DomainResponse":  {
+                                                              "properties":  {
+                                                                                 "name":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Name"
+                                                                                          },
+                                                                                 "slug":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Slug"
+                                                                                          },
+                                                                                 "is_active":  {
+                                                                                                   "type":  "boolean",
+                                                                                                   "title":  "Is Active",
+                                                                                                   "default":  true
+                                                                                               },
+                                                                                 "id":  {
+                                                                                            "type":  "integer",
+                                                                                            "title":  "Id"
+                                                                                        }
+                                                                             },
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "name",
+                                                                               "slug",
+                                                                               "id"
+                                                                           ],
+                                                              "title":  "DomainResponse"
+                                                          },
+                                       "DomainUpdate":  {
+                                                            "properties":  {
+                                                                               "name":  {
+                                                                                            "anyOf":  [
+                                                                                                          {
+                                                                                                              "type":  "string"
+                                                                                                          },
+                                                                                                          {
+                                                                                                              "type":  "null"
+                                                                                                          }
+                                                                                                      ],
+                                                                                            "title":  "Name"
+                                                                                        },
+                                                                               "slug":  {
+                                                                                            "anyOf":  [
+                                                                                                          {
+                                                                                                              "type":  "string"
+                                                                                                          },
+                                                                                                          {
+                                                                                                              "type":  "null"
+                                                                                                          }
+                                                                                                      ],
+                                                                                            "title":  "Slug"
+                                                                                        },
+                                                                               "is_active":  {
+                                                                                                 "anyOf":  [
+                                                                                                               {
+                                                                                                                   "type":  "boolean"
+                                                                                                               },
+                                                                                                               {
+                                                                                                                   "type":  "null"
+                                                                                                               }
+                                                                                                           ],
+                                                                                                 "title":  "Is Active"
+                                                                                             }
+                                                                           },
+                                                            "type":  "object",
+                                                            "title":  "DomainUpdate"
+                                                        },
+                                       "HTTPValidationError":  {
+                                                                   "properties":  {
+                                                                                      "detail":  {
+                                                                                                     "items":  {
+                                                                                                                   "$ref":  "#/components/schemas/ValidationError"
+                                                                                                               },
+                                                                                                     "type":  "array",
+                                                                                                     "title":  "Detail"
+                                                                                                 }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "title":  "HTTPValidationError"
+                                                               },
+                                       "LoginRequest":  {
+                                                            "properties":  {
+                                                                               "email":  {
+                                                                                             "type":  "string",
+                                                                                             "format":  "email",
+                                                                                             "title":  "Email"
+                                                                                         },
+                                                                               "password":  {
+                                                                                                "type":  "string",
+                                                                                                "title":  "Password"
+                                                                                            }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "email",
+                                                                             "password"
+                                                                         ],
+                                                            "title":  "LoginRequest"
+                                                        },
+                                       "RegisterRequest":  {
+                                                               "properties":  {
+                                                                                  "email":  {
+                                                                                                "type":  "string",
+                                                                                                "format":  "email",
+                                                                                                "title":  "Email"
+                                                                                            },
+                                                                                  "password":  {
+                                                                                                   "type":  "string",
+                                                                                                   "title":  "Password"
+                                                                                               }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "email",
+                                                                                "password"
+                                                                            ],
+                                                               "title":  "RegisterRequest"
+                                                           },
+                                       "ServiceCreate":  {
+                                                             "properties":  {
+                                                                                "subcategory_id":  {
+                                                                                                       "type":  "integer",
+                                                                                                       "title":  "Subcategory Id"
+                                                                                                   },
+                                                                                "name":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Name"
+                                                                                         },
+                                                                                "slug":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Slug"
+                                                                                         },
+                                                                                "description":  {
+                                                                                                    "anyOf":  [
+                                                                                                                  {
+                                                                                                                      "type":  "string"
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                      "type":  "null"
+                                                                                                                  }
+                                                                                                              ],
+                                                                                                    "title":  "Description"
+                                                                                                },
+                                                                                "is_active":  {
+                                                                                                  "type":  "boolean",
+                                                                                                  "title":  "Is Active",
+                                                                                                  "default":  true
+                                                                                              }
+                                                                            },
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "subcategory_id",
+                                                                              "name",
+                                                                              "slug"
+                                                                          ],
+                                                             "title":  "ServiceCreate"
+                                                         },
+                                       "ServiceResponse":  {
+                                                               "properties":  {
+                                                                                  "subcategory_id":  {
+                                                                                                         "type":  "integer",
+                                                                                                         "title":  "Subcategory Id"
+                                                                                                     },
+                                                                                  "name":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Name"
+                                                                                           },
+                                                                                  "slug":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Slug"
+                                                                                           },
+                                                                                  "description":  {
+                                                                                                      "anyOf":  [
+                                                                                                                    {
+                                                                                                                        "type":  "string"
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "type":  "null"
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                      "title":  "Description"
+                                                                                                  },
+                                                                                  "is_active":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "title":  "Is Active",
+                                                                                                    "default":  true
+                                                                                                },
+                                                                                  "id":  {
+                                                                                             "type":  "integer",
+                                                                                             "title":  "Id"
+                                                                                         }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "subcategory_id",
+                                                                                "name",
+                                                                                "slug",
+                                                                                "id"
+                                                                            ],
+                                                               "title":  "ServiceResponse"
+                                                           },
+                                       "ServiceUpdate":  {
+                                                             "properties":  {
+                                                                                "subcategory_id":  {
+                                                                                                       "anyOf":  [
+                                                                                                                     {
+                                                                                                                         "type":  "integer"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "type":  "null"
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                       "title":  "Subcategory Id"
+                                                                                                   },
+                                                                                "name":  {
+                                                                                             "anyOf":  [
+                                                                                                           {
+                                                                                                               "type":  "string"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "type":  "null"
+                                                                                                           }
+                                                                                                       ],
+                                                                                             "title":  "Name"
+                                                                                         },
+                                                                                "slug":  {
+                                                                                             "anyOf":  [
+                                                                                                           {
+                                                                                                               "type":  "string"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "type":  "null"
+                                                                                                           }
+                                                                                                       ],
+                                                                                             "title":  "Slug"
+                                                                                         },
+                                                                                "description":  {
+                                                                                                    "anyOf":  [
+                                                                                                                  {
+                                                                                                                      "type":  "string"
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                      "type":  "null"
+                                                                                                                  }
+                                                                                                              ],
+                                                                                                    "title":  "Description"
+                                                                                                },
+                                                                                "is_active":  {
+                                                                                                  "anyOf":  [
+                                                                                                                {
+                                                                                                                    "type":  "boolean"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type":  "null"
+                                                                                                                }
+                                                                                                            ],
+                                                                                                  "title":  "Is Active"
+                                                                                              }
+                                                                            },
+                                                             "type":  "object",
+                                                             "title":  "ServiceUpdate"
+                                                         },
+                                       "SubcategoryCreate":  {
+                                                                 "properties":  {
+                                                                                    "category_id":  {
+                                                                                                        "type":  "integer",
+                                                                                                        "title":  "Category Id"
+                                                                                                    },
+                                                                                    "name":  {
+                                                                                                 "type":  "string",
+                                                                                                 "title":  "Name"
+                                                                                             },
+                                                                                    "slug":  {
+                                                                                                 "type":  "string",
+                                                                                                 "title":  "Slug"
+                                                                                             },
+                                                                                    "is_active":  {
+                                                                                                      "type":  "boolean",
+                                                                                                      "title":  "Is Active",
+                                                                                                      "default":  true
+                                                                                                  }
+                                                                                },
+                                                                 "type":  "object",
+                                                                 "required":  [
+                                                                                  "category_id",
+                                                                                  "name",
+                                                                                  "slug"
+                                                                              ],
+                                                                 "title":  "SubcategoryCreate"
+                                                             },
+                                       "SubcategoryResponse":  {
+                                                                   "properties":  {
+                                                                                      "category_id":  {
+                                                                                                          "type":  "integer",
+                                                                                                          "title":  "Category Id"
+                                                                                                      },
+                                                                                      "name":  {
+                                                                                                   "type":  "string",
+                                                                                                   "title":  "Name"
+                                                                                               },
+                                                                                      "slug":  {
+                                                                                                   "type":  "string",
+                                                                                                   "title":  "Slug"
+                                                                                               },
+                                                                                      "is_active":  {
+                                                                                                        "type":  "boolean",
+                                                                                                        "title":  "Is Active",
+                                                                                                        "default":  true
+                                                                                                    },
+                                                                                      "id":  {
+                                                                                                 "type":  "integer",
+                                                                                                 "title":  "Id"
+                                                                                             }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "required":  [
+                                                                                    "category_id",
+                                                                                    "name",
+                                                                                    "slug",
+                                                                                    "id"
+                                                                                ],
+                                                                   "title":  "SubcategoryResponse"
+                                                               },
+                                       "SubcategoryUpdate":  {
+                                                                 "properties":  {
+                                                                                    "category_id":  {
+                                                                                                        "anyOf":  [
+                                                                                                                      {
+                                                                                                                          "type":  "integer"
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "null"
+                                                                                                                      }
+                                                                                                                  ],
+                                                                                                        "title":  "Category Id"
+                                                                                                    },
+                                                                                    "name":  {
+                                                                                                 "anyOf":  [
+                                                                                                               {
+                                                                                                                   "type":  "string"
+                                                                                                               },
+                                                                                                               {
+                                                                                                                   "type":  "null"
+                                                                                                               }
+                                                                                                           ],
+                                                                                                 "title":  "Name"
+                                                                                             },
+                                                                                    "slug":  {
+                                                                                                 "anyOf":  [
+                                                                                                               {
+                                                                                                                   "type":  "string"
+                                                                                                               },
+                                                                                                               {
+                                                                                                                   "type":  "null"
+                                                                                                               }
+                                                                                                           ],
+                                                                                                 "title":  "Slug"
+                                                                                             },
+                                                                                    "is_active":  {
+                                                                                                      "anyOf":  [
+                                                                                                                    {
+                                                                                                                        "type":  "boolean"
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "type":  "null"
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                      "title":  "Is Active"
+                                                                                                  }
+                                                                                },
+                                                                 "type":  "object",
+                                                                 "title":  "SubcategoryUpdate"
+                                                             },
+                                       "ValidationError":  {
+                                                               "properties":  {
+                                                                                  "loc":  {
+                                                                                              "items":  {
+                                                                                                            "anyOf":  [
+                                                                                                                          {
+                                                                                                                              "type":  "string"
+                                                                                                                          },
+                                                                                                                          {
+                                                                                                                              "type":  "integer"
+                                                                                                                          }
+                                                                                                                      ]
+                                                                                                        },
+                                                                                              "type":  "array",
+                                                                                              "title":  "Location"
+                                                                                          },
+                                                                                  "msg":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Message"
+                                                                                          },
+                                                                                  "type":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Error Type"
+                                                                                           },
+                                                                                  "input":  {
+                                                                                                "title":  "Input"
+                                                                                            },
+                                                                                  "ctx":  {
+                                                                                              "type":  "object",
+                                                                                              "title":  "Context"
+                                                                                          }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "loc",
+                                                                                "msg",
+                                                                                "type"
+                                                                            ],
+                                                               "title":  "ValidationError"
+                                                           }
+                                   },
+                       "securitySchemes":  {
+                                               "HTTPBearer":  {
+                                                                  "type":  "http",
+                                                                  "scheme":  "bearer"
+                                                              }
+                                           }
+                   }
+}

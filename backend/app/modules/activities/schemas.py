@@ -1,30 +1,30 @@
 from pydantic import BaseModel
 
 
-class DomainResponse(BaseModel):
+class UnitResponse(BaseModel):
+    id: int
+    code: str
+    name: str
+
+    class Config:
+        from_attributes = True
+
+
+class ActivityResponse(BaseModel):
     id: int
     name: str
-    slug: str
-    description: str | None = None
-
-
-class CategoryResponse(BaseModel):
-    id: int
-    name: str
-    slug: str
-    domain_id: int
-
-
-class SubCategoryResponse(BaseModel):
-    id: int
-    name: str
-    slug: str
-    category_id: int
-
-
-class ServiceResponse(BaseModel):
-    id: int
-    name: str
-    slug: str
-    description: str | None = None
     subcategory_id: int
+    unit_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class ServiceActivityResponse(BaseModel):
+    id: int
+    service_id: int
+    activity_id: int
+    sort_order: int
+
+    class Config:
+        from_attributes = True

@@ -1,81 +1,72 @@
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
-from alembic import context
-
 import os
 import sys
-from dotenv import load_dotenv
+from logging.config import fileConfig
 
-# --------------------------------------------------
-# Setup path
-# --------------------------------------------------
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, BASE_DIR)
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
 
-# --------------------------------------------------
-# Load .env manually
-# --------------------------------------------------
-load_dotenv(os.path.join(BASE_DIR, ".env"))
+from alembic import context
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Adăugăm calea către folderul backend în sys.path pentru a permite importurile din 'app'
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
-# --------------------------------------------------
-# Alembic Config
-# --------------------------------------------------
+# Importăm Base din locul său de bază (fără modele atașate aici pentru a evita Circular Import)
+from app.db.base_class import Base
+
+# Importăm manual toate modelele pentru ca Alembic să le "vadă" metadata-ul în timpul --autogenerate
+# Această metodă previne eroarea "ImportError: cannot import name 'Domain' from partially initialized module"
+from app.models.user import User
+from app.models.service import Service, partner_services
+from app.models.domain import Domain
+from app.models.category import Category
+from app.models.subcategory import Subcategory
+
+# Obiectul de configurare Alembic, care oferă acces la valorile din fișierul .ini în uz.
 config = context.config
 
+# Interpretăm fișierul de configurare pentru logare.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
-
-# --------------------------------------------------
-# Import models
-# --------------------------------------------------
-from app.db.base import Base
-from app.modules.geography.models import Country, Zone  # noqa: F401
-
+# Setăm target_metadata pentru suportul 'autogenerate'
 target_metadata = Base.metadata
 
-
-# --------------------------------------------------
-# Offline
-# --------------------------------------------------
 def run_migrations_offline() -> None:
+    """Rulează migrările în modul 'offline'.
+    Configurează contextul doar cu un URL și nu cu un Engine.
+    """
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=DATABASE_URL,
+        url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        render_as_batch=True  # Necesar pentru suportul corect de ALTER TABLE în SQLite
     )
 
     with context.begin_transaction():
         context.run_migrations()
 
-
-# --------------------------------------------------
-# Online
-# --------------------------------------------------
 def run_migrations_online() -> None:
+    """Rulează migrările în modul 'online'.
+    Creează un Engine și asociază o conexiune cu contextul.
+    """
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection,
+            connection=connection, 
             target_metadata=target_metadata,
+            render_as_batch=True  # Necesar pentru suportul corect de ALTER TABLE în SQLite
         )
 
         with context.begin_transaction():
             context.run_migrations()
 
-
-# --------------------------------------------------
-# Entry
-# --------------------------------------------------
 if context.is_offline_mode():
     run_migrations_offline()
 else:

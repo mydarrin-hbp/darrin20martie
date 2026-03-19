@@ -1,0 +1,44 @@
+﻿MY DARRIN - STATUS DE LUCRU
+
+Data:
+03/19/2026 19:39:14
+
+BACKEND
+- Startup validat
+- /health validat
+- /docs validat
+- OpenAPI validat
+
+CATALOG CRUD VALIDAT
+- GET /api/v1/catalog/domains
+- POST /api/v1/catalog/domains
+- PUT /api/v1/catalog/domains/{id}
+- DELETE /api/v1/catalog/domains/{id}
+
+- GET /api/v1/catalog/categories
+- POST /api/v1/catalog/categories
+- PUT /api/v1/catalog/categories/{id}
+- DELETE /api/v1/catalog/categories/{id}
+
+- GET /api/v1/catalog/subcategories
+- POST /api/v1/catalog/subcategories
+- PUT /api/v1/catalog/subcategories/{id}
+- DELETE /api/v1/catalog/subcategories/{id}
+
+- GET /api/v1/catalog/services
+- POST /api/v1/catalog/services
+- PUT /api/v1/catalog/services/{id}
+- DELETE /api/v1/catalog/services/{id}
+
+ENCODING
+- Problema diacriticelor rezolvată
+- DB validă UTF-8
+- Terminal VS Code configurat UTF-8
+- .vscode/settings.json stabil
+
+INTERDICTII
+- NU se rescrie DB-ul
+- NU se reface seed-ul
+
+NEXT STEP
+- Auth + Roles + RBAC
