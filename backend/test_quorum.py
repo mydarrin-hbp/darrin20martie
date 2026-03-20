@@ -1,79 +1,86 @@
-import sys
 import os
+import sys
 
-# Forțăm Python să vadă folderul curent ca rădăcină pentru 'app'
 sys.path.append(os.getcwd())
 
 from sqlalchemy.orm import Session
+
 from app.db.session import SessionLocal
-from app.models.user import User, UserRole, VerificationStatus
+from app.models.category import Category
+from app.models.domain import Domain
 from app.models.service import Service
-from app.models.catalog import Subcategory, Category, Domain
-from app.services.catalog_service import update_all_user_services_status
+from app.models.subcategory import SubCategory
 
-def test_quorum_logic():
-    db = SessionLocal()
+
+def run_quorum_smoke() -> None:
+    """
+    Smoke check for the current prerequisites around quorum.
+
+    Real quorum automation per service + zone remains DE VALIDAT IN COD.
+    This script only verifies that the active catalog models can be created
+    coherently in the current backend.
+    """
+
+    db: Session = SessionLocal()
     try:
-        print("\n--- [MY DARRIN] PORNIRE TEST ACTIVARE AUTOMATĂ ---")
+        print("\n--- [MY DARRIN] QUORUM SMOKE CHECK ---")
 
-        # 1. Setup structură catalog
-        domain = db.query(Domain).first() or Domain(name_ro="Construcții")
-        if not domain.id: db.add(domain); db.flush()
+        domain = db.query(Domain).filter(Domain.slug == "constructii").first()
+        if not domain:
+            domain = Domain(name="Constructii", slug="constructii", is_active=True)
+            db.add(domain)
+            db.flush()
 
-        cat = db.query(Category).first() or Category(domain_id=domain.id, name_ro="Instalații")
-        if not cat.id: db.add(cat); db.flush()
+        category = db.query(Category).filter(Category.slug == "instalatii").first()
+        if not category:
+            category = Category(
+                domain_id=domain.id,
+                name="Instalatii",
+                slug="instalatii",
+                is_active=True,
+            )
+            db.add(category)
+            db.flush()
 
-        sub = db.query(Subcategory).first() or Subcategory(category_id=cat.id, name_ro="Sanitare")
-        if not sub.id: db.add(sub); db.flush()
+        subcategory = db.query(SubCategory).filter(SubCategory.slug == "sanitare").first()
+        if not subcategory:
+            subcategory = SubCategory(
+                category_id=category.id,
+                name="Sanitare",
+                slug="sanitare",
+                is_active=True,
+            )
+            db.add(subcategory)
+            db.flush()
 
-        # 2. Setup Serviciu (Status inițial: Inactiv)
-        svc_name = "Montaj Centrală Termică"
-        service = db.query(Service).filter(Service.name_ro == svc_name).first()
+        service = db.query(Service).filter(Service.slug == "montaj-centrala-termica").first()
         if not service:
             service = Service(
-                subcategory_id=sub.id,
-                name_ro=svc_name,
-                service_level="Platinum",
-                is_active=False
+                name="Montaj centrala termica",
+                slug="montaj-centrala-termica",
+                description="Smoke service for quorum prerequisites",
+                is_active=False,
+                legacy_subcategory_id=subcategory.id,
             )
+            service.subcategories = [subcategory]
             db.add(service)
             db.commit()
             db.refresh(service)
-        
-        print(f"[*] Serviciu țintă: {service.name_ro}")
-        print(f"[*] Status actual: {'ACTIV' if service.is_active else 'INACTIV'}")
 
-        # 3. Validăm 3 Parteneri (Pragul de cvorum)
-        for i in range(1, 4):
-            email = f"partener_{i}@test.com"
-            user = db.query(User).filter(User.email == email).first()
-            if not user:
-                user = User(email=email, hashed_password="pwd", role=UserRole.PARTNER)
-                db.add(user)
-                db.commit()
-                db.refresh(user)
-            
-            if service not in user.services:
-                user.services.append(service)
-                db.commit()
-
-            print(f"\n[PAS {i}] Validare KYC pentru: {email}")
-            user.verification_status = VerificationStatus.VALIDATED
-            db.commit()
-            
-            # Declanșăm calculul cvorumului
-            update_all_user_services_status(db, user.id)
-            
-            db.refresh(service)
-            print(f"    >>> Cvorum check: Serviciul este {'✅ ACTIV' if service.is_active else '❌ ÎNCĂ INACTIV'}")
-
-        print("\n--- TEST FINALIZAT ---")
-
-    except Exception as e:
-        print(f"\n[!] EROARE: {e}")
+        print(f"Domain: {domain.slug}")
+        print(f"Category: {category.slug}")
+        print(f"SubCategory: {subcategory.slug}")
+        print(f"Service: {service.slug}")
+        print(f"Linked subcategories: {service.subcategory_ids}")
+        print("Quorum automat per serviciu + zona: DE VALIDAT IN COD")
+        print("--- SMOKE CHECK FINALIZAT ---")
+    except Exception as exc:
         db.rollback()
+        print(f"[EROARE] {exc}")
+        raise
     finally:
         db.close()
 
+
 if __name__ == "__main__":
-    test_quorum_logic()
+    run_quorum_smoke()
