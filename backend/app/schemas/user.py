@@ -1,48 +1,41 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
 from enum import Enum
 
+from pydantic import BaseModel, ConfigDict, EmailStr
 
-# 🔐 ENUMURI (aliniate cu modelul User)
+
 class UserRole(str, Enum):
-    ADMIN = "ADMIN"
-    PARTNER = "PARTNER"
     CLIENT = "CLIENT"
+    PARTNER = "PARTNER"
+    ADMIN = "ADMIN"
+    INVESTOR = "INVESTOR"
+    SUPER_ADMIN = "SUPER_ADMIN"
 
 
 class VerificationStatus(str, Enum):
     PENDING = "PENDING"
-    VERIFIED = "VERIFIED"
+    APPROVED = "APPROVED"
     REJECTED = "REJECTED"
 
 
-# 📦 SCHEME DE BAZĂ
-class UserBase(BaseModel):
+class UserCreate(BaseModel):
     email: EmailStr
-    full_name: str
-
-
-# 🧾 CREARE USER
-class UserCreate(UserBase):
     password: str
 
 
-# 🔄 UPDATE USER
 class UserUpdate(BaseModel):
-    full_name: Optional[str] = None
+    email: EmailStr | None = None
+    role: UserRole | None = None
+    verification_status: VerificationStatus | None = None
 
 
-# 🔐 VERIFICARE USER (BACKOFFICE)
 class UserVerify(BaseModel):
     verification_status: VerificationStatus
 
 
-# 📤 RESPONSE USER
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
     id: int
-    role: UserRole
-    is_active: bool
-    verification_status: VerificationStatus
+    email: EmailStr
+    role: UserRole | str | None
+    verification_status: VerificationStatus | str | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
