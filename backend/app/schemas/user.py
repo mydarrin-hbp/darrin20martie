@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, EmailStr
 
@@ -35,7 +36,16 @@ class UserVerify(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: EmailStr
-    role: UserRole | str | None
-    verification_status: VerificationStatus | str | None
+    role: UserRole | None
+    verification_status: VerificationStatus | None
 
     model_config = ConfigDict(from_attributes=True)
+
+    @classmethod
+    def from_user(cls, user: Any) -> "UserResponse":
+        return cls(
+            id=user.id,
+            email=user.email,
+            role=user.role,
+            verification_status=user.verification_status,
+        )

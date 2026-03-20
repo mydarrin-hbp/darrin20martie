@@ -15,15 +15,7 @@ def get_all_users(
     current_admin: User = Depends(get_current_admin_user),
 ):
     users = db.query(User).all()
-    return [
-        UserResponse(
-            id=user.id,
-            email=user.email,
-            role=user.role,
-            verification_status=user.verification_status,
-        )
-        for user in users
-    ]
+    return [UserResponse.from_user(user) for user in users]
 
 
 @router.get("/users/pending", response_model=list[UserResponse])
@@ -32,15 +24,7 @@ def get_pending_users(
     current_admin: User = Depends(get_current_admin_user),
 ):
     users = db.query(User).filter(User.verification_status == "PENDING").all()
-    return [
-        UserResponse(
-            id=user.id,
-            email=user.email,
-            role=user.role,
-            verification_status=user.verification_status,
-        )
-        for user in users
-    ]
+    return [UserResponse.from_user(user) for user in users]
 
 
 @router.get("/users/{user_id}", response_model=UserResponse)
@@ -54,15 +38,10 @@ def get_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return UserResponse(
-        id=user.id,
-        email=user.email,
-        role=user.role,
-        verification_status=user.verification_status,
-    )
+    return UserResponse.from_user(user)
 
 
-@router.put("/users/{user_id}/activate")
+@router.put("/users/{user_id}/activate", response_model=UserResponse)
 def activate_user(
     user_id: int,
     db: Session = Depends(get_db),
@@ -76,11 +55,10 @@ def activate_user(
     user.verification_status = "APPROVED"
     db.commit()
     db.refresh(user)
+    return UserResponse.from_user(user)
 
-    return {"message": "User activated successfully"}
 
-
-@router.put("/users/{user_id}/deactivate")
+@router.put("/users/{user_id}/deactivate", response_model=UserResponse)
 def deactivate_user(
     user_id: int,
     db: Session = Depends(get_db),
@@ -94,5 +72,4 @@ def deactivate_user(
     user.verification_status = "REJECTED"
     db.commit()
     db.refresh(user)
-
-    return {"message": "User deactivated successfully"}
+    return UserResponse.from_user(user)
