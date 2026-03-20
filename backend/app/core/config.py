@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+psycopg://postgres:postgres@localhost:5432/mydarrin"
 
     # JWT Configuration
-    JWT_SECRET: str = "super-secret-change-me"
+    JWT_SECRET: str  # No default - must be set via env
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
 
@@ -21,3 +21,7 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# Add startup validation
+if settings.JWT_SECRET == "super-secret-change-me":
+    raise ValueError("JWT_SECRET must be changed from default in production")
