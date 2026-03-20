@@ -25,6 +25,6 @@ class SubCategory(Base):
     )
     services: Mapped[List["Service"]] = relationship(
         "Service",
-        back_populates="subcategory",
-        cascade="all, delete-orphan",
+        secondary="service_subcategories",
+        back_populates="subcategories",
     )

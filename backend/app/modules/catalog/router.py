@@ -283,7 +283,7 @@ def remove_subcategory(subcategory_id: int, db: Session = Depends(get_db)):
 
 @router.get("/services", response_model=list[ServiceResponse])
 def list_services(db: Session = Depends(get_db)):
-    return get_services(db)
+    return [ServiceResponse.from_service(service) for service in get_services(db)]
 
 
 @router.get("/services/{service_id}", response_model=ServiceResponse)
@@ -296,7 +296,7 @@ def read_service(service_id: int, db: Session = Depends(get_db)):
             detail="Service not found",
         )
 
-    return service
+    return ServiceResponse.from_service(service)
 
 
 @router.post(
@@ -322,7 +322,7 @@ def create_new_service(
             detail="A service with this slug already exists",
         )
 
-    return created_service
+    return ServiceResponse.from_service(created_service)
 
 
 @router.put("/services/{service_id}", response_model=ServiceResponse)
@@ -351,7 +351,7 @@ def update_existing_service(
             detail="A service with this slug already exists",
         )
 
-    return updated_service
+    return ServiceResponse.from_service(updated_service)
 
 
 @router.delete("/services/{service_id}")

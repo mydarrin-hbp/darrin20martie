@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.models.category import Category
 from app.models.domain import Domain
@@ -246,30 +246,55 @@ def delete_subcategory(db: Session, subcategory_id: int):
 
 def get_services(db: Session):
     return db.execute(
-        select(Service).order_by(Service.id)
+        select(Service)
+        .options(selectinload(Service.subcategories))
+        .order_by(Service.id)
     ).scalars().all()
 
 
 def get_service(db: Session, service_id: int):
-    return db.get(Service, service_id)
+    return db.execute(
+        select(Service)
+        .options(selectinload(Service.subcategories))
+        .where(Service.id == service_id)
+    ).scalar_one_or_none()
 
 
 def get_service_by_slug(db: Session, slug: str):
     return db.execute(
-        select(Service).where(Service.slug == slug)
+        select(Service)
+        .options(selectinload(Service.subcategories))
+        .where(Service.slug == slug)
     ).scalar_one_or_none()
 
 
+def get_subcategories_by_ids(db: Session, subcategory_ids: list[int]) -> list[SubCategory]:
+    unique_ids = list(dict.fromkeys(subcategory_ids))
+    subcategories = db.execute(
+        select(SubCategory)
+        .where(SubCategory.id.in_(unique_ids))
+        .order_by(SubCategory.id)
+    ).scalars().all()
+
+    subcategory_map = {subcategory.id: subcategory for subcategory in subcategories}
+    return [subcategory_map[subcategory_id] for subcategory_id in unique_ids if subcategory_id in subcategory_map]
+
+
 def create_service(db: Session, service: ServiceCreate):
-    db_subcategory = db.get(SubCategory, service.subcategory_id)
-    if not db_subcategory:
+    db_subcategories = get_subcategories_by_ids(db, service.subcategory_ids)
+    if len(db_subcategories) != len(set(service.subcategory_ids)):
         return "subcategory_not_found"
 
     existing_service = get_service_by_slug(db, service.slug)
     if existing_service:
         return "duplicate_slug"
 
-    db_service = Service(**service.model_dump())
+    service_data = service.model_dump(exclude={"subcategory_ids"})
+    db_service = Service(
+        **service_data,
+        legacy_subcategory_id=db_subcategories[0].id,
+    )
+    db_service.subcategories = db_subcategories
     db.add(db_service)
 
     try:
@@ -282,17 +307,20 @@ def create_service(db: Session, service: ServiceCreate):
 
 
 def update_service(db: Session, service_id: int, service_update: ServiceUpdate):
-    db_service = db.get(Service, service_id)
+    db_service = get_service(db, service_id)
 
     if not db_service:
         return None
 
     update_data = service_update.model_dump(exclude_unset=True)
 
-    if "subcategory_id" in update_data:
-        db_subcategory = db.get(SubCategory, update_data["subcategory_id"])
-        if not db_subcategory:
+    if "subcategory_ids" in update_data:
+        db_subcategories = get_subcategories_by_ids(db, update_data["subcategory_ids"])
+        if len(db_subcategories) != len(set(update_data["subcategory_ids"])):
             return "subcategory_not_found"
+        db_service.subcategories = db_subcategories
+        db_service.legacy_subcategory_id = db_subcategories[0].id
+        update_data.pop("subcategory_ids")
 
     if "slug" in update_data:
         existing_service = get_service_by_slug(db, update_data["slug"])

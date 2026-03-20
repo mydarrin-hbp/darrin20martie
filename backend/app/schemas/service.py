@@ -1,8 +1,9 @@
-from pydantic import BaseModel
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ServiceBase(BaseModel):
-    subcategory_id: int
     name: str
     slug: str
     description: str | None = None
@@ -10,11 +11,11 @@ class ServiceBase(BaseModel):
 
 
 class ServiceCreate(ServiceBase):
-    pass
+    subcategory_ids: list[int] = Field(min_length=1)
 
 
 class ServiceUpdate(BaseModel):
-    subcategory_id: int | None = None
+    subcategory_ids: list[int] | None = Field(default=None, min_length=1)
     name: str | None = None
     slug: str | None = None
     description: str | None = None
@@ -23,6 +24,17 @@ class ServiceUpdate(BaseModel):
 
 class ServiceResponse(ServiceBase):
     id: int
+    subcategory_ids: list[int]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+    @classmethod
+    def from_service(cls, service: Any) -> "ServiceResponse":
+        return cls(
+            id=service.id,
+            name=service.name,
+            slug=service.slug,
+            description=service.description,
+            is_active=service.is_active,
+            subcategory_ids=service.subcategory_ids,
+        )
