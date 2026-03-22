@@ -1,31 +1,43 @@
-from sqlalchemy import Boolean, ForeignKey, String, Text, Float
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
 
-from app.core.database import Base
+from app.models.service import Service
+from app.modules.estimates.schemas import EstimateResponse
+from app.modules.geography.models import Zone
 
 
-class Service(Base):
-    __tablename__ = "services"
+def calculate_estimate(
+    db: Session,
+    service_id: int,
+    quantity: float,
+    unit_price: float,
+    zone_id: int,
+    urgency: bool = False,
+) -> EstimateResponse:
+    service = db.get(Service, service_id)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    subcategory_id: Mapped[int] = mapped_column(
-        ForeignKey("subcategories.id", ondelete="CASCADE"),
-        nullable=False
+    zone = db.get(Zone, zone_id)
+    if not zone:
+        raise HTTPException(status_code=404, detail="Zone not found")
+
+    base_cost = round(quantity * unit_price, 2)
+    zone_multiplier = float(zone.multiplier)
+    urgency_multiplier = 1.2 if urgency else 1.0
+    subtotal = round(base_cost * zone_multiplier * urgency_multiplier, 2)
+    platform_fee = round(subtotal * 0.1, 2)
+    total = round(subtotal + platform_fee, 2)
+
+    return EstimateResponse(
+        service_id=service.id,
+        quantity=quantity,
+        unit_price=unit_price,
+        zone_id=zone.id,
+        urgency=urgency,
+        base_cost=base_cost,
+        zone_multiplier=zone_multiplier,
+        urgency_multiplier=urgency_multiplier,
+        platform_fee=platform_fee,
+        total=total,
     )
-
-    code: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
-    name: Mapped[str] = mapped_column(String(180), nullable=False, index=True)
-    slug: Mapped[str] = mapped_column(String(200), unique=True, nullable=False, index=True)
-
-    short_description: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
-
-    unit: Mapped[str] = mapped_column(String(20), nullable=False)
-    base_duration: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
-
-    ai_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    requires_site_visit: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    add_to_cart_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-
-    subcategory = relationship("Subcategory", back_populates="services")

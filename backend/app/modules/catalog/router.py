@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_admin_user
 from app.db.session import get_db
 from app.schemas.category import CategoryCreate, CategoryResponse, CategoryUpdate
 from app.schemas.domain import DomainCreate, DomainResponse, DomainUpdate
@@ -32,7 +33,7 @@ from app.services.catalog_service import (
     update_subcategory,
 )
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_admin_user)])
 
 
 @router.get("/domains", response_model=list[DomainResponse])
@@ -64,7 +65,7 @@ def create_new_domain(
 ):
     created_domain = create_domain(db, domain)
 
-    if created_domain is None:
+    if created_domain == "duplicate_slug":
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="A domain with this slug already exists",
@@ -97,7 +98,10 @@ def update_existing_domain(
 
 
 @router.delete("/domains/{domain_id}")
-def remove_domain(domain_id: int, db: Session = Depends(get_db)):
+def remove_domain(
+    domain_id: int,
+    db: Session = Depends(get_db),
+):
     result = delete_domain(db, domain_id)
 
     if not result:
@@ -183,7 +187,10 @@ def update_existing_category(
 
 
 @router.delete("/categories/{category_id}")
-def remove_category(category_id: int, db: Session = Depends(get_db)):
+def remove_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+):
     result = delete_category(db, category_id)
 
     if not result:
@@ -269,7 +276,10 @@ def update_existing_subcategory(
 
 
 @router.delete("/subcategories/{subcategory_id}")
-def remove_subcategory(subcategory_id: int, db: Session = Depends(get_db)):
+def remove_subcategory(
+    subcategory_id: int,
+    db: Session = Depends(get_db),
+):
     result = delete_subcategory(db, subcategory_id)
 
     if not result:
@@ -355,7 +365,10 @@ def update_existing_service(
 
 
 @router.delete("/services/{service_id}")
-def remove_service(service_id: int, db: Session = Depends(get_db)):
+def remove_service(
+    service_id: int,
+    db: Session = Depends(get_db),
+):
     result = delete_service(db, service_id)
 
     if not result:

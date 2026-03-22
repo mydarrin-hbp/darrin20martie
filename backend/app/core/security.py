@@ -1,7 +1,7 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from jose import jwt
+import jwt
 
 from app.core.dependencies import get_db
 from app.models.user import User, UserRole
@@ -17,18 +17,25 @@ def get_current_user(
     token = credentials.credentials
     try:
         payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
-        user_id = payload.get("sub")
+        user_id_raw = payload.get("sub")
+        if user_id_raw is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        try:
+            user_id = int(user_id_raw)
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(status_code=401, detail="Invalid token") from exc
+
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         return user
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    except jwt.InvalidTokenError as exc:
+        raise HTTPException(status_code=401, detail="Invalid token") from exc
 
 
 def get_current_admin_user(
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role not in (UserRole.ADMIN, UserRole.SUPER_ADMIN):
+    if current_user.role not in (UserRole.ADMIN.value, UserRole.SUPER_ADMIN.value):
         raise HTTPException(status_code=403, detail="Not enough permissions")
     return current_user

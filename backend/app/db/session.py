@@ -1,12 +1,20 @@
+import os
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
 
-DATABASE_URL = "sqlite:///./mydarrin.db"  # Asigură-te că URL-ul bazei de date este corect
+from app.core.config import settings
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
+DATABASE_URL = os.getenv("DATABASE_URL", settings.DATABASE_URL).strip()
+
+engine_kwargs: dict = {}
+if DATABASE_URL.startswith("sqlite"):
+    engine_kwargs["connect_args"] = {"check_same_thread": False}
+
+engine = create_engine(DATABASE_URL, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
 
 def get_db() -> Session:
     db = SessionLocal()

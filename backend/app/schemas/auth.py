@@ -1,19 +1,22 @@
 from pydantic import BaseModel, EmailStr
 
+from app.schemas.user import UserRole, VerificationStatus
 
-# 📝 REGISTER
+
 class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
 
 
-# 🔐 LOGIN
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
 
-# 🔑 TOKEN RESPONSE
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+    user_id: int
+    email: EmailStr
+    role: UserRole | None
+    verification_status: VerificationStatus | None

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.core.auth import create_access_token, hash_password, verify_password
 from app.core.dependencies import get_db
+from app.core.security import get_current_user
 from app.models.user import User, UserRole
 from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 from app.schemas.user import UserResponse
@@ -66,7 +67,16 @@ def login(
 
     token = create_access_token({"sub": str(user.id)})
 
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-    }
+    return TokenResponse(
+        access_token=token,
+        token_type="bearer",
+        user_id=user.id,
+        email=user.email,
+        role=user.role,
+        verification_status=user.verification_status,
+    )
+
+
+@router.get("/me", response_model=UserResponse)
+def me(current_user: User = Depends(get_current_user)):
+    return UserResponse.from_user(current_user)
