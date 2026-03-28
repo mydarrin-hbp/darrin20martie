@@ -1,0 +1,5 @@
+import { AdminSettingsMockup } from "@/components/platform-mockup-v1";
+
+export default function MockupV1AdminSettingsPage() {
+  return <AdminSettingsMockup />;
+}

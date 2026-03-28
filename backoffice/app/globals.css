@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #1f2328;
+  background:
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(180, 83, 9, 0.15), transparent 22%),
+    linear-gradient(180deg, #faf6ef 0%, #f3efe7 100%);
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-[28px] border border-border bg-panel/90 shadow-panel backdrop-blur;
+  }
+
+  .field {
+    @apply w-full rounded-2xl border border-black/10 bg-white/90 px-4 py-3 text-sm text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-accent to-accentStrong px-5 py-3 text-sm font-semibold text-white transition hover:opacity-95;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-border bg-white/80 px-5 py-3 text-sm font-semibold text-ink transition hover:bg-white;
+  }
+
+  .tag {
+    @apply inline-flex rounded-full border border-border bg-white/70 px-3 py-1 text-xs font-medium text-muted;
+  }
+}

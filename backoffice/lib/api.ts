@@ -1,15 +1,19 @@
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 const BROWSER_PROXY_BASE = "/api/proxy";
 export const BACKOFFICE_GATE_USERNAME = process.env.NEXT_PUBLIC_GATE_USERNAME ?? "ownergate";
-export const BACKOFFICE_GATE_PASSWORD = process.env.NEXT_PUBLIC_GATE_PASSWORD ?? "HomeBestPal2026!Secure";
+export const BACKOFFICE_GATE_PASSWORD = process.env.NEXT_PUBLIC_GATE_PASSWORD ?? "CHANGE_ME";
 export const BACKEND_GATE_AUTHORIZATION =
-  process.env.NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION ?? "Basic b3duZXJnYXRlOkhvbWVCZXN0UGFsMjAyNiFTZWN1cmU=";
+  process.env.NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION ?? "Basic CHANGE_ME";
 
 export type AdminUser = {
   id: number;
+  full_name?: string | null;
   email: string;
+  phone?: string | null;
+  city?: string | null;
   role: string | null;
   verification_status: string | null;
+  permissions?: string[];
 };
 
 export type DomainRecord = {
@@ -243,6 +247,140 @@ export type DevizRuleRecord = {
   is_active: boolean;
 };
 
+export type EscoImportResult = {
+  uri: string;
+  class_name: string;
+  resource_table: string | null;
+  relations_created: number;
+  skill_relations_created: number;
+  source_url?: string | null;
+  source_file_name?: string | null;
+};
+
+export type BackofficeServiceCreateRecipeInput = {
+  resource_type: "MANOPERA" | "MATERIAL" | "UTILAJ" | "TRANSPORT" | "CONSUMABIL" | "ALTELE";
+  resource_id: number;
+  activity_id?: number | null;
+  specific_consumption: number;
+  consumption_unit: string;
+  waste_percentage: number;
+  level_coefficients: Record<"BRONZ" | "ARGINT" | "AUR" | "PLATINUM", number>;
+};
+
+export type BackofficeServiceCreateRequest = {
+  domain_id: number;
+  category_id: number;
+  subcategory_id: number;
+  service_name_ro: string;
+  service_name_en?: string | null;
+  service_slug?: string | null;
+  service_code?: string | null;
+  short_description_ro?: string | null;
+  short_description_en?: string | null;
+  is_active: boolean;
+  caen_codes: string[];
+  uniclass_activity_ids: number[];
+  esco_occupations: string[];
+  recipe_items: BackofficeServiceCreateRecipeInput[];
+  default_costs: {
+    labor_hourly_rate: number;
+    indirect_cost_percentage: number;
+    platform_maintenance_percentage: number;
+    mydarrin_platform_percentage: number;
+    vat_percentage: number;
+  };
+};
+
+export type BackofficeServiceCreateResponse = {
+  service_id: number;
+  service_code: string;
+  service_name_ro: string;
+  service_name_en?: string | null;
+  service_slug: string;
+  hierarchy: Record<string, unknown>;
+  classifications: Record<string, unknown>;
+  service: ServiceRecord;
+  default_costs: Record<string, unknown>;
+  price_analysis_recipes: Array<{
+    recipe_id: number;
+    activity_id: number;
+    activity_name_ro: string;
+    resource_id: number;
+    resource_name_ro: string;
+    resource_type: string;
+    requested_resource_type: string;
+    specific_consumption: number;
+    consumption_unit: string;
+    waste_percentage: number;
+    level_coefficients: Record<string, number>;
+  }>;
+  attachments: Array<{
+    attachment_type: string;
+    file_name: string;
+    secure_url: string;
+  }>;
+};
+
+export type EscoIscoGroupRecord = {
+  concept_uri: string;
+  concept_type?: string | null;
+  code?: string | null;
+  preferred_label?: string | null;
+  alt_labels: string[];
+  status?: string | null;
+  in_scheme?: string | null;
+  description?: string | null;
+};
+
+export type EscoSkillRecord = {
+  concept_uri: string;
+  concept_type?: string | null;
+  preferred_label?: string | null;
+  alt_labels: string[];
+  status?: string | null;
+  reuse_level?: string | null;
+  skill_types: string[];
+  in_scheme?: string | null;
+  description?: string | null;
+};
+
+export type EscoOccupationRecord = {
+  concept_uri: string;
+  concept_type?: string | null;
+  isco_group?: string | null;
+  code?: string | null;
+  preferred_label?: string | null;
+  alt_labels: string[];
+  status?: string | null;
+  in_scheme?: string | null;
+  nace_code?: string | null;
+  research_occupation: boolean;
+  green_share?: number | null;
+  description?: string | null;
+};
+
+export type EscoBrowseResponse<T> = {
+  query?: string | null;
+  count: number;
+  items: T[];
+};
+
+export type SiteContentPageRecord = {
+  slug: string;
+  title: string;
+  status: string;
+  content: Record<string, unknown>;
+  notes?: string | null;
+  updated_at?: string | null;
+};
+
+export type SiteContentPageListItemRecord = {
+  slug: string;
+  title: string;
+  status: string;
+  updated_at?: string | null;
+};
+
 type RequestOptions = {
   method?: string;
   token?: string | null;
@@ -285,9 +423,13 @@ export function loginAdmin(email: string, password: string) {
     access_token: string;
     token_type: string;
     user_id: number;
+    full_name?: string | null;
     email: string;
+    phone?: string | null;
+    city?: string | null;
     role: string | null;
     verification_status: string | null;
+    permissions: string[];
   }>("/api/v1/auth/login", {
     method: "POST",
     body: { email, password },
@@ -312,6 +454,33 @@ export function activateUser(token: string, userId: number) {
 
 export function deactivateUser(token: string, userId: number) {
   return request<AdminUser>(`/api/v1/admin/users/${userId}/deactivate`, { method: "PUT", token });
+}
+
+export function updateUserRole(token: string, userId: number, role: "CLIENT" | "PARTNER" | "INVESTOR" | "ADMIN" | "SUPER_ADMIN") {
+  return request<AdminUser>(`/api/v1/admin/users/${userId}/role`, {
+    method: "PUT",
+    token,
+    body: { role },
+  });
+}
+
+export function updateUserProfile(
+  token: string,
+  userId: number,
+  body: Partial<{
+    full_name: string | null;
+    email: string | null;
+    phone: string | null;
+    city: string | null;
+    role: "CLIENT" | "PARTNER" | "INVESTOR" | "ADMIN" | "SUPER_ADMIN" | null;
+    verification_status: "PENDING" | "APPROVED" | "REJECTED" | null;
+  }>,
+) {
+  return request<AdminUser>(`/api/v1/admin/users/${userId}`, {
+    method: "PUT",
+    token,
+    body,
+  });
 }
 
 export function getDomains(token: string) {
@@ -656,6 +825,19 @@ export function uploadServiceAttachment(
   return request<EntityAttachmentRecord>("/api/v1/backoffice/services/attachments", { method: "POST", token, body });
 }
 
+export function createBackofficeServiceFlow(
+  token: string,
+  payload: BackofficeServiceCreateRequest,
+  files?: { mainImage?: File | null; demoVideo?: File | null; instructionsPdf?: File | null },
+) {
+  const body = new FormData();
+  body.append("payload", JSON.stringify(payload));
+  if (files?.mainImage) body.append("main_image", files.mainImage);
+  if (files?.demoVideo) body.append("demo_video", files.demoVideo);
+  if (files?.instructionsPdf) body.append("instructions_pdf", files.instructionsPdf);
+  return request<BackofficeServiceCreateResponse>("/api/v1/backoffice/services/create", { method: "POST", token, body });
+}
+
 export function importIndicators(token: string, file: File) {
   const body = new FormData();
   body.append("file", file);
@@ -663,6 +845,50 @@ export function importIndicators(token: string, file: File) {
     "/api/v1/backoffice/indicators/import",
     { method: "POST", token, body },
   );
+}
+
+export function importEscoResourceFromUrl(token: string, sourceUrl: string) {
+  const body = new FormData();
+  body.append("source_url", sourceUrl);
+  return request<EscoImportResult>("/api/v1/backoffice/esco/import-resource", {
+    method: "POST",
+    token,
+    body,
+  });
+}
+
+export function importEscoResourceFromFile(token: string, file: File) {
+  const body = new FormData();
+  body.append("file", file);
+  return request<EscoImportResult>("/api/v1/backoffice/esco/import-resource", {
+    method: "POST",
+    token,
+    body,
+  });
+}
+
+export function getEscoIscoGroups(token: string, options?: { q?: string; limit?: number }) {
+  const params = new URLSearchParams();
+  if (options?.q?.trim()) params.set("q", options.q.trim());
+  if (options?.limit) params.set("limit", String(options.limit));
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return request<EscoBrowseResponse<EscoIscoGroupRecord>>(`/api/v1/backoffice/esco/isco-groups${query}`, { token });
+}
+
+export function getEscoSkills(token: string, options?: { q?: string; limit?: number }) {
+  const params = new URLSearchParams();
+  if (options?.q?.trim()) params.set("q", options.q.trim());
+  if (options?.limit) params.set("limit", String(options.limit));
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return request<EscoBrowseResponse<EscoSkillRecord>>(`/api/v1/backoffice/esco/skills${query}`, { token });
+}
+
+export function getEscoOccupations(token: string, options?: { q?: string; limit?: number }) {
+  const params = new URLSearchParams();
+  if (options?.q?.trim()) params.set("q", options.q.trim());
+  if (options?.limit) params.set("limit", String(options.limit));
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return request<EscoBrowseResponse<EscoOccupationRecord>>(`/api/v1/backoffice/esco/occupations${query}`, { token });
 }
 
 export function getPriceConfigs(token: string) {
@@ -695,4 +921,35 @@ export function updateDevizRule(token: string, id: number, body: Partial<Omit<De
 
 export function deleteDevizRule(token: string, id: number) {
   return request<{ message: string }>(`/api/v1/deviz/admin-configs/${id}`, { method: "DELETE", token });
+}
+
+export function listSiteContentPages(token: string) {
+  return request<SiteContentPageListItemRecord[]>("/api/v1/backoffice/site-content", { token });
+}
+
+export function getSiteContentPage(token: string, slug: string) {
+  return request<SiteContentPageRecord>(`/api/v1/backoffice/site-content/${slug}`, { token });
+}
+
+export function updateSiteContentPage(
+  token: string,
+  slug: string,
+  body: Pick<SiteContentPageRecord, "title" | "status" | "content" | "notes">,
+) {
+  return request<SiteContentPageRecord>(`/api/v1/backoffice/site-content/${slug}`, {
+    method: "PUT",
+    token,
+    body,
+  });
+}
+
+export function getHomepageContent(token: string) {
+  return getSiteContentPage(token, "homepage");
+}
+
+export function updateHomepageContent(
+  token: string,
+  body: Pick<SiteContentPageRecord, "title" | "status" | "content" | "notes">,
+) {
+  return updateSiteContentPage(token, "homepage", body);
 }

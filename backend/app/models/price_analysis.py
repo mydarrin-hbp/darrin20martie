@@ -56,25 +56,61 @@ class CatalogActivity(Base):
     recipes: Mapped[list["PriceAnalysisRecipe"]] = relationship(
         back_populates="activity",
         cascade="all, delete-orphan",
+    )  
+
+
+class Supplier(Base):
+    __tablename__ = "suppliers"
+    __table_args__ = (
+        Index("ix_suppliers_name_active", "name", "is_active"),
     )
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    rating: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    location_geo: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    resources: Mapped[list["CatalogResource"]] = relationship(back_populates="supplier")
+
+
+class TaxRule(Base):
+    __tablename__ = "tax_rules"
+    __table_args__ = (
+        UniqueConstraint("country_code", "locality_slug", "service_type", name="uq_tax_rules_scope"),
+        Index("ix_tax_rules_lookup", "country_code", "locality_slug", "service_type", "is_active"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    country_code: Mapped[str] = mapped_column(String(3), nullable=False, index=True)
+    locality_slug: Mapped[str | None] = mapped_column(String(150), nullable=True, index=True)
+    service_type: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    vat_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.19)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
 class CatalogResource(Base):
     __tablename__ = "catalog_resources"
     __table_args__ = (
         Index("ix_catalog_resources_type_price", "resource_type", "base_price"),
+        Index("ix_catalog_resources_supplier_availability", "supplier_id", "availability_status", "stock_qty"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    supplier_id: Mapped[int | None] = mapped_column(ForeignKey("suppliers.id", ondelete="SET NULL"), nullable=True, index=True)
     esco_code: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
     name_ro: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     name_en: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     resource_type: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
     base_price: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     unit: Mapped[str] = mapped_column(String(24), nullable=False)
+    lead_time_days: Mapped[int | None] = mapped_column(nullable=True)
+    stock_qty: Mapped[float | None] = mapped_column(Float, nullable=True)
+    availability_status: Mapped[str] = mapped_column(String(32), nullable=False, default="IN_STOCK")
     technical_specs: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+    supplier: Mapped["Supplier | None"] = relationship(back_populates="resources")
     recipes: Mapped[list["PriceAnalysisRecipe"]] = relationship(
         back_populates="resource",
         cascade="all, delete-orphan",
@@ -143,6 +179,8 @@ class PriceAnalysisRecipe(Base):
         index=True,
     )
     specific_consumption: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    productivity_norm: Mapped[float | None] = mapped_column(Float, nullable=True)
+    indicator_code: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
     consumption_unit: Mapped[str | None] = mapped_column(String(24), nullable=True)
     waste_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     waste_formula: Mapped[str | None] = mapped_column(String(255), nullable=True)

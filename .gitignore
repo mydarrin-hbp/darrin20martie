@@ -10,6 +10,31 @@ venv/
 
 # Environment variables
 .env
+.env.local
+*.local
+
+# Node / Next
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Local databases / runtime
+*.db
+*.sqlite
+*.sqlite3
+*.pid
+.pytest_cache/
+.uvicorn_pid
+cloud-sql-proxy.exe
+backend/cloud-sql-proxy.exe
+*.out.log
+*.err.log
+*start.log
+backend/tatus -sb
+
+# Storage and temp runtime artifacts
+storage/
+backend/storage/
 
 # VS Code
 .vscode/

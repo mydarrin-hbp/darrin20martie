@@ -277,13 +277,25 @@ def get_services(db: Session):
 
 def get_service(db: Session, service_id: int):
     return db.execute(
-        select(Service).options(selectinload(Service.subcategories)).where(Service.id == service_id)
+        select(Service)
+        .options(
+            selectinload(Service.subcategories)
+            .selectinload(SubCategory.category)
+            .selectinload(Category.domain)
+        )
+        .where(Service.id == service_id)
     ).scalar_one_or_none()
 
 
 def get_service_by_slug(db: Session, slug: str):
     return db.execute(
-        select(Service).options(selectinload(Service.subcategories)).where(Service.slug == slug)
+        select(Service)
+        .options(
+            selectinload(Service.subcategories)
+            .selectinload(SubCategory.category)
+            .selectinload(Category.domain)
+        )
+        .where(Service.slug == slug)
     ).scalar_one_or_none()
 
 

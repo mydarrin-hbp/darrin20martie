@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
-from app.models.price_analysis import CatalogActivity, PriceAnalysisRecipe
+from app.models.price_analysis import CatalogActivity, PriceAnalysisRecipe, TaxRule
 from app.models.service import Service
 from app.modules.cost_engine.models import AdminPriceConfig, CostCalculation, PriceAnalysis, Resource
 from app.modules.cost_engine.schemas import (
@@ -11,14 +11,16 @@ from app.modules.cost_engine.schemas import (
     CostCalculationResponse,
     CostDraftRequest,
     CostDraftResponse,
+    PartialAvailabilityResponse,
     PriceAnalysisResponse,
     ResourceCreate,
     ResourceResponse,
     ServiceLevel,
 )
 from app.modules.geography.models import Country, Locality, Zone
-from app.schemas.price_analysis import RecipeLevelName
+from app.schemas.price_analysis import RecipeLevelName, ResourceType
 from app.services.price_analysis_service import (
+    evaluate_recipe_geo_availability,
     get_recipe_coefficient,
     get_recipe_rows_for_activities,
     get_service_recipe_activities,
@@ -38,14 +40,16 @@ def _get_service_level_coefficient(config: AdminPriceConfig, service_level: Serv
     return config.standard_level_coefficient
 
 
-def _build_cost_layers(direct_cost: float, config: AdminPriceConfig) -> dict[str, float]:
+def _build_cost_layers(direct_cost: float, config: AdminPriceConfig, *, vat_percentage: float | None = None) -> dict[str, float]:
     indirect_cost_value = _round_amount(direct_cost * config.indirect_cost_percentage)
     platform_maintenance_value = _round_amount(direct_cost * config.platform_maintenance_percentage)
     mydarrin_platform_value = _round_amount(direct_cost * config.mydarrin_platform_percentage)
     net_total = _round_amount(direct_cost + indirect_cost_value + platform_maintenance_value + mydarrin_platform_value)
-    vat_value = _round_amount(net_total * config.vat_percentage)
+    applied_vat_percentage = config.vat_percentage if vat_percentage is None else vat_percentage
+    vat_value = _round_amount(net_total * applied_vat_percentage)
     gross_total = _round_amount(net_total + vat_value)
     return {
+        "direct_cost_value": _round_amount(direct_cost),
         "indirect_cost_value": indirect_cost_value,
         "platform_maintenance_value": platform_maintenance_value,
         "mydarrin_platform_value": mydarrin_platform_value,
@@ -53,6 +57,91 @@ def _build_cost_layers(direct_cost: float, config: AdminPriceConfig) -> dict[str
         "vat_value": vat_value,
         "gross_total": gross_total,
     }
+
+
+def get_tax_rule(
+    db: Session,
+    *,
+    country_code: str,
+    service_type: str,
+    locality_slug: str | None = None,
+) -> float:
+    normalized_country_code = country_code.upper().strip()
+    normalized_service_type = service_type.upper().strip()
+    normalized_locality_slug = locality_slug.lower().strip() if locality_slug else None
+
+    if normalized_locality_slug:
+        local_rule = db.execute(
+            select(TaxRule).where(
+                TaxRule.country_code == normalized_country_code,
+                TaxRule.locality_slug == normalized_locality_slug,
+                TaxRule.service_type == normalized_service_type,
+                TaxRule.is_active.is_(True),
+            )
+        ).scalar_one_or_none()
+        if local_rule:
+            return float(local_rule.vat_percentage)
+
+    country_rule = db.execute(
+        select(TaxRule).where(
+            TaxRule.country_code == normalized_country_code,
+            TaxRule.locality_slug.is_(None),
+            TaxRule.service_type == normalized_service_type,
+            TaxRule.is_active.is_(True),
+        )
+    ).scalar_one_or_none()
+    if country_rule:
+        return float(country_rule.vat_percentage)
+
+    fallback_tax_rules = {
+        "RO": {"SERVICE": 0.19, "LANDSCAPING": 0.19, "CONSTRUCTION_MATERIAL": 0.19},
+        "GR": {"SERVICE": 0.24, "LANDSCAPING": 0.24, "CONSTRUCTION_MATERIAL": 0.24},
+    }
+    return float(fallback_tax_rules.get(normalized_country_code, {}).get(normalized_service_type, 0.19))
+
+
+def _infer_service_tax_type(service: Service, recipe_rows: list[PriceAnalysisRecipe]) -> str:
+    normalized_slug = (service.slug or "").lower()
+    resource_types = {(recipe.resource.resource_type or "").upper() for recipe in recipe_rows}
+
+    if "gazon" in normalized_slug or "grass" in normalized_slug or "landscape" in normalized_slug:
+        return "LANDSCAPING"
+    if "beton" in normalized_slug or ResourceType.MATERIAL.value in resource_types:
+        return "CONSTRUCTION_MATERIAL"
+    return "SERVICE"
+
+
+def _apply_minimum_order_to_layers(cost_layers: dict[str, float], minimum_order_value: float) -> dict[str, float]:
+    current_gross_total = _round_amount(cost_layers["gross_total"])
+    target_gross_total = _round_amount(minimum_order_value)
+    if current_gross_total <= 0 or target_gross_total <= current_gross_total:
+        return cost_layers
+
+    current_net_total = _round_amount(cost_layers["net_total"])
+    if current_net_total <= 0:
+        cost_layers["gross_total"] = target_gross_total
+        cost_layers["net_total"] = target_gross_total
+        cost_layers["vat_value"] = 0.0
+        return cost_layers
+
+    target_net_total = _round_amount(target_gross_total - cost_layers["vat_value"])
+    if target_net_total <= 0:
+        target_net_total = target_gross_total
+
+    scale_factor = target_net_total / current_net_total
+    cost_layers["direct_cost_value"] = _round_amount(cost_layers["direct_cost_value"] * scale_factor)
+    cost_layers["indirect_cost_value"] = _round_amount(cost_layers["indirect_cost_value"] * scale_factor)
+    cost_layers["platform_maintenance_value"] = _round_amount(cost_layers["platform_maintenance_value"] * scale_factor)
+    cost_layers["mydarrin_platform_value"] = _round_amount(cost_layers["mydarrin_platform_value"] * scale_factor)
+    cost_layers["net_total"] = _round_amount(
+        cost_layers["direct_cost_value"]
+        + cost_layers["indirect_cost_value"]
+        + cost_layers["platform_maintenance_value"]
+        + cost_layers["mydarrin_platform_value"]
+    )
+    cost_layers["vat_value"] = _round_amount(target_gross_total - cost_layers["net_total"])
+    cost_layers["gross_total"] = target_gross_total
+    return cost_layers
 
 
 def _serialize_resources(resources: list[Resource]) -> list[ResourceResponse]:
@@ -325,7 +414,7 @@ def _build_recipe_resource_rows(
     return rows, _round_amount(subtotal)
 
 
-def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | str:
+def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | PartialAvailabilityResponse | str:
     service = db.execute(
         select(Service).options(selectinload(Service.subcategories)).where(Service.id == data.service_id)
     ).scalar_one_or_none()
@@ -341,6 +430,7 @@ def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | 
         return "zone_not_found"
     if zone.country_id != country.id:
         return "zone_country_mismatch"
+    locality = None
     if data.locality_id is not None:
         locality = db.get(Locality, data.locality_id)
         if not locality:
@@ -363,6 +453,28 @@ def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | 
 
     selected_activities = _resolve_activities_for_cost(db, service, data.activity_ids)
     recipe_rows = get_recipe_rows_for_activities(db, [activity.id for activity in selected_activities])
+    availability_error = evaluate_recipe_geo_availability(
+        recipe_rows,
+        country=country,
+        zone=zone,
+        locality=locality,
+    )
+    if availability_error:
+        return PartialAvailabilityResponse(
+            status=availability_error["status"],
+            service_id=service.id,
+            service_name=service.name,
+            service_slug=service.slug,
+            country_id=country.id,
+            zone_id=zone.id,
+            locality_id=data.locality_id,
+            currency=config.currency,
+            legislation_code=config.legislation_code,
+            message=availability_error["message"],
+            available_resource_types=availability_error["available_resource_types"],
+            missing_resource_types=availability_error["missing_resource_types"],
+            target_address=data.target_address,
+        )
     recipe_resource_rows, recipe_subtotal = _build_recipe_resource_rows(
         db,
         recipe_rows,
@@ -382,6 +494,13 @@ def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | 
     urgency_coefficient = config.urgency_coefficient if data.urgency else 1.0
     service_level_coefficient = _get_service_level_coefficient(config, data.service_level)
     legislation_coefficient = config.legislation_coefficient
+    service_tax_type = _infer_service_tax_type(service, recipe_rows)
+    applied_vat_percentage = get_tax_rule(
+        db,
+        country_code=country.code,
+        service_type=service_tax_type,
+        locality_slug=locality.slug if locality else None,
+    )
 
     adjusted_subtotal = _round_amount(
         (base_price + resource_subtotal)
@@ -390,7 +509,20 @@ def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | 
         * service_level_coefficient
         * legislation_coefficient
     )
-    cost_layers = _build_cost_layers(adjusted_subtotal, config)
+    minimum_order_applied = False
+    if data.requested_quantity is not None:
+        if config.minimum_quantity_threshold <= 0 or data.requested_quantity >= config.minimum_quantity_threshold:
+            adjusted_subtotal = _round_amount(adjusted_subtotal * data.requested_quantity)
+    cost_layers = _build_cost_layers(adjusted_subtotal, config, vat_percentage=applied_vat_percentage)
+    if (
+        data.requested_quantity is not None
+        and config.minimum_quantity_threshold > 0
+        and data.requested_quantity < config.minimum_quantity_threshold
+    ):
+        current_gross_total = cost_layers["gross_total"]
+        updated_layers = _apply_minimum_order_to_layers(cost_layers, config.minimum_order_value)
+        minimum_order_applied = updated_layers["gross_total"] != current_gross_total
+        cost_layers = updated_layers
 
     analysis = PriceAnalysis(
         service_id=service.id,
@@ -415,14 +547,14 @@ def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | 
         indirect_cost_percentage=config.indirect_cost_percentage,
         platform_maintenance_percentage=config.platform_maintenance_percentage,
         mydarrin_platform_percentage=config.mydarrin_platform_percentage,
-        vat_percentage=config.vat_percentage,
+        vat_percentage=applied_vat_percentage,
         platform_margin_coefficient=config.platform_margin_coefficient,
-        vat_coefficient=config.vat_coefficient,
-        cost_direct_total=adjusted_subtotal,
+        vat_coefficient=applied_vat_percentage,
+        cost_direct_total=cost_layers["direct_cost_value"],
         indirect_cost_value=cost_layers["indirect_cost_value"],
         platform_maintenance_value=cost_layers["platform_maintenance_value"],
         mydarrin_platform_value=cost_layers["mydarrin_platform_value"],
-        adjusted_subtotal=adjusted_subtotal,
+        adjusted_subtotal=cost_layers["direct_cost_value"],
     )
     db.add(analysis)
     db.flush()
@@ -430,7 +562,7 @@ def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | 
     calculation = CostCalculation(
         price_analysis_id=analysis.id,
         service_id=service.id,
-        cost_direct_total=adjusted_subtotal,
+        cost_direct_total=cost_layers["direct_cost_value"],
         indirect_cost_value=cost_layers["indirect_cost_value"],
         platform_maintenance_value=cost_layers["platform_maintenance_value"],
         mydarrin_platform_value=cost_layers["mydarrin_platform_value"],
@@ -468,6 +600,10 @@ def calculate_draft(db: Session, data: CostDraftRequest) -> CostDraftResponse | 
         legislation_code=config.legislation_code,
         service_level=data.service_level,
         urgency=data.urgency,
+        requested_quantity=data.requested_quantity,
+        target_address=data.target_address,
+        minimum_order_applied=minimum_order_applied,
+        availability_status="available",
         price_analysis=PriceAnalysisResponse(
             id=analysis.id,
             admin_price_config_id=analysis.admin_price_config_id,

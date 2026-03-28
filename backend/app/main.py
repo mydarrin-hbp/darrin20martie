@@ -21,6 +21,7 @@ import app.modules.cost_engine.models  # noqa: F401
 import app.modules.deviz_engine.models  # noqa: F401
 import app.modules.esco.models  # noqa: F401
 import app.modules.geography.models  # noqa: F401
+import app.modules.site_content.models  # noqa: F401
 
 
 app = FastAPI(title="My Darrin API")

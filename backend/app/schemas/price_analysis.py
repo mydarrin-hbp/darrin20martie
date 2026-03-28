@@ -119,12 +119,16 @@ class CatalogActivityResponse(CatalogActivityBase):
 
 
 class CatalogResourceBase(BaseModel):
+    supplier_id: int | None = None
     esco_code: str | None = Field(default=None, max_length=255)
     name_ro: str = Field(min_length=2, max_length=255)
     name_en: str = Field(min_length=2, max_length=255)
     resource_type: ResourceType
     base_price: float = Field(ge=0)
     unit: str = Field(min_length=1, max_length=24)
+    lead_time_days: int | None = Field(default=None, ge=0)
+    stock_qty: float | None = Field(default=None, ge=0)
+    availability_status: str = Field(default="IN_STOCK", min_length=2, max_length=32)
     technical_specs: dict = Field(default_factory=dict)
     is_active: bool = True
 
@@ -145,12 +149,16 @@ class CatalogResourceCreate(CatalogResourceBase):
 
 
 class CatalogResourceUpdate(BaseModel):
+    supplier_id: int | None = None
     esco_code: str | None = Field(default=None, max_length=255)
     name_ro: str | None = Field(default=None, min_length=2, max_length=255)
     name_en: str | None = Field(default=None, min_length=2, max_length=255)
     resource_type: ResourceType | None = None
     base_price: float | None = Field(default=None, ge=0)
     unit: str | None = Field(default=None, min_length=1, max_length=24)
+    lead_time_days: int | None = Field(default=None, ge=0)
+    stock_qty: float | None = Field(default=None, ge=0)
+    availability_status: str | None = Field(default=None, min_length=2, max_length=32)
     technical_specs: dict | None = None
     is_active: bool | None = None
 
@@ -206,6 +214,8 @@ class PriceAnalysisRecipeBase(BaseModel):
     activity_id: int
     resource_id: int
     specific_consumption: float = Field(gt=0)
+    productivity_norm: float | None = Field(default=None, gt=0)
+    indicator_code: str | None = Field(default=None, min_length=2, max_length=64)
     consumption_unit: str | None = Field(default=None, min_length=1, max_length=24)
     waste_percentage: float = Field(ge=0)
     waste_formula: str | None = Field(default=None, max_length=255)
@@ -237,6 +247,8 @@ class PriceAnalysisRecipeUpdate(BaseModel):
     activity_id: int | None = None
     resource_id: int | None = None
     specific_consumption: float | None = Field(default=None, gt=0)
+    productivity_norm: float | None = Field(default=None, gt=0)
+    indicator_code: str | None = Field(default=None, min_length=2, max_length=64)
     consumption_unit: str | None = Field(default=None, min_length=1, max_length=24)
     waste_percentage: float | None = Field(default=None, ge=0)
     waste_formula: str | None = Field(default=None, max_length=255)

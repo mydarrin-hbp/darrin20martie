@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.core.security import get_current_admin_user
 from app.db.session import get_db
 from app.schemas.backoffice_catalog import CatalogImportResponse
+from app.schemas.backoffice_service_creation import BackofficeServiceCreateResponse
 from app.schemas.category import CategoryBackofficeResponse, CategoryCreate, CategoryUpdate
 from app.schemas.domain import DomainBackofficeResponse, DomainCreate, DomainUpdate
 from app.schemas.subcategory import SubcategoryBackofficeResponse, SubcategoryCreate, SubcategoryUpdate
+from app.services.backoffice_service_creation import create_backoffice_service_flow, parse_service_create_payload
 from app.services.catalog_service import (
     create_category,
     create_domain,
@@ -149,3 +151,50 @@ async def import_caen_uniclass_esco(file: UploadFile = File(...), db: Session = 
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     return import_catalog_taxonomy(db, rows)
+
+
+@router.post("/services/create", response_model=BackofficeServiceCreateResponse, status_code=status.HTTP_201_CREATED)
+async def create_service_from_backoffice(
+    payload: str = Form(...),
+    main_image: UploadFile | None = File(default=None),
+    demo_video: UploadFile | None = File(default=None),
+    instructions_pdf: UploadFile | None = File(default=None),
+    db: Session = Depends(get_db),
+):
+    try:
+        parsed_payload = parse_service_create_payload(payload)
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid payload: {exc}") from exc
+
+    result = create_backoffice_service_flow(
+        db,
+        payload=parsed_payload,
+        main_image=main_image,
+        demo_video=demo_video,
+        instructions_pdf=instructions_pdf,
+    )
+    if result == "subcategory_not_found":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Subcategory not found")
+    if result == "category_not_found":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
+    if result == "subcategory_category_mismatch":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Subcategory does not belong to category")
+    if result == "category_domain_mismatch":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Category does not belong to domain")
+    if result == "duplicate_slug":
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="A service with this slug already exists")
+    if result == "activity_required_for_recipe":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Each recipe requires a primary activity")
+    if result == "activity_not_found":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Activity not found")
+    if result == "activity_subcategory_mismatch":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Activity does not belong to the selected subcategory")
+    if result == "resource_not_found":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+    if result == "duplicate_recipe":
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Recipe row already exists")
+    if result == "entity_not_found":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Service not found for attachment upload")
+    if result == "invalid_attachment_type":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid attachment type")
+    return result

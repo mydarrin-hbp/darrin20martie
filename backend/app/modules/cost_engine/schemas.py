@@ -61,6 +61,8 @@ class AdminPriceConfigBase(BaseModel):
     platform_maintenance_percentage: float = Field(ge=0, default=0.03)
     mydarrin_platform_percentage: float = Field(ge=0, default=0.15)
     vat_percentage: float = Field(ge=0, default=0.21)
+    minimum_order_value: float = Field(ge=0, default=0)
+    minimum_quantity_threshold: float = Field(ge=0, default=0)
     platform_margin_coefficient: float = Field(ge=0, default=0.15)
     vat_coefficient: float = Field(ge=0, default=0.19)
     is_active: bool = True
@@ -84,6 +86,8 @@ class AdminPriceConfigUpdate(BaseModel):
     platform_maintenance_percentage: float | None = Field(default=None, ge=0)
     mydarrin_platform_percentage: float | None = Field(default=None, ge=0)
     vat_percentage: float | None = Field(default=None, ge=0)
+    minimum_order_value: float | None = Field(default=None, ge=0)
+    minimum_quantity_threshold: float | None = Field(default=None, ge=0)
     platform_margin_coefficient: float | None = Field(default=None, ge=0)
     vat_coefficient: float | None = Field(default=None, ge=0)
     is_active: bool | None = None
@@ -108,8 +112,26 @@ class CostDraftRequest(BaseModel):
     urgency: bool = False
     service_level: ServiceLevel = ServiceLevel.STANDARD
     recipe_level: RecipeLevelName = RecipeLevelName.ARGINT
+    requested_quantity: float | None = Field(default=None, gt=0)
+    target_address: str | None = None
     activity_ids: list[int] = Field(default_factory=list)
     resources: list[ResourceCreate] = Field(default_factory=list)
+
+
+class PartialAvailabilityResponse(BaseModel):
+    status: str
+    service_id: int
+    service_name: str
+    service_slug: str
+    country_id: int
+    zone_id: int
+    locality_id: int | None = None
+    currency: str
+    legislation_code: str
+    message: str
+    available_resource_types: list[str]
+    missing_resource_types: list[str]
+    target_address: str | None = None
 
 
 class PriceAnalysisResponse(BaseModel):
@@ -193,5 +215,9 @@ class CostDraftResponse(BaseModel):
     legislation_code: str
     service_level: ServiceLevel
     urgency: bool
+    requested_quantity: float | None = None
+    target_address: str | None = None
+    minimum_order_applied: bool = False
+    availability_status: str = "available"
     price_analysis: PriceAnalysisResponse
     calculation: CostCalculationResponse

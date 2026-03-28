@@ -42,6 +42,8 @@ class AdminPriceConfig(Base):
     platform_maintenance_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.03)
     mydarrin_platform_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.15)
     vat_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.21)
+    minimum_order_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    minimum_quantity_threshold: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     platform_margin_coefficient: Mapped[float] = mapped_column(Float, nullable=False, default=0.15)
     vat_coefficient: Mapped[float] = mapped_column(Float, nullable=False, default=0.19)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)

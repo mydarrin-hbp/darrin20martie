@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 from pathlib import Path
 
 from sqlalchemy import Select, select
@@ -92,6 +93,8 @@ def _serialize_recipe(recipe: PriceAnalysisRecipe) -> PriceAnalysisRecipeRespons
         activity_id=recipe.activity_id,
         resource_id=recipe.resource_id,
         specific_consumption=recipe.specific_consumption,
+        productivity_norm=recipe.productivity_norm,
+        indicator_code=recipe.indicator_code,
         consumption_unit=recipe.consumption_unit,
         waste_percentage=recipe.waste_percentage,
         waste_formula=recipe.waste_formula,
@@ -514,6 +517,105 @@ def resolve_resource_unit_price(
             "zone_multiplier": float(selected.zone_multiplier),
         },
     )
+
+
+def normalize_supplier_location_geo(value) -> dict:
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+            if isinstance(parsed, dict):
+                return parsed
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+def supplier_matches_geo(
+    supplier,
+    *,
+    country: Country,
+    zone: Zone,
+    locality: Locality | None,
+) -> bool:
+    if supplier is None:
+        return True
+    if not supplier.is_active:
+        return False
+
+    location_geo = normalize_supplier_location_geo(getattr(supplier, "location_geo", None))
+    if not location_geo:
+        return True
+
+    country_codes = {str(item).upper() for item in location_geo.get("country_codes", []) if str(item).strip()}
+    zone_slugs = {str(item).lower() for item in location_geo.get("zone_slugs", []) if str(item).strip()}
+    locality_slugs = {str(item).lower() for item in location_geo.get("locality_slugs", []) if str(item).strip()}
+
+    if country_codes and country.code.upper() not in country_codes:
+        return False
+    if zone_slugs and zone.slug.lower() not in zone_slugs:
+        return False
+    if locality and locality_slugs and locality.slug.lower() not in locality_slugs:
+        return False
+    return True
+
+
+def evaluate_recipe_geo_availability(
+    recipe_rows: list[PriceAnalysisRecipe],
+    *,
+    country: Country,
+    zone: Zone,
+    locality: Locality | None,
+) -> dict | None:
+    critical_types = {ResourceType.LABOR.value, ResourceType.MATERIAL.value, ResourceType.TRANSPORT.value}
+    required_types: set[str] = set()
+    available_types: set[str] = set()
+
+    for recipe in recipe_rows:
+        resource = recipe.resource
+        resource_type = (resource.resource_type or "").upper()
+        if resource_type not in critical_types:
+            continue
+        if not recipe.is_essential and resource_type not in {ResourceType.LABOR.value, ResourceType.MATERIAL.value, ResourceType.TRANSPORT.value}:
+            continue
+        required_types.add(resource_type)
+
+        if not resource.is_active:
+            continue
+        if resource.stock_qty is not None and resource.stock_qty <= 0:
+            continue
+        if str(resource.availability_status or "IN_STOCK").upper() in {"OUT_OF_STOCK", "UNAVAILABLE", "BLOCKED"}:
+            continue
+        if not supplier_matches_geo(getattr(resource, "supplier", None), country=country, zone=zone, locality=locality):
+            continue
+        available_types.add(resource_type)
+
+    if not required_types:
+        return None
+
+    missing_types = sorted(required_types - available_types)
+    if not missing_types:
+        return None
+
+    available_sorted = sorted(available_types)
+    if available_sorted == [ResourceType.LABOR.value]:
+        message = "Doar manopera disponibila pentru adresa de executie selectata."
+    elif available_sorted == [ResourceType.MATERIAL.value]:
+        message = "Doar materialele sunt disponibile pentru adresa de executie selectata."
+    elif available_sorted == [ResourceType.TRANSPORT.value]:
+        message = "Doar transportul este disponibil pentru adresa de executie selectata."
+    elif available_sorted:
+        message = f"Disponibilitate partiala pentru adresa de executie: lipsesc {', '.join(missing_types)}."
+    else:
+        message = "Serviciul este indisponibil la adresa de executie selectata."
+
+    return {
+        "status": "partial_available" if available_sorted else "resource_unavailable",
+        "message": message,
+        "available_resource_types": available_sorted,
+        "missing_resource_types": missing_types,
+    }
 
 
 def list_recipes(db: Session, *, activity_id: int | None = None):

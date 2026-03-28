@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "My Darrin Client",
+    "slug": "mydarrin-client",
+    "scheme": "mydarrin-client",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light"
+  }
+}

@@ -56,6 +56,7 @@ class AIRobotDarrinInterpretResponse(BaseModel):
     follow_up_questions: list[str] = Field(default_factory=list)
     client_explanation: str | None = None
     recommended_deviz_level: str | None = None
+    price_breakdown: dict | None = None
     prompt_snapshot: str | None = None
     deviz: DevizResponse | None
     error: str | None = None
@@ -104,6 +105,7 @@ def interpret(data: AIRobotDarrinInterpretRequest, db: Session = Depends(get_db)
         follow_up_questions=result["follow_up_questions"],
         client_explanation=result["client_explanation"],
         recommended_deviz_level=result["recommended_deviz_level"],
+        price_breakdown=result.get("price_breakdown"),
         prompt_snapshot=result["prompt_snapshot"],
         deviz=deviz if isinstance(deviz, DevizResponse) else None,
         error=deviz if isinstance(deviz, str) else None,

@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session, selectinload
 from app.core.config import settings
 from app.models.category import Category
 from app.models.domain import Domain
+from app.models.price_analysis import CatalogResource, Supplier
 from app.models.service import Service
 from app.models.subcategory import SubCategory
 from app.modules.ai_robot_darrin.learning_loop import get_learning_examples, get_learning_snapshot
@@ -23,9 +24,10 @@ from app.modules.deviz_engine.models import AdminDevizRule
 from app.modules.deviz_engine.schemas import DevizRequest
 from app.modules.deviz_engine.service import generate_deviz
 from app.modules.geography.models import Country, Locality, Zone
+from app.modules.sync.service import syncPublicPrices
 from app.schemas.price_analysis import RecipeLevelName
 from app.services.reparat_calorifer_service import match_reparat_calorifer_variant
-from app.services.price_analysis_service import calculate_indicators_for_activity, get_service_recipe_activities
+from app.services.price_analysis_service import calculate_indicators_for_activity, get_recipe_rows_for_activities, get_service_recipe_activities
 
 PROMPTS_DIR = Path(__file__).resolve().parent / "prompts"
 GEMINI_MODEL = "gemini-2.5-flash"
@@ -57,6 +59,17 @@ def _infer_service_level(message: str, override: ServiceLevel | None) -> Service
     if any(keyword in normalized for keyword in ["standard", "echilibrat", "normal", "bun", "argint"]):
         return ServiceLevel.STANDARD
     return ServiceLevel.BASIC
+
+
+def _extract_requested_quantity(message: str) -> float | None:
+    normalized = message.lower()
+    match = re.search(r"(\d+(?:[.,]\d+)?)\s*(mp|m2|mc|m3|buc|ore|ora)", normalized)
+    if not match:
+        return None
+    try:
+        return float(match.group(1).replace(",", "."))
+    except ValueError:
+        return None
 
 
 def _extract_json_blob(raw_text: str) -> dict | None:
@@ -121,6 +134,41 @@ def _safe_json(value: object) -> str:
         raise TypeError(f"Object of type {item.__class__.__name__} is not JSON serializable")
 
     return json.dumps(value, ensure_ascii=True, sort_keys=True, default=_default_serializer)
+
+
+def _round_money(value: float | Decimal | None) -> float:
+    if value is None:
+        return 0.0
+    return float(Decimal(str(value)).quantize(Decimal("0.01")))
+
+
+def _build_unavailable_alternatives(service: Service | None) -> tuple[str, list[str]]:
+    if service and any(token in service.slug for token in ["beton", "materiale"]):
+        return (
+            "Momentan nu putem genera oferta finala deoarece pachetul selectat nu este disponibil in zona aleasa. Putem propune o alta clasa de beton compatibila sau o alta data de livrare, imediat ce exista stoc confirmat.",
+            [
+                "Vrei sa cautam o clasa de beton apropiata, disponibila acum?",
+                "Preferi sa iti propun o data alternativa de livrare?",
+            ],
+        )
+
+    return (
+        "Momentan nu putem genera oferta finala deoarece o resursa critica nu este disponibila la furnizorii activi din zona selectata. Putem cauta urmatorul interval disponibil sau o varianta apropiata de executie.",
+        [
+            "Vrei sa caut urmatorul interval disponibil pentru interventie?",
+            "Preferi o varianta apropiata de serviciu disponibila mai repede?",
+        ],
+    )
+
+
+def _parse_recipe_level(value: str | None, fallback: RecipeLevelName) -> RecipeLevelName:
+    if not value:
+        return fallback
+    normalized = value.upper().strip()
+    for level in RecipeLevelName:
+        if level.value == normalized:
+            return level
+    return fallback
 
 
 def _ensure_sqlite_fts_objects(db: Session) -> None:
@@ -209,6 +257,12 @@ def sync_backoffice_documents(db: Session) -> int:
     countries = db.execute(select(Country).order_by(Country.id)).scalars().all()
     zones = db.execute(select(Zone).order_by(Zone.id)).scalars().all()
     localities = db.execute(select(Locality).order_by(Locality.id)).scalars().all()
+    try:
+        suppliers = db.execute(select(Supplier).order_by(Supplier.id)).scalars().all()
+        resources = db.execute(select(CatalogResource).options(selectinload(CatalogResource.supplier)).order_by(CatalogResource.id)).scalars().all()
+    except Exception:
+        suppliers = []
+        resources = []
 
     for domain in domains:
         _upsert_document(
@@ -307,6 +361,46 @@ def sync_backoffice_documents(db: Session) -> int:
                 f"Localitate {locality.name_ro}. English {locality.name_en}. Tara {locality.country_id}. Zona {locality.zone_id}. Coordonate {locality.latitude or 'n/a'}, {locality.longitude or 'n/a'}."
             ),
             metadata={"locality_id": locality.id, "country_id": locality.country_id, "zone_id": locality.zone_id},
+        )
+
+    for supplier in suppliers:
+        _upsert_document(
+            db,
+            source_type="supplier",
+            source_key=str(supplier.id),
+            title=f"Supplier {supplier.name}",
+            content=_normalize_text(
+                f"Furnizor {supplier.name}. Rating {supplier.rating}. Activ {supplier.is_active}. Geo {supplier.location_geo}."
+            ),
+            metadata={"supplier_id": supplier.id, "rating": supplier.rating, "location_geo": supplier.location_geo},
+        )
+
+    for resource in resources:
+        _upsert_document(
+            db,
+            source_type="resource",
+            source_key=str(resource.id),
+            title=f"Resource {resource.name_ro}",
+            content=_normalize_text(
+                " ".join(
+                    [
+                        f"Resursa {resource.name_ro}.",
+                        f"Tip {resource.resource_type}.",
+                        f"ESCO {resource.esco_code or 'n/a'}.",
+                        f"Stoc {resource.stock_qty if resource.stock_qty is not None else 'n/a'}.",
+                        f"Disponibilitate {resource.availability_status}.",
+                        f"Lead time {resource.lead_time_days if resource.lead_time_days is not None else 'n/a'}.",
+                        f"Furnizor {resource.supplier.name if resource.supplier else 'nespecificat'}.",
+                    ]
+                )
+            ),
+            metadata={
+                "resource_id": resource.id,
+                "resource_type": resource.resource_type,
+                "supplier_id": resource.supplier_id,
+                "stock_qty": resource.stock_qty,
+                "availability_status": resource.availability_status,
+            },
         )
 
     for config in price_configs:
@@ -523,6 +617,23 @@ def retrieve_backoffice_context(db: Session, *, service_id: int, country_id: int
                 }
             )
 
+    resource_availability = []
+    recipe_rows = get_recipe_rows_for_activities(db, [activity.id for activity in service_activities])
+    for recipe in recipe_rows[:12]:
+        resource_availability.append(
+            {
+                "resource_id": recipe.resource.id,
+                "resource_name_ro": recipe.resource.name_ro,
+                "resource_type": recipe.resource.resource_type,
+                "indicator_code": recipe.indicator_code,
+                "productivity_norm": recipe.productivity_norm,
+                "stock_qty": recipe.resource.stock_qty,
+                "availability_status": recipe.resource.availability_status,
+                "lead_time_days": recipe.resource.lead_time_days,
+                "supplier": recipe.resource.supplier.name if recipe.resource.supplier else None,
+            }
+        )
+
     return {
         "service": {
             "id": service.id,
@@ -566,6 +677,7 @@ def retrieve_backoffice_context(db: Session, *, service_id: int, country_id: int
         "matching_price_configs": price_configs,
         "matching_deviz_rules": deviz_rules,
         "indicator_snapshots": indicator_snapshots,
+        "resource_availability": resource_availability,
         "rag_matches": [
             {
                 "source_type": item["source_type"],
@@ -771,11 +883,14 @@ def interpret_request(
     resources: list[ResourceCreate],
 ):
     selected_service_id = service_id
-    matched_variant = match_reparat_calorifer_variant(
-        db,
-        message=message,
-        preferred_service_id=service_id,
-    )
+    try:
+        matched_variant = match_reparat_calorifer_variant(
+            db,
+            message=message,
+            preferred_service_id=service_id,
+        )
+    except Exception:
+        matched_variant = None
     if matched_variant is not None:
         selected_service_id = matched_variant.selected_service_id
 
@@ -792,6 +907,7 @@ def interpret_request(
         message=message,
     )
     learning_context = get_learning_examples(db)
+    requested_quantity = _extract_requested_quantity(message)
 
     prompt_text = _build_prompt_text(
         prompt_name="interpret",
@@ -819,6 +935,10 @@ def interpret_request(
 
     interpreted_urgency = bool(llm_payload.get("urgency", fallback_urgency))
     interpreted_service_level = _parse_service_level(llm_payload.get("service_level"), fallback_level)
+    interpreted_recipe_level = _parse_recipe_level(
+        llm_payload.get("recommended_deviz_level"),
+        RecipeLevelName.ARGINT if interpreted_urgency else RecipeLevelName.BRONZ,
+    )
     suggested_resources = _parse_resource_suggestions(
         llm_payload.get("resource_suggestions"),
         interpreted_service_level,
@@ -826,21 +946,64 @@ def interpret_request(
     if resources:
         suggested_resources = resources
 
-    deviz = generate_deviz(
-        db,
-        DevizRequest(
-            service_id=selected_service_id,
-            country_id=country_id,
-            zone_id=zone_id,
-            locality_id=locality_id,
-            currency=currency,
-            legislation_code=legislation_code,
+    try:
+        deviz = generate_deviz(
+            db,
+            DevizRequest(
+                service_id=selected_service_id,
+                country_id=country_id,
+                zone_id=zone_id,
+                locality_id=locality_id,
+                currency=currency,
+                legislation_code=legislation_code,
+                urgency=interpreted_urgency,
+                service_level=interpreted_service_level,
+                resources=suggested_resources,
+                source_message=message,
+            ),
+        )
+    except Exception:
+        db.rollback()
+        deviz = None
+
+    service = db.execute(
+        select(Service).where(Service.id == selected_service_id)
+    ).scalar_one_or_none()
+    country = db.get(Country, country_id)
+    zone = db.get(Zone, zone_id)
+    locality = db.get(Locality, locality_id) if locality_id is not None else None
+    price_breakdown = (
+        syncPublicPrices(
+            db,
+            service.slug,
+            country_code=country.code if country else None,
+            zone_slug=zone.slug if zone else None,
+            locality_slug=locality.slug if locality else None,
+            requested_quantity=requested_quantity,
             urgency=interpreted_urgency,
             service_level=interpreted_service_level,
-            resources=suggested_resources,
-            source_message=message,
-        ),
+            recipe_level=interpreted_recipe_level,
+        )
+        if service
+        else None
     )
+
+    alternative_questions: list[str] = []
+    price_breakdown_payload = price_breakdown.model_dump(mode="json") if hasattr(price_breakdown, "model_dump") else None
+    if price_breakdown_payload:
+        client_explanation = (
+            f"Pe baza bazei noastre de date interne, solutia pentru problema dvs. costa "
+            f"{_round_money(price_breakdown.total_facturabil):.2f} {price_breakdown.currency}. "
+            f"Aceasta include {_round_money(price_breakdown.distributie_furnizori):.2f} {price_breakdown.currency} "
+            f"pentru executie si {_round_money(price_breakdown.garantie_buna_executie):.2f} {price_breakdown.currency} garantie."
+        )
+        if getattr(price_breakdown, "minimum_order_applied", False):
+            client_explanation += f" {price_breakdown.minimum_order_note or 'Acesta este tariful minim care acopera deplasarea si logistica pentru zona dvs.'}"
+    elif price_breakdown == "resource_unavailable":
+        client_explanation, alternative_questions = _build_unavailable_alternatives(service)
+        price_breakdown_payload = {"status": "resource_unavailable", "alternatives": alternative_questions}
+    else:
+        client_explanation = llm_payload.get("client_explanation")
 
     learning_snapshot = get_learning_snapshot(db)
     rag_sources = [f"{item['source_type']}:{item['source_key']}" for item in rag_context["rag_matches"]]
@@ -868,7 +1031,7 @@ def interpret_request(
         "interpreted_urgency": interpreted_urgency,
         "interpreted_service_level": interpreted_service_level,
         "reasoning": reasoning,
-        "rag_context": rag_context,
+        "rag_context": {**rag_context, "price_breakdown": price_breakdown_payload},
         "matched_service_variant": {
             "service_id": matched_variant.selected_service_id,
             "service_slug": matched_variant.selected_service_slug,
@@ -881,10 +1044,11 @@ def interpret_request(
         "rag_sources": rag_sources,
         "learning_snapshot": learning_snapshot,
         "suggested_resources": suggested_resources,
-        "risk_flags": llm_payload.get("risk_flags") or [],
-        "follow_up_questions": llm_payload.get("follow_up_questions") or [],
-        "client_explanation": llm_payload.get("client_explanation"),
+        "risk_flags": (llm_payload.get("risk_flags") or []) + (["resource_unavailable"] if price_breakdown == "resource_unavailable" else []),
+        "follow_up_questions": (llm_payload.get("follow_up_questions") or []) + alternative_questions,
+        "client_explanation": client_explanation,
         "recommended_deviz_level": llm_payload.get("recommended_deviz_level"),
+        "price_breakdown": price_breakdown_payload,
         "prompt_snapshot": prompt_text,
         "deviz": deviz,
     }
