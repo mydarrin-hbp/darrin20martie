@@ -1,27 +1,44 @@
-import { PublicServicePage } from "@/components/public-site-v3";
-import { getPublicCatalogPrice, getPublicServiceTaxonomy, getPublicSyncManifest, getSitePageContent } from "@/lib/site-content";
-import { publicServiceCatalog } from "@/lib/public-site";
-
-export function generateStaticParams() {
-  return publicServiceCatalog.map((service) => ({ slug: service.slug }));
-}
+﻿import { PublicServicePage } from "@/components/public-site-v3";
+import {
+  getPublicCatalogPrice,
+  getPublicCatalogServiceBySlug,
+  getPublicServiceTaxonomy,
+  getPublicServiceTechnicalSpecs,
+  getPublicSyncManifest,
+  getSitePageContent,
+} from "@/lib/site-content";
 
 export default async function ServicePage({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
   searchParams?: Promise<{ target_address?: string; place_id?: string }>;
 }) {
-  const { slug } = await params;
-  const query = (await searchParams) ?? {};
-  const targetAddress = query.target_address;
-  const placeId = query.place_id;
-  const [page, taxonomy, dynamicPrice, syncManifest] = await Promise.all([
+  const resolvedParams = (await searchParams) ?? {};
+  const targetAddress = resolvedParams.target_address;
+  const placeId = resolvedParams.place_id;
+
+  const [page, taxonomy, dynamicPrice, syncManifest, technicalSpecs, catalogService] = await Promise.all([
     getSitePageContent("service-detail"),
-    getPublicServiceTaxonomy(slug),
-    getPublicCatalogPrice(slug, { targetAddress, placeId }),
+    getPublicServiceTaxonomy(params.slug),
+    getPublicCatalogPrice(params.slug, { targetAddress, placeId }),
     getPublicSyncManifest(),
+    getPublicServiceTechnicalSpecs(params.slug),
+    getPublicCatalogServiceBySlug(params.slug),
   ]);
-  return <PublicServicePage page={page} slug={slug} taxonomy={taxonomy} dynamicPrice={dynamicPrice} syncManifest={syncManifest} />;
+
+  return (
+    <PublicServicePage
+      page={page}
+      slug={params.slug}
+      taxonomy={taxonomy}
+      dynamicPrice={dynamicPrice}
+      syncManifest={syncManifest}
+      targetAddress={targetAddress}
+      placeId={placeId}
+      technicalSpecs={technicalSpecs}
+      catalogService={catalogService}
+    />
+  );
 }

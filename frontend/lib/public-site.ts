@@ -53,6 +53,17 @@ export type PublicSpecialCatalog = {
 export type PublicServiceRecord = {
   slug: string;
   title: string;
+  objectLabel?: string;
+  interventionType?: string;
+  availableInterventions?: Array<{
+    label: string;
+    serviceSlug: string;
+    taskLabel: string;
+    skill: string;
+    requiredPeople: number;
+    escoCodes: string[];
+    naceCodes: string[];
+  }>;
   category: string;
   summary: string;
   description: string;
@@ -63,6 +74,11 @@ export type PublicServiceRecord = {
   badges: string[];
   benefits: string[];
   levels: PublicServiceLevel[];
+  media?: {
+    images?: string[];
+    videos?: string[];
+    documents?: string[];
+  };
   classifications?: PublicServiceClassification;
   specialCatalog?: PublicSpecialCatalog;
 };
@@ -74,6 +90,23 @@ export type PublicRoleRecord = {
   description: string;
   permissions: string[];
   ctaLabel: string;
+};
+
+export type PublicAssetIntervention = {
+  label: string;
+  serviceSlug: string;
+  taskLabel: string;
+  skill: string;
+  requiredPeople: number;
+  escoCodes: string[];
+  naceCodes: string[];
+};
+
+export type PublicAssetRecord = {
+  assetSlug: string;
+  assetLabel: string;
+  category: string;
+  interventions: PublicAssetIntervention[];
 };
 
 export const publicNavLinks: PublicNavLink[] = [
@@ -133,14 +166,60 @@ export const publicQuickLinks: PublicQuickLink[] = [
   { title: "Creare cont client", href: "/account/create", tone: "light" },
 ];
 
+export const publicAssetCatalog: PublicAssetRecord[] = [
+  {
+    assetSlug: "centrala-termica",
+    assetLabel: "Centrala Termica",
+    category: "Acasa",
+    interventions: [
+      {
+        label: "Reparatie",
+        serviceSlug: "reparat-calorifer",
+        taskLabel: "Diagnoza si remediere defect",
+        skill: "Tehnician diagnoza",
+        requiredPeople: 1,
+        escoCodes: ["ESCO-HVAC-DIAG"],
+        naceCodes: ["4322"],
+      },
+      {
+        label: "Mentenanta",
+        serviceSlug: "montaj-centrala-termica",
+        taskLabel: "Revizie anuala / VTP",
+        skill: "Tehnician revizie",
+        requiredPeople: 1,
+        escoCodes: ["ESCO-HVAC-MAINT"],
+        naceCodes: ["4322"],
+      },
+      {
+        label: "Inlocuire",
+        serviceSlug: "montaj-centrala-termica",
+        taskLabel: "Demontare unitate veche + montaj nou",
+        skill: "Echipa instalare",
+        requiredPeople: 2,
+        escoCodes: ["ESCO-HVAC-INSTALL", "ESCO-HVAC-REMOVE"],
+        naceCodes: ["4322"],
+      },
+      {
+        label: "Montaj",
+        serviceSlug: "montaj-centrala-termica",
+        taskLabel: "Montaj unitate noua",
+        skill: "Echipa instalare",
+        requiredPeople: 2,
+        escoCodes: ["ESCO-HVAC-INSTALL"],
+        naceCodes: ["4322"],
+      },
+    ],
+  },
+];
+
 export const publicServiceCatalog: PublicServiceRecord[] = [
   {
     slug: "materiale-betoane",
     title: "Materiale si Betoane",
     category: "Materiale speciale",
-    summary: "Catalog special pentru clase de beton, transport, pompa si furnizori verificati, integrat in acelasi flux public My Darrin.",
+    summary: "Anunt comercial pentru livrare beton, cu selectie de clasa, volum, perioada de livrare si optiuni logistice direct pe pagina serviciului.",
     description:
-      "Zona de materiale speciale preia logica unui catalog operational dedicat pentru betoane si o aliniaza cu proiectul nostru: selectie rapida, clase clare, niveluri comerciale, transport si optiunea de pompa, toate vizibile public dupa configurare si aprobare.",
+      "Pagina dedicata pentru materiale si betoane preia logica unui serviciu comercial complet: clientul alege clasa, nivelul, cantitatea, adresa, intervalul de livrare si optiunile de santier, iar in catalog serviciul apare doar ca anunt/card, la fel ca restul ofertelor.",
     startingPrice: "de la 345 lei / mc",
     rating: "4.9",
     accent: "navy",
@@ -160,7 +239,7 @@ export const publicServiceCatalog: PublicServiceRecord[] = [
       "Clase de beton standardizate pe niveluri comerciale",
       "Pret / mc, transport si furnizor vizibile din prima ecranare",
       "Optiune pompa pentru santiere si turnari speciale",
-      "Serviciu aliniat cu comanda, checkout si status plata",
+      "Pagina dedicata de configurare, comanda, checkout si status plata",
     ],
     levels: [
       { label: "Bronz", price: "345 lei / mc", note: "Pentru lucrari uzuale si bugete controlate" },
@@ -172,7 +251,7 @@ export const publicServiceCatalog: PublicServiceRecord[] = [
       title: "Catalog Betoane",
       supplier: "Betoniera SRL",
       summary:
-        "Inspiratia din structura trimisa este pastrata in forma unui catalog special dark, dar aliniata My Darrin ca serviciu special pentru materiale si executii.",
+        "Clasele si pachetele comerciale sunt folosite pe pagina serviciului pentru configurarea comenzii de beton, transportului si optiunilor logistice.",
       stats: [
         { label: "Total produse", value: "12", tone: "blue" },
         { label: "Platinum", value: "3", tone: "amber" },
@@ -234,6 +313,14 @@ export const publicServiceCatalog: PublicServiceRecord[] = [
   {
     slug: "reparat-calorifer",
     title: "Reparat calorifer",
+    objectLabel: "Calorifer",
+    interventionType: "Reparatie",
+    availableInterventions: [
+      { label: "Reparatie", serviceSlug: "reparat-calorifer", taskLabel: "Diagnoza si remediere defect", skill: "Tehnician diagnoza", requiredPeople: 1, escoCodes: ["ESCO-HVAC-DIAG"], naceCodes: ["4322"] },
+      { label: "Mentenanta", serviceSlug: "reparat-calorifer", taskLabel: "Revizie si reglaj", skill: "Tehnician service", requiredPeople: 1, escoCodes: ["ESCO-HVAC-MAINT"], naceCodes: ["4322"] },
+      { label: "Inlocuire", serviceSlug: "montaj-centrala-termica", taskLabel: "Demontare + inlocuire componenta", skill: "Echipa instalare", requiredPeople: 2, escoCodes: ["ESCO-HVAC-REMOVE"], naceCodes: ["4322"] },
+      { label: "Montaj", serviceSlug: "montaj-centrala-termica", taskLabel: "Montaj corp nou", skill: "Echipa instalare", requiredPeople: 2, escoCodes: ["ESCO-HVAC-INSTALL"], naceCodes: ["4322"] },
+    ],
     category: "Acasa",
     summary: "Vizibil instant din Backoffice in homepage, catalog si pagina dedicata.",
     description:
@@ -253,6 +340,14 @@ export const publicServiceCatalog: PublicServiceRecord[] = [
   {
     slug: "montaj-centrala-termica",
     title: "Montaj centrala termica",
+    objectLabel: "Centrala termica",
+    interventionType: "Montaj",
+    availableInterventions: [
+      { label: "Reparatie", serviceSlug: "reparat-calorifer", taskLabel: "Diagnoza si remediere defect", skill: "Tehnician diagnoza", requiredPeople: 1, escoCodes: ["ESCO-HVAC-DIAG"], naceCodes: ["4322"] },
+      { label: "Mentenanta", serviceSlug: "montaj-centrala-termica", taskLabel: "Revizie anuala / VTP", skill: "Tehnician revizie", requiredPeople: 1, escoCodes: ["ESCO-HVAC-MAINT"], naceCodes: ["4322"] },
+      { label: "Inlocuire", serviceSlug: "montaj-centrala-termica", taskLabel: "Demontare unitate veche + montaj nou", skill: "Echipa instalare + punere in functiune", requiredPeople: 2, escoCodes: ["ESCO-HVAC-REMOVE", "ESCO-HVAC-INSTALL"], naceCodes: ["4322"] },
+      { label: "Montaj", serviceSlug: "montaj-centrala-termica", taskLabel: "Montaj unitate noua", skill: "Echipa instalare", requiredPeople: 2, escoCodes: ["ESCO-HVAC-INSTALL"], naceCodes: ["4322"] },
+    ],
     category: "Acasa",
     summary: "Interventie complexa cu verificari si executie standardizata.",
     description:
@@ -305,6 +400,28 @@ export const publicServiceCatalog: PublicServiceRecord[] = [
     ],
   },
 ];
+
+export const publicSafetyChecklist: Record<
+  string,
+  { certifications: string[]; declarationLabel?: string; declarationHref?: string }
+> = {
+  "materiale-betoane": {
+    certifications: ["eIDAS", "Asigurare malpraxis furnizor", "ISO 9001"],
+    declarationLabel: "Declaratie pe proprie raspundere - furnizor beton",
+    declarationHref: "/account",
+  },
+  "reparat-calorifer": {
+    certifications: ["ISCIR (unde este necesar)", "Asigurare raspundere civila"],
+    declarationLabel: "Declaratie conformitate partener",
+    declarationHref: "/account",
+  },
+};
+
+export const publicCrossSellMap: Record<string, string[]> = {
+  "reparat-calorifer": ["Rigips Smart 9.5mm", "SikaTop Seal-107", "Ceresit CT 17"],
+  "montaj-centrala-termica": ["Kit montaj centrala", "Sika Multiseal", "Rigips RF 12.5mm"],
+  "materiale-betoane": ["SikaRapid-2", "Ceresit CN 69", "Rigips Aqua"],
+};
 
 export function getPublicServiceBySlug(slug: string) {
   return publicServiceCatalog.find((service) => service.slug === slug);

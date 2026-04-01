@@ -3,15 +3,29 @@ import { Inter } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
 
-import type { HomepageContent, PublicCatalogPrice, PublicServiceTaxonomy, PublicSyncManifest } from "@/lib/site-content";
+import type {
+  HomepageContent,
+  PublicCatalogPrice,
+  PublicCatalogServiceCard,
+  PublicServiceTaxonomy,
+  PublicServiceTechnicalSpecs,
+  PublicSyncManifest,
+} from "@/lib/site-content";
 import {
   PublicAccountRegisterForm,
   PublicRoleCompletionForm,
   PublicRoleSelectionForm,
 } from "@/components/public-account-register-form";
 import { GeoAddressAutocomplete } from "@/components/geo-address-autocomplete";
+import { InvestorSeedWidget } from "@/components/investor-seed-widget";
+import { PublicCheckoutSubmit } from "@/components/public-checkout-submit";
+import { GeoRestrictionGate } from "@/components/geo-restriction-gate";
+import { LiveActivityFeed } from "@/components/live-activity-feed";
+import { VisualEditableText } from "@/components/visual-editable-text";
 import {
   getPublicServiceBySlug,
+  publicCrossSellMap,
+  publicSafetyChecklist,
   publicFooterColumns,
   publicNavLinks,
   publicQuickLinks,
@@ -81,15 +95,6 @@ function betonLevelClass(level: "Bronz" | "Argint" | "Aur" | "Platinum") {
   }[level];
 }
 
-function betonStatToneClass(tone: "blue" | "amber" | "green" | "purple") {
-  return {
-    blue: "v3-beton-stat-blue",
-    amber: "v3-beton-stat-amber",
-    green: "v3-beton-stat-green",
-    purple: "v3-beton-stat-purple",
-  }[tone];
-}
-
 function resolveServiceClassifications(
   service: (typeof publicServiceCatalog)[number],
   taxonomy?: PublicServiceTaxonomy | null,
@@ -106,31 +111,189 @@ function resolveServiceClassifications(
   };
 }
 
-function formatDynamicPrice(amount: number, currency: string, currencySymbol?: string | null) {
-  const normalized = Number.isFinite(amount) ? amount.toFixed(0) : "0";
-  const suffix = currencySymbol && currencySymbol !== currency ? currencySymbol : currency.toLowerCase();
-  return `de la ${normalized} ${suffix}`;
+type ResolvedServicePrice = {
+  startingPrice: string;
+  primaryValue: string;
+  currencyLabel: string;
+  prefixLabel: string;
+  taxLabel: string;
+  minimumOrderApplied: boolean;
+  minimumOrderNote?: string | null;
+  levels: Array<{
+    label: string;
+    price: string;
+    note: string;
+  }>;
+};
+
+function formatPriceAmount(amount: number) {
+  return new Intl.NumberFormat("ro-RO", {
+    maximumFractionDigits: 0,
+  }).format(Number.isFinite(amount) ? amount : 0);
+}
+
+function normalizeCurrencyLabel(currency: string, currencySymbol?: string | null) {
+  const value = (currencySymbol || currency || "RON").toUpperCase();
+  return value === "LEI" ? "RON" : value;
+}
+
+type ServiceMediaAssets = {
+  images?: string[];
+  videos?: string[];
+  documents?: string[];
+};
+
+type ResolvedServiceRecord = (typeof publicServiceCatalog)[number] & {
+  media?: ServiceMediaAssets;
+};
+
+const DEFAULT_SERVICE_BENEFITS = ["Pret standardizat", "Garantie", "Asigurare", "Profesionisti verificati"];
+
+function normalizeMediaAssets(card?: PublicCatalogServiceCard | null): ServiceMediaAssets {
+  return {
+    images: (card?.images ?? []).filter(Boolean),
+    videos: (card?.videos ?? []).filter(Boolean),
+    documents: (card?.documents ?? []).filter(Boolean),
+  };
+}
+
+function resolveMediaType(assets: ServiceMediaAssets) {
+  if ((assets.videos ?? []).length > 0) return "VIDEO";
+  if ((assets.images ?? []).length > 0) return "IMAGINE";
+  return "SLIDE";
+}
+
+function pickAccent(slug: string, fallbackIndex: number) {
+  const accents: Array<ResolvedServiceRecord["accent"]> = ["orange", "navy", "green"];
+  let hash = 0;
+  for (let index = 0; index < slug.length; index += 1) {
+    hash = (hash + slug.charCodeAt(index) * (index + 3)) % accents.length;
+  }
+  return accents[hash] ?? accents[fallbackIndex % accents.length];
+}
+
+function parseTierLevels(levelAttachments: Record<string, unknown> | null | undefined) {
+  const raw = Array.isArray((levelAttachments as Record<string, unknown> | undefined)?.service_tiers)
+    ? ((levelAttachments as Record<string, unknown>).service_tiers as Array<Record<string, unknown>>)
+    : [];
+  const levels = raw
+    .map((tier) => ({
+      label: String(tier.title ?? tier.tierKey ?? "Nivel"),
+      price: `+${Number(tier.marginMultiplier ?? 0)}%`,
+      note: String(tier.benefitsMarkdown ?? "Configuratie standard"),
+    }))
+    .filter((tier) => tier.label.trim().length > 0);
+  if (levels.length) {
+    return levels;
+  }
+  return [
+    { label: "Bronz", price: "de la 0 RON", note: "Configuratie standard" },
+    { label: "Argint", price: "de la 0 RON", note: "Configuratie recomandata" },
+    { label: "Aur", price: "de la 0 RON", note: "Executie extinsa" },
+  ];
+}
+
+function parseStaticPrice(startingPrice: string) {
+  const match = startingPrice.match(/(\d[\d.,]*)\s*([A-Za-z]+)/);
+  if (!match) {
+    return {
+      primaryValue: startingPrice,
+      currencyLabel: "RON",
+      prefixLabel: "",
+    };
+  }
+
+  return {
+    primaryValue: match[1].replace(",", "."),
+    currencyLabel: normalizeCurrencyLabel(match[2]),
+    prefixLabel: startingPrice.toLowerCase().includes("de la") ? "de la" : "",
+  };
 }
 
 function resolveServicePrice(
   service: (typeof publicServiceCatalog)[number],
   dynamicPrice?: PublicCatalogPrice | null,
-) {
+): ResolvedServicePrice {
   if (!dynamicPrice?.levels?.length) {
+    const staticPrice = parseStaticPrice(service.startingPrice);
     return {
       startingPrice: service.startingPrice,
+      primaryValue: staticPrice.primaryValue,
+      currencyLabel: staticPrice.currencyLabel,
+      prefixLabel: staticPrice.prefixLabel,
+      taxLabel: "TVA inclus",
+      minimumOrderApplied: false,
+      minimumOrderNote: null,
       levels: service.levels,
     };
   }
 
   const recommended = dynamicPrice.levels.find((level) => level.recommended) ?? dynamicPrice.levels[0];
+  const currencyLabel = normalizeCurrencyLabel(dynamicPrice.currency, dynamicPrice.currency_symbol);
   return {
-    startingPrice: formatDynamicPrice(recommended.gross_total, dynamicPrice.currency, dynamicPrice.currency_symbol),
+    startingPrice: `de la ${formatPriceAmount(recommended.gross_total)} ${currencyLabel}`,
+    primaryValue: formatPriceAmount(recommended.gross_total),
+    currencyLabel,
+    prefixLabel: "de la",
+    taxLabel: "TVA inclus",
+    minimumOrderApplied: Boolean(dynamicPrice.minimum_order_applied),
+    minimumOrderNote: dynamicPrice.minimum_order_note,
     levels: dynamicPrice.levels.map((level) => ({
       label: level.label,
-      price: `${level.gross_total.toFixed(0)} ${dynamicPrice.currency_symbol && dynamicPrice.currency_symbol !== dynamicPrice.currency ? dynamicPrice.currency_symbol : dynamicPrice.currency.toLowerCase()}`,
+      price: `${formatPriceAmount(level.gross_total)} ${currencyLabel}`,
       note: level.description ?? "Pret calculat din motorul de deviz",
     })),
+  };
+}
+
+function buildServiceFromCatalogCard(card: PublicCatalogServiceCard, index: number): ResolvedServiceRecord {
+  const mediaAssets = normalizeMediaAssets(card);
+  const rateCardLabel = card.rate_card
+    ? `de la ${formatPriceAmount(card.rate_card.base_price)} ${normalizeCurrencyLabel(card.rate_card.currency)}`
+    : "de la 0 RON";
+
+  return {
+    slug: card.slug,
+    title: card.name,
+    category: card.category ?? card.domain ?? "Serviciu",
+    summary: card.description ?? "Serviciu sincronizat din Backoffice, cu continut public actualizat in timp real.",
+    description:
+      card.description_extended ??
+      card.description ??
+      "Serviciu tehnic configurat in Backoffice si publicat automat in catalogul My Darrin.",
+    startingPrice: rateCardLabel,
+    rating: card.rating_aipl ? card.rating_aipl.toFixed(1) : "4.8",
+    accent: pickAccent(card.slug, index),
+    mediaType: resolveMediaType(mediaAssets),
+    badges: [
+      ...(card.subcategories?.length ? [card.subcategories[0]] : []),
+      ...(card.resource_types?.length ? [card.resource_types[0]] : []),
+    ].filter(Boolean),
+    benefits: DEFAULT_SERVICE_BENEFITS,
+    levels: parseTierLevels(card.level_attachments),
+    media: mediaAssets,
+  };
+}
+
+function mergeServiceWithCard(service: ResolvedServiceRecord, card: PublicCatalogServiceCard, index: number): ResolvedServiceRecord {
+  const mediaAssets = normalizeMediaAssets(card);
+  return {
+    ...service,
+    title: card.name || service.title,
+    category: card.category ?? card.domain ?? service.category,
+    summary: card.description ?? service.summary,
+    description: card.description_extended ?? card.description ?? service.description,
+    rating: card.rating_aipl ? card.rating_aipl.toFixed(1) : service.rating,
+    mediaType:
+      (mediaAssets.images ?? []).length || (mediaAssets.videos ?? []).length
+        ? resolveMediaType(mediaAssets)
+        : service.mediaType,
+    media:
+      (mediaAssets.images ?? []).length || (mediaAssets.videos ?? []).length || (mediaAssets.documents ?? []).length
+        ? mediaAssets
+        : service.media,
+    levels: card.level_attachments ? parseTierLevels(card.level_attachments) : service.levels,
+    accent: service.accent ?? pickAccent(card.slug, index),
   };
 }
 
@@ -149,27 +312,42 @@ function formatMaterialCardTitle(clasa: string) {
   return `Beton ${clasa} (Livrare Inclusa)`;
 }
 
+function PriceLockup({
+  price,
+  center = false,
+  compact = false,
+  pulseKey,
+}: {
+  price: ResolvedServicePrice;
+  center?: boolean;
+  compact?: boolean;
+  pulseKey?: string | null;
+}) {
+  return (
+    <div
+      key={pulseKey ?? "static-price"}
+      className={`v3-price-lockup ${center ? "v3-price-lockup-center" : ""} ${compact ? "v3-price-lockup-compact" : ""} ${pulseKey ? "v3-price-lockup-pulse" : ""}`}
+    >
+      {price.prefixLabel ? <div className="v3-price-prefix">{price.prefixLabel}</div> : null}
+      <div className="v3-price-figure-row">
+        <span className="v3-price-figure">{price.primaryValue}</span>
+        <span className="v3-price-currency">{price.currencyLabel}</span>
+      </div>
+      <div className="v3-price-meta-row">
+        <span className="v3-price-meta-badge">{price.taxLabel}</span>
+        {price.minimumOrderApplied ? <span className="v3-price-meta-badge v3-price-meta-badge-soft">Tarif minim</span> : null}
+      </div>
+      {price.minimumOrderNote ? <div className="v3-price-note">{price.minimumOrderNote}</div> : null}
+    </div>
+  );
+}
+
 function PublicHeader({ page }: { page: HomepageContent }) {
   const content = page.content;
   const menuItems = content.header?.menu?.length ? content.header.menu : publicNavLinks.map((item) => item.label);
 
   return (
     <header className="v3-header-shell">
-      <div className="v3-header-top">
-        <div className="v3-header-top-inner">
-          <div className="v3-header-address">
-            <span>Address</span>
-            <span className="v3-header-address-strong">{content.header?.locationLabel ?? "Residential - Bucharest, Sect 3, Bd Unirii nr. 5"}</span>
-          </div>
-          <div className="v3-header-tools">
-            <span>{content.header?.language ?? "Romanian"}</span>
-            <Link href="https://admin.mydarrin.homebestpal.com" className="v3-header-admin-link">
-              Administrare
-            </Link>
-          </div>
-        </div>
-      </div>
-
       <div className="v3-header-main">
         <div className="v3-header-main-inner">
           <Link href="/" className="v3-header-brand">
@@ -194,6 +372,10 @@ function PublicHeader({ page }: { page: HomepageContent }) {
               <span className="v3-header-flag">RO</span>
               <span>{content.header?.language ?? "Romanian"}</span>
             </div>
+            <Link href="https://admin.mydarrin.homebestpal.com" className="v3-header-account-chip">
+              <span className="v3-header-account-label">Administrare</span>
+              <strong>Backoffice</strong>
+            </Link>
             <Link href="/account" className="v3-header-account-chip">
               <span className="v3-header-account-label">Salut, intra in cont</span>
               <strong>Cont & onboarding</strong>
@@ -294,7 +476,14 @@ function PublicFooter({ page }: { page: HomepageContent }) {
         <div>Home Best Pal SRL | Bucuresti, Romania | contact@mydarrin.com | +40 700 000 000</div>
         <div>{page.content.meta?.domain ?? "mydarrin.homebestpal.com"}</div>
       </div>
-      <div className="v3-footer-bottom">Copyright My Darrin | Operated by Home Best Pal</div>
+      <div className="v3-footer-bottom">
+        <VisualEditableText
+          slug="homepage"
+          path="footer.copyright"
+          value={page.content.footer?.copyright ?? "Copyright My Darrin | Operated by Home Best Pal"}
+          as="div"
+        />
+      </div>
     </footer>
   );
 }
@@ -335,6 +524,7 @@ function PublicShell({
         } as CSSProperties
       }
     >
+      <GeoRestrictionGate />
       <PublicHeader page={page} />
       <section className="v3-content-shell">{children}</section>
       {hideFooter ? null : <PublicFooter page={page} />}
@@ -425,27 +615,53 @@ function AccountBenefitsPanel({
   );
 }
 
-export function PublicHomepage({ page }: { page: HomepageContent }) {
+export function PublicHomepage({ page, roleHint }: { page: HomepageContent; roleHint?: string }) {
   const content = page.content;
   const services = buildHomepageServices(page);
   const heroImageUrl = content.mediaLibrary?.heroImageUrl;
   const slogan = content.branding?.slogan ?? "Structura marketplace aprobata";
+  const detectedRole = (roleHint ?? "CLIENT").toUpperCase() as "CLIENT" | "INVESTOR" | "PARTNER";
+  const heroCopy = {
+    CLIENT: {
+      headline: "Servicii locale in 15 minute, cu echipe verificate si preturi standardizate.",
+      subheadline:
+        "Experienta client ramane cea mai rapida: selectezi serviciul, primesti deviz, vezi statusul live si platesti securizat.",
+      primaryCta: "Solicita deviz",
+      secondaryCta: "Vezi catalog",
+    },
+    INVESTOR: {
+      headline: "Investitii in infrastructura tech + executie operationala verificata.",
+      subheadline:
+        "Urmareste rundele SEED active, cvorumul live si evolutia proiectelor in timp real, direct din dashboardul public.",
+      primaryCta: "Investește în Tech",
+      secondaryCta: "Vezi indicatorii",
+    },
+    PARTNER: {
+      headline: "Devino partener verificat si acceseaza proiecte cu plata securizata.",
+      subheadline:
+        "Onboardingul de partener include documente obligatorii, validare operationala si acces la comenzi live.",
+      primaryCta: "Devino Partener",
+      secondaryCta: "Incarca documente",
+    },
+  }[detectedRole];
+  const heroHeadline = content.hero?.headline ?? heroCopy.headline;
+  const heroSubheadline = content.hero?.subheadline ?? heroCopy.subheadline;
 
   return (
     <PublicShell page={page}>
       <section className="v3-marketplace-stage">
         <article className="v3-marketplace-notice">
           <div className="v3-card-kicker">{slogan}</div>
-          <h2 className="v3-marketplace-notice-title">Afisam serviciile disponibile pentru zona ta si deschidem rapid cautarea, contul si cosul.</h2>
+          <h2 className="v3-marketplace-notice-title">{heroHeadline}</h2>
           <p className="v3-muted-copy">
-            Inspiratia este o intrare utilitara de marketplace: localizare, cautare mare, cont vizibil si acces direct catre comenzi. Totul ramane adaptat identitatii My Darrin si fluxurilor noastre de servicii.
+            {heroSubheadline}
           </p>
           <div className="v3-marketplace-notice-actions">
             <Link href="/catalog" className="v3-ghost-chip">
-              Schimba serviciul
+              {heroCopy.secondaryCta}
             </Link>
-            <Link href="/account/create" className="v3-primary-button">
-              Creeaza cont
+            <Link href={detectedRole === "PARTNER" ? "/partners/join" : "/account/create"} className="v3-primary-button">
+              {heroCopy.primaryCta}
             </Link>
           </div>
         </article>
@@ -460,6 +676,18 @@ export function PublicHomepage({ page }: { page: HomepageContent }) {
             Esti nou? <Link href="/account/create">Incepe de aici.</Link>
           </div>
         </article>
+      </section>
+
+      <section className="v3-cta-strip">
+        <Link href="/partners/join" className="v3-primary-button">
+          Devino Partener
+        </Link>
+        <Link href="/investors" className="v3-dark-button">
+          Investește în Tech
+        </Link>
+        <Link href="/catalog" className="v3-ghost-chip">
+          Solicită Deviz
+        </Link>
       </section>
 
       <div className="v3-grid-layout">
@@ -525,11 +753,15 @@ export function PublicHomepage({ page }: { page: HomepageContent }) {
                   <Pill>[{content.hero?.mediaType ?? "VIDEO HERO"}]</Pill>
                 </div>
                 <div className="v3-eyebrow">Servicii la cerere, fara frictiune</div>
-                <h1 className="v3-hero-title">{content.hero?.headline ?? "Cea mai rapida experienta pentru servicii locale, urgente si programate."}</h1>
-                <p className="v3-hero-description">
-                  {content.hero?.subheadline ??
-                    "My Darrin combina viteza de selectie din Glovo cu increderea Home Best Pal: AI, provideri verificati si executie standardizata."}
-                </p>
+                <VisualEditableText slug="homepage" path="hero.headline" value={heroHeadline} as="h1" className="v3-hero-title" />
+                <VisualEditableText
+                  slug="homepage"
+                  path="hero.subheadline"
+                  value={heroSubheadline}
+                  as="p"
+                  multiline
+                  className="v3-hero-description"
+                />
 
                 <div className="v3-command-bar">
                   <div className="v3-command-input">{content.header?.searchPlaceholder ?? "Descrie ce ai nevoie... poti incarca poze sau video"}</div>
@@ -568,7 +800,10 @@ export function PublicHomepage({ page }: { page: HomepageContent }) {
                       <div className="v3-card-kicker">Serviciu evidenta</div>
                       <div className="v3-service-spotlight-title">Reparat calorifer</div>
                       <div className="v3-service-spotlight-copy">Vizibil instant in homepage, catalog si pagina de serviciu.</div>
-                      <div className="v3-price-pill">de la 189 lei</div>
+                      <PriceLockup
+                        price={resolveServicePrice(getPublicServiceBySlug("reparat-calorifer") ?? publicServiceCatalog[0])}
+                        compact
+                      />
                       <Link href="/services/reparat-calorifer" className="v3-dark-button">
                         Vezi pagina serviciului
                       </Link>
@@ -699,9 +934,9 @@ export function PublicHomepage({ page }: { page: HomepageContent }) {
               <div className="v3-eyebrow">Beneficii</div>
               <h2 className="v3-section-title">Pret standardizat, garantie si incredere operationala</h2>
               <div className="v3-benefits-grid">
-                {(content.benefits ?? []).map((benefit) => (
-                  <div key={benefit} className="v3-benefit-card">
-                    {benefit}
+                {(content.benefits ?? []).map((benefit, index) => (
+                  <div key={`${benefit}-${index}`} className="v3-benefit-card">
+                    <VisualEditableText slug="homepage" path={`benefits.${index}`} value={benefit} as="div" />
                   </div>
                 ))}
               </div>
@@ -754,17 +989,49 @@ export function PublicHomepage({ page }: { page: HomepageContent }) {
 
 export function PublicCatalogPage({
   page,
+  catalogServices,
   taxonomyBySlug = {},
   dynamicPriceBySlug = {},
   syncManifest,
+  targetAddress,
+  placeId,
+  catalogMetaBySlug = {},
+  activeFilters,
 }: {
   page: HomepageContent;
+  catalogServices?: PublicCatalogServiceCard[];
   taxonomyBySlug?: Record<string, PublicServiceTaxonomy | null>;
   dynamicPriceBySlug?: Record<string, PublicCatalogPrice | null>;
   syncManifest?: PublicSyncManifest | null;
+  targetAddress?: string;
+  placeId?: string;
+  catalogMetaBySlug?: Record<string, PublicCatalogServiceCard | undefined>;
+  activeFilters?: {
+    domain: string | null;
+    category: string | null;
+    subcategory: string | null;
+    resourceTypes: string[];
+    equipmentTypes: string[];
+    brands: string[];
+  };
 }) {
-  const specialServices = publicServiceCatalog.filter((service) => service.specialCatalog);
-  const standardServices = publicServiceCatalog.filter((service) => !service.specialCatalog);
+  const catalogCards = (catalogServices ?? Object.values(catalogMetaBySlug)).filter(
+    (card): card is PublicCatalogServiceCard => Boolean(card),
+  );
+  const cardBySlug = new Map(catalogCards.map((card) => [card.slug, card]));
+  const mergedCatalogServices = catalogCards.map((card, index) => {
+    const staticService = publicServiceCatalog.find((service) => service.slug === card.slug);
+    return staticService ? mergeServiceWithCard(staticService, card, index) : buildServiceFromCatalogCard(card, index);
+  });
+  const fallbackServices: ResolvedServiceRecord[] = publicServiceCatalog
+    .filter((service) => !cardBySlug.has(service.slug))
+    .map((service) => ({ ...service }));
+  const catalogServicesResolved: ResolvedServiceRecord[] = [...mergedCatalogServices, ...fallbackServices];
+  const pricePulseKey = placeId ?? targetAddress ?? null;
+  const catalogHeadline = page.content.hero?.headline ?? "Catalogul public include acum si zona de materiale speciale pentru betoane";
+  const catalogSubheadline =
+    page.content.hero?.subheadline ??
+    "Cardurile, filtrele, CTA-urile si ierarhia de informatie urmeaza acelasi limbaj vizual din `homepage-preview-v2`, cu focus pe claritate, conversie si sincronizare vizibila din Backoffice. Toate serviciile, inclusiv `materiale si betoane`, apar aici ca anunturi/carduri comerciale, iar configurarea detaliata se face exclusiv pe pagina dedicata serviciului.";
 
   return (
     <PublicShell page={page}>
@@ -772,15 +1039,22 @@ export function PublicCatalogPage({
         <div className="v3-page-hero">
           <div>
             <div className="v3-eyebrow">Catalog servicii</div>
-            <h1 className="v3-page-title">Catalogul public include acum si zona de materiale speciale pentru betoane</h1>
-            <p className="v3-page-description">
-              Cardurile, filtrele, CTA-urile si ierarhia de informatie urmeaza acelasi limbaj vizual din `homepage-preview-v2`, cu
-              focus pe claritate, conversie si sincronizare vizibila din Backoffice. Pentru `materiale si betoane` am adaugat o
-              structura dark dedicata, inspirata din captura ta, dar integrata in conceptul My Darrin.
-            </p>
+            <VisualEditableText slug="catalog" path="hero.headline" value={catalogHeadline} as="h1" className="v3-page-title" />
+            <VisualEditableText
+              slug="catalog"
+              path="hero.subheadline"
+              value={catalogSubheadline}
+              as="p"
+              multiline
+              className="v3-page-description"
+            />
             {syncManifest ? (
               <p className="v3-inline-note">Versiune config: {syncManifest.content_version}</p>
             ) : null}
+            <GeoAddressAutocomplete
+              helperText="Selecteaza adresa exacta pentru a recalcula instant preturile principale din catalog."
+              pulseTargetId="catalog"
+            />
           </div>
           <div className="v3-page-hero-side">
             <div className="v3-page-hero-chip">Filtre</div>
@@ -791,198 +1065,94 @@ export function PublicCatalogPage({
         </div>
       </section>
 
-      {specialServices.map((service) => {
-        const specialCatalog = service.specialCatalog;
-        const classifications = resolveServiceClassifications(service, taxonomyBySlug[service.slug]);
-        const resolvedPrice = resolveServicePrice(service, dynamicPriceBySlug[service.slug]);
-        const deliveryBadge = resolveDeliveryBadge(service, dynamicPriceBySlug[service.slug]);
-
-        if (!specialCatalog) {
-          return null;
-        }
-
-        return (
-          <section key={service.slug} className="v3-special-catalog-shell">
-            <div className="v3-special-catalog-head">
-              <div className="v3-special-catalog-brand">
-                <div className="v3-special-catalog-icon">B</div>
-                <div>
-                  <div className="v3-special-catalog-kicker">{specialCatalog.title}</div>
-                  <h2 className="v3-special-catalog-title">{service.title}</h2>
-                  <p className="v3-special-catalog-copy">
-                    {specialCatalog.supplier} | {specialCatalog.summary}
-                  </p>
-                </div>
-              </div>
-              <Link href={`/services/${service.slug}`} className="v3-special-catalog-cta">
-                Vezi serviciul special
-              </Link>
-            </div>
-
-            <div className="v3-special-stats-grid">
-              {specialCatalog.stats.map((stat) => (
-                <article key={stat.label} className="v3-special-stat-card">
-                  <span className={`v3-special-stat-icon ${betonStatToneClass(stat.tone)}`} />
-                  <div>
-                    <strong>{stat.value}</strong>
-                    <span>{stat.label}</span>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            <div className="v3-special-filter-bar">
-              {specialCatalog.filters.map((filter, index) => (
-                <span key={filter} className={`v3-special-filter-chip ${index === 0 ? "v3-special-filter-chip-active" : ""}`}>
-                  {filter}
-                </span>
-              ))}
-            </div>
-
-            {classifications ? (
-              <div className="v3-taxonomy-grid">
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">CAEN</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.caen.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">Uniclass</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.uniclass.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">ESCO</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.esco.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">Indicatori deviz</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.indicators.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              </div>
-            ) : null}
-
-            <div className="v3-special-offer-grid">
-              {specialCatalog.offers.map((offer) => (
-                <article key={offer.id} className="v3-special-offer-card">
-                  <div className="v3-special-offer-head">
-                    <div>
-                      <span className={`v3-special-level-pill ${betonLevelClass(offer.nivel)}`}>{offer.nivel}</span>
-                      <div className="v3-special-offer-title">{formatMaterialCardTitle(offer.clasa)}</div>
-                    </div>
-                    {deliveryBadge ? <span className="v3-delivery-badge">{deliveryBadge}</span> : null}
-                  </div>
-                  <div className="v3-special-offer-price-main">{resolvedPrice.startingPrice}</div>
-                  <p className="v3-special-offer-summary">
-                    Pachet de livrare la cheie pentru beton, transport si coordonare operationala, afisat ca serviciu public standardizat.
-                  </p>
-                  <div className="v3-special-offer-secondary">
-                    <span>Sort {offer.sorturi}</span>
-                    {offer.furnizor ? <span>{offer.furnizor}</span> : null}
-                  </div>
-                  <div className="v3-service-badges v3-service-badges-compact">
-                    <span className="v3-mini-badge">Pachet de livrare</span>
-                    {offer.optionalPompa ? <span className="v3-mini-badge">Pompa optionala</span> : null}
-                    <span className="v3-mini-badge">{offer.cantitateTransport}</span>
-                  </div>
-                  <details className="v3-technical-details">
-                    <summary>Vezi detalii tehnice</summary>
-                    <div className="v3-special-offer-rows">
-                      <div>
-                        <span>Transport</span>
-                        <strong>{offer.cantitateTransport}</strong>
-                      </div>
-                      <div>
-                        <span>Sorturi</span>
-                        <strong>{offer.sorturi}</strong>
-                      </div>
-                      {offer.transportPret ? (
-                        <div>
-                          <span>Pret transport</span>
-                          <strong>{offer.transportPret}</strong>
-                        </div>
-                      ) : null}
-                      {offer.furnizor ? (
-                        <div>
-                          <span>Furnizor</span>
-                          <strong>{offer.furnizor}</strong>
-                        </div>
-                      ) : null}
-                      {offer.indicatorDeviz ? (
-                        <div>
-                          <span>Indicator deviz</span>
-                          <strong>{offer.indicatorDeviz}</strong>
-                        </div>
-                      ) : null}
-                    </div>
-                  </details>
-                </article>
-              ))}
-            </div>
-          </section>
-        );
-      })}
-
       <section className="v3-section-card">
         <div className="v3-filter-bar">
-          <span className="v3-filter-chip v3-filter-chip-active">Acasa</span>
-          <span className="v3-filter-chip">Auto</span>
-          <span className="v3-filter-chip">Materiale speciale</span>
-          <span className="v3-filter-chip">Industrial</span>
-          <span className="v3-filter-chip">HoReCa</span>
-          <span className="v3-filter-chip">Agricultura</span>
-          <span className="v3-filter-chip">Logistica</span>
+          {[
+            { label: "Constructii", value: "constructii" },
+            { label: "Energie Verde", value: "energie-verde" },
+            { label: "Logistica", value: "logistica" },
+            { label: "Agricultura", value: "agricultura" },
+          ].map((item) => (
+            <Link
+              key={item.value}
+              href={`/catalog?domain=${item.value}`}
+              className={`v3-filter-chip ${activeFilters?.domain === item.value ? "v3-filter-chip-active" : ""}`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="v3-filter-bar v3-filter-bar-secondary">
+          {[
+            { label: "Excavatoare", value: "excavator" },
+            { label: "Compactoare", value: "compactor" },
+            { label: "Materiale", value: "material" },
+          ].map((item) => (
+            <Link
+              key={item.value}
+              href={`/catalog?equipment_type=${item.value}`}
+              className={`v3-filter-chip ${activeFilters?.equipmentTypes?.includes(item.value) ? "v3-filter-chip-active" : ""}`}
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
 
         <div className="v3-catalog-grid">
-          {standardServices.map((service) => {
+          {catalogServicesResolved.map((service, index) => {
+            const catalogMeta = catalogMetaBySlug[service.slug];
             const resolvedPrice = resolveServicePrice(service, dynamicPriceBySlug[service.slug]);
             const deliveryBadge = resolveDeliveryBadge(service, dynamicPriceBySlug[service.slug]);
             const availabilityWarning = getAvailabilityWarning(dynamicPriceBySlug[service.slug]);
+            const highlightedOffer = service.specialCatalog?.offers[0];
+            const rateCard = catalogMeta?.rate_card;
+            const rateCardLabel = rateCard ? `${formatPriceAmount(rateCard.base_price)} ${rateCard.currency} / unit` : null;
 
+            const mediaAssets = service.media
+              ? {
+                  images: service.media.images ?? [],
+                  videos: service.media.videos ?? [],
+                  documents: service.media.documents ?? [],
+                }
+              : normalizeMediaAssets(catalogMeta);
+            const hasImage = (mediaAssets.images ?? []).length > 0;
             return (
             <article key={service.slug} className="v3-catalog-card">
               <div className={`v3-catalog-media ${accentClass(service.accent)}`}>
+                {hasImage ? <img src={mediaAssets.images?.[0]} alt={service.title} className="v3-media-image" /> : null}
+                {hasImage ? <span className="v3-media-overlay" /> : null}
                 <Pill>{service.mediaType}</Pill>
-                <span className="v3-rating-badge">{service.rating}</span>
+                <span className="v3-rating-badge">AIPL {service.rating}</span>
               </div>
               <div className="v3-catalog-content">
                 <div className="v3-catalog-category">{service.category}</div>
+                {catalogMeta?.domain ? <div className="v3-inline-note">Domeniu master: {catalogMeta.domain}</div> : null}
+                {service.objectLabel ? <div className="v3-inline-note">Obiect: {service.objectLabel} / {service.interventionType}</div> : null}
                 <div className="v3-service-title">{service.title}</div>
                 <p>{service.summary}</p>
                 <div className="v3-service-badges">
                   {deliveryBadge ? <span className="v3-mini-badge v3-mini-badge-accent">{deliveryBadge}</span> : null}
+                  {highlightedOffer ? <span className="v3-mini-badge">{formatMaterialCardTitle(highlightedOffer.clasa)}</span> : null}
                   {service.badges.map((badge) => (
                     <span key={badge} className="v3-mini-badge">
                       {badge}
                     </span>
                   ))}
+                  {catalogMeta?.equipment_types?.length ? (
+                    <span className="v3-mini-badge v3-mini-badge-soft">{catalogMeta.equipment_types[0]}</span>
+                  ) : null}
+                  {catalogMeta?.brands?.length ? (
+                    <span className="v3-mini-badge v3-mini-badge-soft">{catalogMeta.brands[0]}</span>
+                  ) : null}
                 </div>
                 {availabilityWarning ? <div className="v3-warning-note">{availabilityWarning}</div> : null}
+                {catalogMeta?.availability_status ? (
+                  <div className="v3-inline-note">Disponibilitate flota: {catalogMeta.availability_status}</div>
+                ) : null}
+                {rateCardLabel ? <div className="v3-inline-note">Rate-card: {rateCardLabel}</div> : null}
                 <div className="v3-service-meta">
-                  <span className="v3-price-text">{resolvedPrice.startingPrice}</span>
+                  <PriceLockup price={resolvedPrice} compact pulseKey={pricePulseKey ? `${service.slug}:${pricePulseKey}` : null} />
                   <Link href={`/services/${service.slug}`} className="v3-dark-button">
                     Vezi detalii
                   </Link>
@@ -1002,27 +1172,74 @@ export function PublicServicePage({
   taxonomy,
   dynamicPrice,
   syncManifest,
+  targetAddress,
+  placeId,
+  technicalSpecs,
+  catalogService,
 }: {
   page: HomepageContent;
   slug: string;
   taxonomy?: PublicServiceTaxonomy | null;
   dynamicPrice?: PublicCatalogPrice | null;
   syncManifest?: PublicSyncManifest | null;
+  targetAddress?: string;
+  placeId?: string;
+  technicalSpecs?: PublicServiceTechnicalSpecs | null;
+  catalogService?: PublicCatalogServiceCard | null;
 }) {
-  const service = getPublicServiceBySlug(slug);
+  const staticService = getPublicServiceBySlug(slug);
+  const service = catalogService
+    ? staticService
+      ? mergeServiceWithCard(staticService, catalogService, 0)
+      : buildServiceFromCatalogCard(catalogService, 0)
+    : staticService;
 
   if (!service) {
     notFound();
   }
 
+  const mediaAssets = service.media
+    ? {
+        images: service.media.images ?? [],
+        videos: service.media.videos ?? [],
+        documents: service.media.documents ?? [],
+      }
+    : normalizeMediaAssets(catalogService);
+  const heroMedia = (mediaAssets.videos ?? [])[0] ?? (mediaAssets.images ?? [])[0] ?? null;
+  const heroMediaType =
+    (mediaAssets.videos ?? []).length > 0 ? "video" : (mediaAssets.images ?? []).length > 0 ? "image" : null;
+
   const classifications = resolveServiceClassifications(service, taxonomy);
   const resolvedPrice = resolveServicePrice(service, dynamicPrice);
   const deliveryBadge = resolveDeliveryBadge(service, dynamicPrice);
   const availabilityWarning = getAvailabilityWarning(dynamicPrice);
+  const pricePulseKey = placeId ?? targetAddress ?? null;
+  const activeIntervention =
+    service.availableInterventions?.find((item) => item.label === service.interventionType) ?? service.availableInterventions?.[0];
+  const checkoutHref = `/checkout?slug=${encodeURIComponent(slug)}${
+    activeIntervention?.label ? `&intervention=${encodeURIComponent(activeIntervention.label)}` : ""
+  }${targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""}${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}&escrow_note=${encodeURIComponent("5%")}`;
+  const serviceHeadline = page.content.hero?.headline ?? service.title;
+  const serviceSubheadline = page.content.hero?.subheadline ?? service.description;
+  const serviceBenefits = page.content.benefits?.length ? page.content.benefits : service.benefits?.length ? service.benefits : DEFAULT_SERVICE_BENEFITS;
+  const serviceTiers =
+    page.content.serviceTiers?.length
+      ? page.content.serviceTiers
+      : [
+          { tierKey: "silver" as const, title: "Argint", marginMultiplier: 0, benefitsMarkdown: "- Configuratie standard\n- Executie eficienta" },
+          { tierKey: "gold" as const, title: "Aur", marginMultiplier: 12, benefitsMarkdown: "- Programare prioritara\n- Coordonare extinsa" },
+          { tierKey: "platinum" as const, title: "Platina", marginMultiplier: 20, benefitsMarkdown: "- Management dedicat\n- SLA premium" },
+        ];
+  const serviceSectionsOrder = page.content.serviceSectionsOrder?.length
+    ? page.content.serviceSectionsOrder
+    : ["hero", "pricing", "technicalSpecs", "specialCatalog", "tiers", "benefits", "safety", "crossSell"];
+  const relatedServices = publicServiceCatalog.filter((item) => item.slug !== service.slug).slice(0, 4);
+  const safetyChecklist = publicSafetyChecklist[service.slug];
+  const crossSellItems = publicCrossSellMap[service.slug] ?? [];
 
-  return (
-    <PublicShell page={page}>
-      <section className="v3-panel-card">
+  const serviceSectionContent: Record<string, ReactNode> = {
+    hero: (
+      <section className="v3-panel-card" key="hero">
         <div className="v3-service-detail-grid">
           <div>
             <div className="v3-pill-row">
@@ -1033,8 +1250,8 @@ export function PublicServicePage({
               ))}
             </div>
             <div className="v3-eyebrow">Pagina serviciu</div>
-            <h1 className="v3-page-title">{service.title}</h1>
-            <p className="v3-page-description">{service.description}</p>
+            <VisualEditableText slug="service-detail" path="hero.headline" value={serviceHeadline} as="h1" className="v3-page-title" />
+            <VisualEditableText slug="service-detail" path="hero.subheadline" value={serviceSubheadline} as="p" multiline className="v3-page-description" />
 
             <div className="v3-sync-banner">
               <strong>Flux obligatoriu vizibil:</strong>
@@ -1049,10 +1266,13 @@ export function PublicServicePage({
                 {syncManifest?.content_version ?? "fallback"}
               </div>
             ) : null}
-            <GeoAddressAutocomplete helperText="Selecteaza adresa exacta din Google Places pentru a recalcula pretul pe coordonate GPS exacte." />
+            <GeoAddressAutocomplete
+              helperText="Selecteaza adresa exacta din Google Places pentru a recalcula pretul pe coordonate GPS exacte."
+              pulseTargetId={`service:${slug}`}
+            />
 
             <div className="v3-service-detail-actions">
-              <Link href="/checkout" className={`v3-primary-button ${dynamicPrice?.availability_status === "partial_available" ? "v3-primary-button-warning" : ""}`}>
+              <Link href={checkoutHref} className={`v3-primary-button ${dynamicPrice?.availability_status === "partial_available" ? "v3-primary-button-warning" : ""}`}>
                 {dynamicPrice?.availability_status === "partial_available" ? "Comanda cu verificare" : "Continua spre checkout"}
               </Link>
               <Link href="/cart" className="v3-dark-button">
@@ -1061,171 +1281,370 @@ export function PublicServicePage({
             </div>
             {deliveryBadge ? <div className="v3-inline-note">{deliveryBadge}</div> : null}
             {availabilityWarning ? <div className="v3-warning-note">{availabilityWarning}</div> : null}
+            {service.objectLabel && service.availableInterventions?.length ? (
+              <div className="v3-object-recursion-card">
+                <div className="v3-card-kicker">Obiect inteligent</div>
+                <div className="v3-object-recursion-title">{service.objectLabel}</div>
+                <div className="v3-object-recursion-grid">
+                  {service.availableInterventions.map((intervention) => (
+                    <Link
+                      key={intervention.label}
+                      href={`/services/${intervention.serviceSlug}`}
+                      className={`v3-object-recursion-item ${intervention.label === service.interventionType ? "v3-object-recursion-item-active" : ""}`}
+                    >
+                      <strong>{intervention.label}</strong>
+                      <span>{intervention.taskLabel}</span>
+                      <span>Skill: {intervention.skill} · {intervention.requiredPeople} oameni</span>
+                      <span>ESCO/NACE: {intervention.escoCodes.join(", ")} · {intervention.naceCodes.join(", ")}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div className={`v3-detail-media ${accentClass(service.accent)}`}>
-            <div className="v3-detail-media-label">[{service.mediaType}] Galerie media configurata din Backoffice</div>
-            <div className="v3-detail-price">{resolvedPrice.startingPrice}</div>
-          </div>
-        </div>
-      </section>
-
-      <section className="v3-split-highlight">
-        {service.specialCatalog ? (
-          <article className="v3-special-service-panel">
-            <div className="v3-special-catalog-head">
-              <div className="v3-special-catalog-brand">
-                <div className="v3-special-catalog-icon">B</div>
-                <div>
-                  <div className="v3-special-catalog-kicker">{service.specialCatalog.title}</div>
-                  <h2 className="v3-special-catalog-title">Oferta operationala pentru materiale si betoane</h2>
-                  <p className="v3-special-catalog-copy">{service.specialCatalog.summary}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="v3-special-stats-grid">
-              {service.specialCatalog.stats.map((stat) => (
-                <article key={stat.label} className="v3-special-stat-card">
-                  <span className={`v3-special-stat-icon ${betonStatToneClass(stat.tone)}`} />
-                  <div>
-                    <strong>{stat.value}</strong>
-                    <span>{stat.label}</span>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {classifications ? (
-              <div className="v3-taxonomy-grid">
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">CAEN</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.caen.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">Uniclass</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.uniclass.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">ESCO</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.esco.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-                <article className="v3-taxonomy-card">
-                  <div className="v3-taxonomy-title">Indicatori deviz</div>
-                  <div className="v3-taxonomy-pills">
-                    {classifications.indicators.map((item) => (
-                      <span key={item} className="v3-taxonomy-pill">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
+            {heroMedia ? (
+              heroMediaType === "video" ? (
+                <video className="v3-media-frame" src={heroMedia} controls />
+              ) : (
+                <img className="v3-media-frame" src={heroMedia} alt={service.title} />
+              )
+            ) : (
+              <div className="v3-detail-media-label">[{service.mediaType}] Galerie media configurata din Backoffice</div>
+            )}
+            <PriceLockup price={resolvedPrice} center pulseKey={pricePulseKey ? `${slug}:${pricePulseKey}` : null} />
+            {(mediaAssets.documents ?? []).length ? (
+              <div className="v3-document-list">
+                {(mediaAssets.documents ?? []).slice(0, 3).map((doc) => (
+                  <a key={doc} href={doc} target="_blank" rel="noreferrer" className="v3-document-chip">
+                    {doc.split("/").pop()}
+                  </a>
+                ))}
               </div>
             ) : null}
-
-            <div className="v3-special-offer-grid">
-              {service.specialCatalog.offers.map((offer) => (
-                <article key={offer.id} className="v3-special-offer-card">
-                  <div className="v3-special-offer-head">
-                    <div>
-                      <span className={`v3-special-level-pill ${betonLevelClass(offer.nivel)}`}>{offer.nivel}</span>
-                      <div className="v3-special-offer-title">{formatMaterialCardTitle(offer.clasa)}</div>
-                    </div>
-                    {deliveryBadge ? <span className="v3-delivery-badge">{deliveryBadge}</span> : null}
+          </div>
+        </div>
+        </section>
+      ),
+    pricing: (
+      <article className="v3-section-card v3-section-card-soft" key="pricing">
+        <div className="v3-eyebrow">Pret & disponibilitate</div>
+        <h2 className="v3-section-title">Rezumatul comercial pentru serviciul selectat</h2>
+        <div className="v3-level-grid">
+          <div className="v3-level-card">
+            <PriceLockup price={resolvedPrice} center pulseKey={pricePulseKey ? `${slug}:pricing:${pricePulseKey}` : null} />
+            {deliveryBadge ? <div className="v3-inline-note">{deliveryBadge}</div> : null}
+            {availabilityWarning ? <div className="v3-warning-note">{availabilityWarning}</div> : null}
+          </div>
+        </div>
+      </article>
+    ),
+    technicalSpecs: (
+      <article className="v3-section-card" key="technicalSpecs">
+        <div className="v3-eyebrow">Fisa tehnica</div>
+        <h2 className="v3-section-title">Specificatii preluate din fisele de produs</h2>
+        <div className="v3-technical-grid">
+          {(technicalSpecs?.items?.length ? technicalSpecs.items : []).map((item) => (
+            <div key={item.resource_id} className="v3-technical-card">
+              <div className="v3-card-kicker">{item.resource_type}</div>
+              <strong>{item.resource_name}</strong>
+              <div className="v3-technical-list">
+                {Object.entries(item.technical_specs ?? {}).slice(0, 6).map(([key, value]) => (
+                  <div key={key} className="v3-technical-row">
+                    <span>{key}</span>
+                    <strong>{String(value)}</strong>
                   </div>
-                  <div className="v3-special-offer-price-main">{resolvedPrice.startingPrice}</div>
-                  <p className="v3-special-offer-summary">
-                    Configurator comercial simplificat pentru clientul final, cu detaliile de deviz mutate intr-o sectiune separata.
-                  </p>
-                  <div className="v3-special-offer-secondary">
-                    <span>Sort {offer.sorturi}</span>
-                    {offer.furnizor ? <span>{offer.furnizor}</span> : null}
-                  </div>
-                  <div className="v3-service-badges v3-service-badges-compact">
-                    <span className="v3-mini-badge">Pachet de livrare</span>
-                    {offer.optionalPompa ? <span className="v3-mini-badge">Pompa optionala</span> : null}
-                    <span className="v3-mini-badge">{offer.cantitateTransport}</span>
-                  </div>
-                  <details className="v3-technical-details">
-                    <summary>Vezi detalii tehnice</summary>
-                    <div className="v3-special-offer-rows">
-                      <div>
-                        <span>Transport</span>
-                        <strong>{offer.cantitateTransport}</strong>
-                      </div>
-                      <div>
-                        <span>Sorturi</span>
-                        <strong>{offer.sorturi}</strong>
-                      </div>
-                      {offer.transportPret ? (
-                        <div>
-                          <span>Pret transport</span>
-                          <strong>{offer.transportPret}</strong>
-                        </div>
-                      ) : null}
-                      {offer.furnizor ? (
-                        <div>
-                          <span>Furnizor</span>
-                          <strong>{offer.furnizor}</strong>
-                        </div>
-                      ) : null}
-                      {offer.indicatorDeviz ? (
-                        <div>
-                          <span>Indicator deviz</span>
-                          <strong>{offer.indicatorDeviz}</strong>
-                        </div>
-                      ) : null}
-                    </div>
-                  </details>
-                </article>
-              ))}
+                ))}
+              </div>
             </div>
-          </article>
+          ))}
+          {!technicalSpecs?.items?.length ? (
+            <div className="v3-technical-card v3-technical-card-empty">
+              <div className="v3-card-kicker">Specificații in curs</div>
+              <strong>Fișele tehnice se sincronizează din Backoffice</strong>
+              <p>Vom afișa automat greutate, putere, consum si compatibilitati cand documentele sunt incarcate.</p>
+            </div>
+          ) : null}
+        </div>
+      </article>
+    ),
+    specialCatalog: (
+      <article className="v3-section-card v3-section-card-soft" key="specialCatalog">
+        <div className="v3-eyebrow">Configurator serviciu</div>
+        <h2 className="v3-section-title">
+          {service.specialCatalog ? "Aici clientul configureaza comanda de beton" : "Aici clientul configureaza serviciul ales"}
+        </h2>
+        <div className="v3-configurator-layout">
+          <div className="v3-configurator-main">
+            {service.specialCatalog ? (
+              <>
+                <div className="v3-configurator-block">
+                  <div className="v3-configurator-block-title">Clasa si pachet comercial</div>
+                  <div className="v3-configurator-choice-grid">
+                    {service.specialCatalog.offers.map((offer) => (
+                      <article key={offer.id} className="v3-configurator-choice-card">
+                        <div className="v3-configurator-choice-top">
+                          <span className={`v3-special-level-pill ${betonLevelClass(offer.nivel)}`}>{offer.nivel}</span>
+                          {offer.optionalPompa ? <span className="v3-mini-badge">Pompa optionala</span> : null}
+                        </div>
+                        <strong>{formatMaterialCardTitle(offer.clasa)}</strong>
+                        <span>Transport standard: {offer.cantitateTransport}</span>
+                        <span>Sorturi: {offer.sorturi}</span>
+                        {offer.furnizor ? <span>Furnizor: {offer.furnizor}</span> : null}
+                        {offer.transportPret ? <span>Transport: {offer.transportPret}</span> : null}
+                      </article>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="v3-configurator-block">
+                  <div className="v3-configurator-block-title">Date declarate pe pagina serviciului</div>
+                  <div className="v3-configurator-field-grid">
+                    <div className="v3-configurator-field">
+                      <span>Adresa livrare</span>
+                      <strong>{targetAddress ?? "Clientul declara adresa sau foloseste adresa deja selectata."}</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Cantitate</span>
+                      <strong>Selector dedicat pentru volum in mc si praguri minime de comanda.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Clasa beton</span>
+                      <strong>C20/25, C25/30, C30/37, C35/45 si alte clase aprobate.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Perioada de livrare</span>
+                      <strong>Zi, interval orar, livrare programata sau urgenta.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Optiuni suplimentare</span>
+                      <strong>Pompa, acces santier, observatii logistice si conditii speciale.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Confirmare comanda</span>
+                      <strong>Recapitulare pret, nivel, furnizor si trimitere spre checkout.</strong>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="v3-configurator-block">
+                  <div className="v3-configurator-block-title">Nivelul serviciului</div>
+                  <div className="v3-configurator-choice-grid">
+                    {serviceTiers.map((tier, index) => (
+                      <article key={tier.tierKey} className="v3-configurator-choice-card">
+                        <span className="v3-mini-badge">{tier.title}</span>
+                        <strong>{resolvedPrice.levels[index]?.price ?? resolvedPrice.startingPrice}</strong>
+                        <span>{tier.benefitsMarkdown?.replace(/^- /gm, "").split("\n")[0] ?? "Configuratie standard."}</span>
+                      </article>
+                    ))}
+                  </div>
+                  <div className="v3-configurator-field-grid">
+                    <div className="v3-configurator-field">
+                      <span>Cantitate / durata</span>
+                      <strong>Selector pentru unitati, ore sau zile de executie.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Solicita cu operator</span>
+                      <strong>Disponibil pentru utilaje grele (ex: Autobetoniera Roman 9mc).</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="v3-configurator-block">
+                  <div className="v3-configurator-block-title">Date declarate pe pagina serviciului</div>
+                  <div className="v3-configurator-field-grid">
+                    <div className="v3-configurator-field">
+                      <span>Adresa executie</span>
+                      <strong>{targetAddress ?? "Clientul confirma sau completeaza adresa de executie."}</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Tip interventie</span>
+                      <strong>{activeIntervention?.label ?? service.interventionType ?? "Configurat pe pagina serviciului"}</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Nivel de serviciu</span>
+                      <strong>Standard, premium sau pachet special aprobat in Backoffice.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Perioada / programare</span>
+                      <strong>Data, interval, urgenta si conditiile de acces.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Detalii tehnice</span>
+                      <strong>Poze, video, simptome, observatii si cerinte comerciale.</strong>
+                    </div>
+                    <div className="v3-configurator-field">
+                      <span>Confirmare</span>
+                      <strong>Recapitulare pret, garantie si trimitere clara catre checkout.</strong>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <aside className="v3-configurator-summary">
+            <div className="v3-configurator-summary-head">
+              <div className="v3-eyebrow">Rezumat comanda</div>
+              <PriceLockup price={resolvedPrice} pulseKey={pricePulseKey ? `${slug}:config:${pricePulseKey}` : null} />
+            </div>
+            <div className="v3-configurator-summary-list">
+              <div>
+                <span>Serviciu</span>
+                <strong>{service.title}</strong>
+              </div>
+              <div>
+                <span>Flux</span>
+                <strong>{"Configurare -> recapitulare -> checkout -> executie"}</strong>
+              </div>
+              <div>
+                <span>Adresa</span>
+                <strong>{targetAddress ?? "Se completeaza sau se reconfirma aici."}</strong>
+              </div>
+              <div>
+                <span>Model comercial</span>
+                <strong>{service.specialCatalog ? "Clasa + volum + livrare" : "Nivel + interventie + programare"}</strong>
+              </div>
+            </div>
+            <div className="v3-service-detail-actions">
+              <Link href={checkoutHref} className={`v3-primary-button ${dynamicPrice?.availability_status === "partial_available" ? "v3-primary-button-warning" : ""}`}>
+                Continua configurarea
+              </Link>
+              <Link href="/catalog" className="v3-dark-button">
+                Inapoi in catalog
+              </Link>
+            </div>
+          </aside>
+        </div>
+        {classifications ? (
+          <div className="v3-taxonomy-grid">
+            <article className="v3-taxonomy-card">
+              <div className="v3-taxonomy-title">CAEN</div>
+              <div className="v3-taxonomy-pills">{classifications.caen.map((item) => <span key={item} className="v3-taxonomy-pill">{item}</span>)}</div>
+            </article>
+            <article className="v3-taxonomy-card">
+              <div className="v3-taxonomy-title">Uniclass</div>
+              <div className="v3-taxonomy-pills">{classifications.uniclass.map((item) => <span key={item} className="v3-taxonomy-pill">{item}</span>)}</div>
+            </article>
+            <article className="v3-taxonomy-card">
+              <div className="v3-taxonomy-title">ESCO</div>
+              <div className="v3-taxonomy-pills">{classifications.esco.map((item) => <span key={item} className="v3-taxonomy-pill">{item}</span>)}</div>
+            </article>
+            <article className="v3-taxonomy-card">
+              <div className="v3-taxonomy-title">Indicatori deviz</div>
+              <div className="v3-taxonomy-pills">{classifications.indicators.map((item) => <span key={item} className="v3-taxonomy-pill">{item}</span>)}</div>
+            </article>
+          </div>
         ) : null}
-
-        <article className="v3-section-card">
-          <div className="v3-eyebrow">Pachete si niveluri</div>
-          <h2 className="v3-section-title">Preturi si configuratii vizibile public dupa aprobare</h2>
-          <div className="v3-level-grid">
-            {resolvedPrice.levels.map((level) => (
-              <div key={level.label} className="v3-level-card">
-                <div className="v3-level-label">{level.label}</div>
-                <div className="v3-level-price">{level.price}</div>
-                <p>{level.note}</p>
-              </div>
-            ))}
+      </article>
+    ),
+    safety: (
+      <article className="v3-section-card v3-section-card-soft" key="safety">
+        <div className="v3-eyebrow">Siguranta & rezilienta</div>
+        <h2 className="v3-section-title">Certificari si documente obligatorii</h2>
+        <div className="v3-benefits-grid">
+          {(safetyChecklist?.certifications ?? ["eIDAS", "Asigurare malpraxis partener", "Declaratie conformitate"]).map((item) => (
+            <div key={item} className="v3-benefit-card">
+              {item}
+            </div>
+          ))}
+        </div>
+        {safetyChecklist?.declarationHref ? (
+          <div className="v3-final-actions">
+            <Link href={safetyChecklist.declarationHref} className="v3-ghost-chip">
+              {safetyChecklist.declarationLabel ?? "Declaratie pe proprie raspundere"}
+            </Link>
           </div>
-        </article>
+        ) : null}
+      </article>
+    ),
+    crossSell: (
+      <article className="v3-section-card" key="crossSell">
+        <div className="v3-eyebrow">Cross-selling</div>
+        <h2 className="v3-section-title">Materiale recomandate pentru acest serviciu</h2>
+        <div className="v3-cross-sell-grid">
+          {(crossSellItems.length ? crossSellItems : ["Rigips Smart 9.5mm", "SikaTop Seal-107", "Ceresit CT 17"]).map((item) => (
+            <div key={item} className="v3-cross-sell-card">
+              {item}
+            </div>
+          ))}
+        </div>
+      </article>
+    ),
+    tiers: (
+      <article className="v3-section-card" key="tiers">
+        <div className="v3-eyebrow">Pachete si niveluri</div>
+        <h2 className="v3-section-title">Preturi si configuratii vizibile public dupa aprobare</h2>
+        <div className="v3-level-grid">
+          {serviceTiers.map((tier, index) => (
+            <div key={tier.tierKey} className="v3-level-card">
+              <VisualEditableText slug="service-detail" path={`serviceTiers.${index}.title`} value={tier.title} as="div" className="v3-level-label" />
+              <div className="v3-level-price">{resolvedPrice.levels[index]?.price ?? resolvedPrice.levels[0]?.price ?? resolvedPrice.startingPrice}</div>
+              <div className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted">Marja +{tier.marginMultiplier ?? 0}%</div>
+              <VisualEditableText slug="service-detail" path={`serviceTiers.${index}.benefitsMarkdown`} value={tier.benefitsMarkdown ?? "Pachet configurabil din Backoffice."} as="div" multiline className="mt-3 text-sm text-muted whitespace-pre-line" />
+            </div>
+          ))}
+        </div>
+      </article>
+    ),
+    benefits: (
+      <article className="v3-section-card v3-section-card-soft" key="benefits">
+        <div className="v3-eyebrow">Beneficii</div>
+        <h2 className="v3-section-title">Ce vede vizitatorul dupa publicare</h2>
+        <div className="v3-benefits-grid">
+          {serviceBenefits.map((benefit, index) => (
+            <div key={`${benefit}-${index}`} className="v3-benefit-card">
+              <VisualEditableText slug="service-detail" path={`benefits.${index}`} value={benefit} as="div" />
+            </div>
+          ))}
+        </div>
+      </article>
+    ),
+  };
 
-        <article className="v3-section-card v3-section-card-soft">
-          <div className="v3-eyebrow">Beneficii</div>
-          <h2 className="v3-section-title">Ce vede vizitatorul dupa publicare</h2>
-          <div className="v3-benefits-grid">
-            {service.benefits.map((benefit) => (
-              <div key={benefit} className="v3-benefit-card">
-                {benefit}
-              </div>
-            ))}
-          </div>
-        </article>
+  return (
+    <PublicShell page={page}>
+      {serviceSectionContent.hero}
+      <section className="v3-split-highlight">
+        {serviceSectionsOrder.filter((sectionKey) => sectionKey !== "hero").map((sectionKey) => serviceSectionContent[sectionKey] ?? null)}
+      </section>
+      <section className="v3-section-card">
+        <div className="v3-eyebrow">Poate te intereseaza si</div>
+        <h2 className="v3-section-title">Servicii complementare promovate sub pagina dedicata</h2>
+        <div className="v3-catalog-grid">
+          {relatedServices.map((related) => {
+            const relatedPrice = resolveServicePrice(related);
+            return (
+              <article key={related.slug} className="v3-catalog-card">
+                <div className={`v3-catalog-media ${accentClass(related.accent)}`}>
+                  <Pill>{related.mediaType}</Pill>
+                  <span className="v3-rating-badge">{related.rating}</span>
+                </div>
+                <div className="v3-catalog-content">
+                  <div className="v3-catalog-category">{related.category}</div>
+                  <div className="v3-service-title">{related.title}</div>
+                  <p>{related.summary}</p>
+                  <div className="v3-service-badges">
+                    {related.badges.slice(0, 3).map((badge) => (
+                      <span key={badge} className="v3-mini-badge">
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="v3-service-meta">
+                    <PriceLockup price={relatedPrice} compact />
+                    <Link href={`/services/${related.slug}`} className="v3-dark-button">
+                      Vezi serviciul
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </section>
     </PublicShell>
   );
@@ -1499,6 +1918,11 @@ export function PublicAccountRoleSelectionPage({ page, leadId }: { page: Homepag
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="v3-split-highlight">
+        <InvestorSeedWidget />
+        <LiveActivityFeed />
       </section>
 
       <section className="v3-section-card">
@@ -1794,10 +2218,19 @@ export function PublicCheckoutPage({ page }: { page: HomepageContent }) {
             <div><span>Transport</span><strong>35 lei</strong></div>
             <div><span>Total</span><strong>224 lei</strong></div>
           </div>
+          <div className="v3-inline-note">
+            Garanție de Bună Execuție de 5% este păstrată în Escrow și eliberată către furnizor doar după confirmarea
+            calității de către My Darrin.
+          </div>
+          <div className="v3-object-recursion-card">
+            <div className="v3-card-kicker">Pachetul de Siguranta My Darrin</div>
+            <div className="v3-muted-copy">
+              Aceasta lucrare este protejata de Polita de Asigurare My Darrin si beneficiaza de Garantia de Buna Executie
+              (5% retinut in Escrow pana la receptie).
+            </div>
+          </div>
           <div className="v3-final-actions">
-            <Link href="/payment-status" className="v3-primary-button">
-              Continua la plata
-            </Link>
+            <PublicCheckoutSubmit />
           </div>
         </article>
       </section>

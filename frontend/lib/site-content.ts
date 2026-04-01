@@ -74,12 +74,20 @@ export type HomepageContent = {
       startingPrice: string;
       featured?: boolean;
     }>;
+    serviceTiers?: Array<{
+      tierKey: "silver" | "gold" | "platinum";
+      title: string;
+      marginMultiplier?: number;
+      benefitsMarkdown?: string;
+    }>;
+    serviceSectionsOrder?: string[];
     howItWorks?: string[];
     benefits?: string[];
     finalCta?: { primary?: string; secondary?: string };
     footer?: {
       columns?: Record<string, string[]>;
       apps?: string[];
+      copyright?: string;
     };
     syncFlow?: string[];
   };
@@ -87,6 +95,58 @@ export type HomepageContent = {
 
 const API_BASE = process.env.API_BASE_URL_PUBLIC ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 const GATE = process.env.BACKEND_GATE_AUTHORIZATION ?? process.env.NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION;
+const PUBLIC_FETCH_TIMEOUT_MS = 3000;
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs: number) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await Promise.race([
+      fetch(input, { ...init, signal: controller.signal }),
+      new Promise<Response>((_, reject) =>
+        setTimeout(() => reject(new Error("public_fetch_timeout")), timeoutMs + 50),
+      ),
+    ]);
+    return response;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function fetchPublicJson<T>(url: string): Promise<T> {
+  const response = await fetchWithTimeout(
+    url,
+    {
+      headers: GATE ? { "X-Gate-Authorization": GATE } : {},
+      cache: "no-store",
+    },
+    PUBLIC_FETCH_TIMEOUT_MS,
+  );
+
+  const normalized = response as Response;
+
+  if (!normalized.ok) {
+    throw new Error(`Public request failed: ${normalized.status}`);
+  }
+
+  return (await normalized.json()) as T;
+}
+
+/*
+async function fetchPublicJson<T>(url: string): Promise<T> {
+  const response = await fetch(url, {
+    headers: GATE ? { "X-Gate-Authorization": GATE } : {},
+    cache: "no-store",
+    signal: AbortSignal.timeout(PUBLIC_FETCH_TIMEOUT_MS),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Public request failed: ${response.status}`);
+  }
+
+  return (await response.json()) as T;
+}
+*/
 
 function createFallbackPage(slug: string): HomepageContent {
   const titles: Record<string, string> = {
@@ -201,6 +261,27 @@ function createFallbackPage(slug: string): HomepageContent {
           startingPrice: "de la 449 lei",
         },
       ],
+      serviceTiers: [
+        {
+          tierKey: "silver",
+          title: "Argint",
+          marginMultiplier: 0,
+          benefitsMarkdown: "- Configuratie standard\n- Raspuns rapid\n- Pret optimizat",
+        },
+        {
+          tierKey: "gold",
+          title: "Aur",
+          marginMultiplier: 12,
+          benefitsMarkdown: "- Prioritate in programare\n- Coordonare extinsa\n- Documentatie completa",
+        },
+        {
+          tierKey: "platinum",
+          title: "Platina",
+          marginMultiplier: 20,
+          benefitsMarkdown: "- Management dedicat\n- SLA premium\n- Flux complet asistat de Darrin",
+        },
+      ],
+      serviceSectionsOrder: ["hero", "pricing", "specialCatalog", "tiers", "benefits"],
       howItWorks: ["Descrii / Alegi", "Primesti deviz", "Alegi furnizor", "Executie", "Plata securizata + garantie"],
       benefits: ["Pret standardizat", "Garantie", "Asigurare", "Profesionisti verificati"],
       finalCta: { primary: "Incepe acum", secondary: "Devino partener" },
@@ -211,6 +292,7 @@ function createFallbackPage(slug: string): HomepageContent {
           legal: ["Termeni", "GDPR", "Politici"],
         },
         apps: ["iOS", "Android"],
+        copyright: "Copyright My Darrin | Operated by Home Best Pal",
       },
       syncFlow: [
         "Super Admin configureaza serviciul in Backoffice",
@@ -263,6 +345,8 @@ export type PublicCatalogPrice = {
     missing_resource_types: string[];
     target_address?: string | null;
   } | null;
+  minimum_order_applied?: boolean;
+  minimum_order_note?: string | null;
   recommended_level: string;
   base_gross_total: number;
   delivery_badge?: string | null;
@@ -270,6 +354,51 @@ export type PublicCatalogPrice = {
   levels: PublicCatalogPriceLevel[];
   last_calculated_at: string;
   source: string;
+};
+
+export type PublicCatalogServiceCard = {
+  id: number;
+  slug: string;
+  name: string;
+  description?: string | null;
+  description_extended?: string | null;
+  domain?: string | null;
+  category?: string | null;
+  subcategories: string[];
+  rating_aipl?: number | null;
+  availability_status?: string | null;
+  rate_card?: {
+    currency: string;
+    base_price: number;
+    legislation_code?: string | null;
+    country_id?: number | null;
+    zone_id?: number | null;
+    is_active?: boolean | null;
+  } | null;
+  images?: string[] | null;
+  videos?: string[] | null;
+  documents?: string[] | null;
+  level_attachments?: Record<string, unknown> | null;
+  equipment_types: string[];
+  brands: string[];
+  resource_types: string[];
+};
+
+export type PublicCatalogServiceListResponse = {
+  items: PublicCatalogServiceCard[];
+};
+
+export type PublicTechnicalSpecItem = {
+  resource_id: number;
+  resource_name: string;
+  resource_type: string;
+  technical_specs: Record<string, unknown>;
+};
+
+export type PublicServiceTechnicalSpecs = {
+  slug: string;
+  service_name: string;
+  items: PublicTechnicalSpecItem[];
 };
 
 const PUBLIC_SERVICE_SOURCE_SLUGS: Record<string, string> = {
@@ -290,16 +419,7 @@ export type PublicSyncManifest = {
 
 export async function getSitePageContent(slug: string): Promise<HomepageContent> {
   try {
-    const response = await fetch(`${API_BASE}/api/v1/public/pages/${slug}`, {
-      headers: GATE ? { "X-Gate-Authorization": GATE } : {},
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      throw new Error("Site page content request failed");
-    }
-
-    return (await response.json()) as HomepageContent;
+    return await fetchPublicJson<HomepageContent>(`${API_BASE}/api/v1/public/pages/${slug}`);
   } catch {
     return createFallbackPage(slug);
   }
@@ -311,16 +431,9 @@ export async function getHomepageContent(): Promise<HomepageContent> {
 
 export async function getPublicServiceTaxonomy(slug: string): Promise<PublicServiceTaxonomy | null> {
   try {
-    const response = await fetch(`${API_BASE}/api/v1/public/pages/service-taxonomy/${resolveSourceSlug(slug)}`, {
-      headers: GATE ? { "X-Gate-Authorization": GATE } : {},
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return (await response.json()) as PublicServiceTaxonomy;
+    return await fetchPublicJson<PublicServiceTaxonomy>(
+      `${API_BASE}/api/v1/public/pages/service-taxonomy/${resolveSourceSlug(slug)}`,
+    );
   } catch {
     return null;
   }
@@ -336,16 +449,65 @@ export async function getPublicCatalogPrice(slug: string, options?: { targetAddr
       params.set("place_id", options.placeId);
     }
     const query = params.toString();
-    const response = await fetch(`${API_BASE}/api/v1/public/sync/catalog-price/${resolveSourceSlug(slug)}${query ? `?${query}` : ""}`, {
-      headers: GATE ? { "X-Gate-Authorization": GATE } : {},
-      cache: "no-store",
-    });
+    return await fetchPublicJson<PublicCatalogPrice>(
+      `${API_BASE}/api/v1/public/sync/catalog-price/${resolveSourceSlug(slug)}${query ? `?${query}` : ""}`,
+    );
+  } catch {
+    return null;
+  }
+}
 
-    if (!response.ok) {
-      return null;
+export async function getPublicCatalogServices(params?: {
+  domain?: string;
+  category?: string;
+  subcategory?: string;
+  resourceTypes?: string[];
+  equipmentTypes?: string[];
+  brands?: string[];
+}): Promise<PublicCatalogServiceCard[]> {
+  try {
+    const query = new URLSearchParams();
+    if (params?.domain) {
+      query.set("domain", params.domain);
     }
+    if (params?.category) {
+      query.set("category", params.category);
+    }
+    if (params?.subcategory) {
+      query.set("subcategory", params.subcategory);
+    }
+    for (const value of params?.resourceTypes ?? []) {
+      query.append("resource_type", value);
+    }
+    for (const value of params?.equipmentTypes ?? []) {
+      query.append("equipment_type", value);
+    }
+    for (const value of params?.brands ?? []) {
+      query.append("brand", value);
+    }
+    const queryString = query.toString();
+    const response = await fetchPublicJson<PublicCatalogServiceListResponse>(
+      `${API_BASE}/api/v1/public/catalog/services${queryString ? `?${queryString}` : ""}`,
+    );
+    return response.items ?? [];
+  } catch {
+    return [];
+  }
+}
 
-    return (await response.json()) as PublicCatalogPrice;
+export async function getPublicCatalogServiceBySlug(slug: string): Promise<PublicCatalogServiceCard | null> {
+  try {
+    return await fetchPublicJson<PublicCatalogServiceCard>(`${API_BASE}/api/v1/public/catalog/services/${slug}`);
+  } catch {
+    return null;
+  }
+}
+
+export async function getPublicServiceTechnicalSpecs(slug: string): Promise<PublicServiceTechnicalSpecs | null> {
+  try {
+    return await fetchPublicJson<PublicServiceTechnicalSpecs>(
+      `${API_BASE}/api/v1/public/catalog/services/${slug}/technical-specs`,
+    );
   } catch {
     return null;
   }
@@ -353,16 +515,7 @@ export async function getPublicCatalogPrice(slug: string, options?: { targetAddr
 
 export async function getPublicSyncManifest(): Promise<PublicSyncManifest | null> {
   try {
-    const response = await fetch(`${API_BASE}/api/v1/public/sync/manifest`, {
-      headers: GATE ? { "X-Gate-Authorization": GATE } : {},
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return (await response.json()) as PublicSyncManifest;
+    return await fetchPublicJson<PublicSyncManifest>(`${API_BASE}/api/v1/public/sync/manifest`);
   } catch {
     return null;
   }
