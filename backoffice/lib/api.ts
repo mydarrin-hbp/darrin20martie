@@ -14,6 +14,32 @@ export type AdminUser = {
   role: string | null;
   verification_status: string | null;
   permissions?: string[];
+  admin_role_key?: string | null;
+  country_access?: string[];
+  module_access?: string[];
+  design_edit?: boolean;
+};
+
+export type AdminCollaboratorRecord = {
+  id: number;
+  user_id: number;
+  email: string;
+  full_name?: string | null;
+  role_key: string;
+  country_access: string[];
+  module_access: string[];
+  invitation_status: string;
+  is_active: boolean;
+  design_edit?: boolean;
+  invitation_url?: string | null;
+  created_at: string;
+  permissions: Array<{
+    id: number;
+    permission_code: string;
+    module_key: string;
+    country_code?: string | null;
+    is_active: boolean;
+  }>;
 };
 
 export type DomainRecord = {
@@ -61,7 +87,7 @@ export type ServiceRecord = {
   images: string[];
   documents: string[];
   videos: string[];
-  level_attachments: Record<string, string[]>;
+  level_attachments: Record<string, unknown>;
   subcategory_ids: number[];
 };
 
@@ -73,6 +99,14 @@ export type CountryRecord = {
   slug: string;
   code: string;
   currency: string;
+  is_active: boolean;
+};
+export type TaxRuleRecord = {
+  id: number;
+  country_code: string;
+  locality_slug?: string | null;
+  service_type: string;
+  vat_percentage: number;
   is_active: boolean;
 };
 export type ZoneRecord = {
@@ -97,6 +131,138 @@ export type LocalityRecord = {
   is_active: boolean;
   country_name_ro: string;
   zone_name_ro: string;
+};
+export type FinancialConfigRecord = {
+  id: number;
+  country_id: number | null;
+  zone_id: number | null;
+  locality_id: number | null;
+  service_family: string | null;
+  mydarrin_commission_percentage: number;
+  labor_margin_percentage: number;
+  material_margin_percentage: number;
+  rental_margin_percentage: number;
+  platform_fee_percentage: number;
+  indirect_cost_percentage: number;
+  escrow_guarantee_percentage: number;
+  insurance_percentage: number;
+  insurance_fixed_amount: number;
+  incomplete_load_fee: number;
+  pump_mobilization_fee: number;
+  pump_price_per_m3: number;
+  is_active: boolean;
+};
+export type LaborRateRecord = {
+  id: number;
+  country_id: number | null;
+  zone_id: number | null;
+  locality_id: number | null;
+  skill_code: string;
+  skill_label: string;
+  currency: string;
+  base_rate: number;
+  weekend_multiplier: number;
+  holiday_multiplier: number;
+  night_multiplier: number;
+  is_active: boolean;
+};
+
+export type PartnerLiveJobRecord = {
+  broadcast_id: number;
+  supplier_id: number;
+  order_id: number;
+  order_ref: string;
+  service_slug: string;
+  service_name: string;
+  asset_label?: string | null;
+  intervention_label?: string | null;
+  task_label?: string | null;
+  skill_label?: string | null;
+  required_people?: number | null;
+  esco_codes: string[];
+  nace_codes: string[];
+  required_certification_codes: string[];
+  standard_consumables: string[];
+  target_address: string;
+  locality_slug?: string | null;
+  claim_status: string;
+  full_package_priority_seconds: number;
+  can_cover_full_package: boolean;
+  client_gross_total: number;
+  mydarrin_retention: number;
+  escrow_retention: number;
+  insurance_fee: number;
+  partner_net_receivable: number;
+  can_claim: boolean;
+  blocking_reasons: string[];
+};
+export type AdminOrderSummary = {
+  id: number;
+  order_ref: string;
+  status: string;
+  service_name: string;
+  total_facturabil: number;
+  currency: string;
+  target_address: string;
+  locality_slug?: string | null;
+  client_email?: string | null;
+  client_name?: string | null;
+  provider_ref?: string | null;
+  provider_name?: string | null;
+  created_at: string;
+  updated_at?: string | null;
+};
+
+export type AdminOrderDetail = AdminOrderSummary & {
+  cost_direct: number;
+  cost_regie: number;
+  mentenanta_platforma: number;
+  venit_platforma: number;
+  garantie_buna_executie: number;
+  insurance_premium: number;
+  darrin_management_fee: number;
+  tva: number;
+  escrow_status: string;
+  escrow_blocked_amount: number;
+  asset_label?: string | null;
+  intervention_label?: string | null;
+  task_label?: string | null;
+  skill_label?: string | null;
+  required_people?: number | null;
+};
+
+export type AdminOrderStatusUpdateRequest = {
+  status: string;
+  provider_ref?: string | null;
+  provider_name?: string | null;
+  message?: string | null;
+};
+
+export type AdminOrderAssignRequest = {
+  provider_ref?: string | null;
+  provider_name?: string | null;
+};
+export type OrderDocumentRecord = {
+  id: number;
+  order_id: number;
+  document_type: string;
+  status: string;
+  mime_type: string;
+  storage_key: string;
+  file_name: string;
+  placeholder_content: string;
+  generated_at: string;
+};
+export type AdminOrderReviewRecord = {
+  id: number;
+  order_ref: string;
+  rating: number;
+  feedback: string;
+  is_visible: boolean;
+  admin_note?: string | null;
+  client_name?: string | null;
+  client_email?: string | null;
+  created_at: string;
 };
 export type UnitRecord = { id: number; name: string; symbol: string };
 export type ActivityRecord = { id: number; name: string; code: string; unit_id: number; sort_order: number };
@@ -245,6 +411,32 @@ export type DevizRuleRecord = {
   description?: string | null;
   sort_order: number;
   is_active: boolean;
+};
+
+export type ProjectedRevenueMetricRecord = {
+  projected_revenue_total: number;
+  projected_order_count: number;
+  currency: string;
+  statuses: string[];
+  full_package_claim_rate_60s: number;
+  expired_job_count: number;
+  expired_jobs: Array<{
+    order_ref: string;
+    service_name: string;
+    locality_slug?: string | null;
+    missing_skill_label: string;
+    expired_at?: string | null;
+  }>;
+};
+
+export type InsightsRecord = {
+  total_gmv: number;
+  total_orders: number;
+  currency: string;
+  paid_orders: number;
+  payment_conversion_rate: number;
+  orders_by_category: Array<{ category: string; order_count: number; gmv: number }>;
+  provider_performance: Array<{ provider: string; order_count: number; gmv: number }>;
 };
 
 export type EscoImportResult = {
@@ -430,9 +622,24 @@ export function loginAdmin(email: string, password: string) {
     role: string | null;
     verification_status: string | null;
     permissions: string[];
+    admin_role_key?: string | null;
+    country_access?: string[];
+    module_access?: string[];
+    design_edit?: boolean;
   }>("/api/v1/auth/login", {
     method: "POST",
     body: { email, password },
+  });
+}
+
+export function acceptAdminInvite(token: string, password: string, fullName?: string) {
+  return request<AdminUser>("/api/v1/auth/admin-invite/accept", {
+    method: "POST",
+    body: {
+      token,
+      password,
+      full_name: fullName || null,
+    },
   });
 }
 
@@ -442,6 +649,50 @@ export function getCurrentUser(token: string) {
 
 export function getAdminUsers(token: string) {
   return request<AdminUser[]>("/api/v1/admin/users", { token });
+}
+
+export function getAdminCollaborators(token: string) {
+  return request<AdminCollaboratorRecord[]>("/api/v1/backoffice/admins", { token });
+}
+
+export function inviteAdminCollaborator(
+  token: string,
+  body: {
+    email: string;
+    full_name?: string | null;
+      role_key: string;
+      country_access: string[];
+      module_access: string[];
+      design_edit?: boolean;
+    },
+) {
+  return request<AdminCollaboratorRecord>("/api/v1/backoffice/invite-admin", {
+    method: "POST",
+    token,
+    body,
+  });
+}
+
+export function revokeAdminCollaborator(token: string, adminId: number) {
+  return request<AdminCollaboratorRecord>(`/api/v1/backoffice/admins/${adminId}/revoke`, {
+    method: "POST",
+    token,
+  });
+}
+
+export function patchContentSync(
+  token: string,
+  body: {
+    slug: string;
+    path: string;
+    value: unknown;
+  },
+) {
+  return request<{ slug: string; updated_at?: string | null; path: string; value: unknown }>("/api/v1/admin/content-sync", {
+    method: "PATCH",
+    token,
+    body,
+  });
 }
 
 export function getPendingUsers(token: string) {
@@ -568,7 +819,7 @@ export function createService(
     images?: string[];
     documents?: string[];
     videos?: string[];
-    level_attachments?: Record<string, string[]>;
+    level_attachments?: Record<string, unknown>;
     subcategory_ids: number[];
   },
 ) {
@@ -587,7 +838,7 @@ export function updateService(
     images?: string[];
     documents?: string[];
     videos?: string[];
-    level_attachments?: Record<string, string[]>;
+    level_attachments?: Record<string, unknown>;
     subcategory_ids: number[];
   }>,
 ) {
@@ -602,8 +853,32 @@ export function getCountries(token: string) {
   return request<CountryRecord[]>("/api/v1/geography/countries", { token });
 }
 
+export function createCountry(token: string, body: Omit<CountryRecord, "id">) {
+  return request<CountryRecord>("/api/v1/backoffice/countries", { method: "POST", token, body });
+}
+
+export function updateCountry(token: string, id: number, body: Partial<Omit<CountryRecord, "id">>) {
+  return request<CountryRecord>(`/api/v1/backoffice/countries/${id}`, { method: "PUT", token, body });
+}
+
+export function deleteCountry(token: string, id: number) {
+  return request<{ message: string }>(`/api/v1/backoffice/countries/${id}`, { method: "DELETE", token });
+}
+
 export function getZones(token: string) {
   return request<ZoneRecord[]>("/api/v1/geography/zones", { token });
+}
+
+export function createZone(token: string, body: Omit<ZoneRecord, "id">) {
+  return request<ZoneRecord>("/api/v1/backoffice/zones", { method: "POST", token, body });
+}
+
+export function updateZone(token: string, id: number, body: Partial<Omit<ZoneRecord, "id">>) {
+  return request<ZoneRecord>(`/api/v1/backoffice/zones/${id}`, { method: "PUT", token, body });
+}
+
+export function deleteZone(token: string, id: number) {
+  return request<{ message: string }>(`/api/v1/backoffice/zones/${id}`, { method: "DELETE", token });
 }
 
 export function getLocalities(token: string, options?: { countryId?: number; zoneId?: number }) {
@@ -825,6 +1100,22 @@ export function uploadServiceAttachment(
   return request<EntityAttachmentRecord>("/api/v1/backoffice/services/attachments", { method: "POST", token, body });
 }
 
+export function getResourceAttachments(token: string, resourceId: number) {
+  return request<{ items: EntityAttachmentRecord[] }>(`/api/v1/backoffice/resources/attachments?resource_id=${resourceId}`, { token });
+}
+
+export function uploadResourceAttachment(
+  token: string,
+  bodyValues: { resourceId: number; attachmentType: string; levelName?: string; file: File },
+) {
+  const body = new FormData();
+  body.append("resource_id", String(bodyValues.resourceId));
+  body.append("attachment_type", bodyValues.attachmentType);
+  if (bodyValues.levelName) body.append("level_name", bodyValues.levelName);
+  body.append("file", bodyValues.file);
+  return request<EntityAttachmentRecord>("/api/v1/backoffice/resources/attachments", { method: "POST", token, body });
+}
+
 export function createBackofficeServiceFlow(
   token: string,
   payload: BackofficeServiceCreateRequest,
@@ -909,6 +1200,114 @@ export function deletePriceConfig(token: string, id: number) {
 
 export function getDevizRules(token: string) {
   return request<DevizRuleRecord[]>("/api/v1/deviz/admin-configs", { token });
+}
+
+export function getProjectedRevenueMetric(token: string) {
+  return request<ProjectedRevenueMetricRecord>("/api/v1/backoffice/orders/projected-revenue", { token });
+}
+
+export function getPartnerLiveJobs(token: string) {
+  return request<PartnerLiveJobRecord[]>("/api/v1/partner/orders/live-jobs", { token });
+}
+
+export function claimPartnerLiveJob(token: string, broadcastId: number) {
+  return request(`/api/v1/partner/orders/broadcasts/${broadcastId}/claim`, { method: "POST", token });
+}
+
+export function getBackofficeOrders(token: string) {
+  return request<AdminOrderSummary[]>("/api/v1/backoffice/orders", { token });
+}
+
+export function getBackofficeOrder(token: string, orderId: number) {
+  return request<AdminOrderDetail>(`/api/v1/backoffice/orders/${orderId}`, { token });
+}
+
+export function updateBackofficeOrderStatus(token: string, orderId: number, body: AdminOrderStatusUpdateRequest) {
+  return request<AdminOrderDetail>(`/api/v1/backoffice/orders/${orderId}/status`, {
+    method: "PATCH",
+    token,
+    body,
+  });
+}
+
+export function assignBackofficeOrderProvider(token: string, orderId: number, body: AdminOrderAssignRequest) {
+  return request<AdminOrderDetail>(`/api/v1/backoffice/orders/${orderId}/assign`, {
+    method: "PATCH",
+    token,
+    body,
+  });
+}
+
+export function getBackofficeOrderDocuments(token: string, orderId: number) {
+  return request<OrderDocumentRecord[]>(`/api/v1/backoffice/orders/${orderId}/documents`, { token });
+}
+
+export function getBackofficeReviews(token: string) {
+  return request<AdminOrderReviewRecord[]>("/api/v1/backoffice/orders/reviews", { token });
+}
+
+export function updateBackofficeReview(
+  token: string,
+  reviewId: number,
+  body: { is_visible?: boolean | null; admin_note?: string | null },
+) {
+  return request<AdminOrderReviewRecord>(`/api/v1/backoffice/orders/reviews/${reviewId}`, {
+    method: "PATCH",
+    token,
+    body,
+  });
+}
+
+export function getInsights(token: string) {
+  return request<InsightsRecord>("/api/v1/backoffice/insights", { token });
+}
+
+export function getTaxRules(token: string) {
+  return request<TaxRuleRecord[]>("/api/v1/backoffice/geo-fiscal/tax-rules", { token });
+}
+
+export function createTaxRule(token: string, body: Omit<TaxRuleRecord, "id">) {
+  return request<TaxRuleRecord>("/api/v1/backoffice/geo-fiscal/tax-rules", { method: "POST", token, body });
+}
+
+export function updateTaxRule(token: string, id: number, body: Partial<Omit<TaxRuleRecord, "id">>) {
+  return request<TaxRuleRecord>(`/api/v1/backoffice/geo-fiscal/tax-rules/${id}`, { method: "PUT", token, body });
+}
+
+export function deleteTaxRule(token: string, id: number) {
+  return request<{ message: string }>(`/api/v1/backoffice/geo-fiscal/tax-rules/${id}`, { method: "DELETE", token });
+}
+
+export function getFinancialConfigs(token: string) {
+  return request<FinancialConfigRecord[]>("/api/v1/cost/admin-configs/financial-configs", { token });
+}
+
+export function createFinancialConfig(token: string, body: Omit<FinancialConfigRecord, "id">) {
+  return request<FinancialConfigRecord>("/api/v1/cost/admin-configs/financial-configs", { method: "POST", token, body });
+}
+
+export function updateFinancialConfig(token: string, id: number, body: Partial<Omit<FinancialConfigRecord, "id">>) {
+  return request<FinancialConfigRecord>(`/api/v1/cost/admin-configs/financial-configs/${id}`, { method: "PUT", token, body });
+}
+
+export function deleteFinancialConfig(token: string, id: number) {
+  return request<{ message: string }>(`/api/v1/cost/admin-configs/financial-configs/${id}`, { method: "DELETE", token });
+}
+
+export function getLaborRates(token: string) {
+  return request<LaborRateRecord[]>("/api/v1/cost/admin-configs/labor-rates", { token });
+}
+
+export function createLaborRate(token: string, body: Omit<LaborRateRecord, "id">) {
+  return request<LaborRateRecord>("/api/v1/cost/admin-configs/labor-rates", { method: "POST", token, body });
+}
+
+export function updateLaborRate(token: string, id: number, body: Partial<Omit<LaborRateRecord, "id">>) {
+  return request<LaborRateRecord>(`/api/v1/cost/admin-configs/labor-rates/${id}`, { method: "PUT", token, body });
+}
+
+export function deleteLaborRate(token: string, id: number) {
+  return request<{ message: string }>(`/api/v1/cost/admin-configs/labor-rates/${id}`, { method: "DELETE", token });
 }
 
 export function createDevizRule(token: string, body: Omit<DevizRuleRecord, "id">) {

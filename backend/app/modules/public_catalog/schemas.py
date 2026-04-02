@@ -39,6 +39,23 @@ class PublicCatalogServiceListResponse(BaseModel):
     items: list[PublicCatalogServiceCard]
 
 
+class PublicCatalogSubcategoryItem(BaseModel):
+    name: str
+    slug: str
+
+
+class PublicCatalogCategoryItem(BaseModel):
+    domain: str
+    domain_slug: str
+    category: str
+    category_slug: str
+    subcategories: list[PublicCatalogSubcategoryItem] = Field(default_factory=list)
+
+
+class PublicCatalogCategoryListResponse(BaseModel):
+    items: list[PublicCatalogCategoryItem]
+
+
 class PublicTechnicalSpecItem(BaseModel):
     resource_id: int
     resource_name: str

@@ -66,3 +66,7 @@ class TokenResponse(BaseModel):
     role: UserRole | None
     verification_status: VerificationStatus | None
     permissions: list[str] = []
+    admin_role_key: str | None = None
+    country_access: list[str] = []
+    module_access: list[str] = []
+    design_edit: bool = False

@@ -14,10 +14,12 @@ export function GeoAddressAutocomplete({
   label = "Adresa prestare",
   placeholder = "Introdu adresa exacta de executie",
   helperText,
+  pulseTargetId,
 }: {
   label?: string;
   placeholder?: string;
   helperText?: string;
+  pulseTargetId?: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();

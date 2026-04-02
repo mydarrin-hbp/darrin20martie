@@ -4,26 +4,26 @@ export default function DesignSystemAdminPage() {
   return (
     <AdminHub
       title="Design System"
-      description="Hub pentru consistenta vizuala a panoului administrativ si a experientelor conexe. In mediul actual se bazeaza pe stilurile globale, componentele shared si paginile de preview deja existente."
+      description="Hub pentru consistenta vizuala a panoului administrativ si a experientelor conexe. In mediul actual se bazeaza pe stilurile globale, componentele shared si Visual Builder-ul activ, nu pe mockup-urile vechi."
       badge="Design hub"
       metrics={[
         { label: "Fundatie", value: "Shared UI", hint: "Sidebar, shell, module header, cards" },
-        { label: "Preview", value: "2 pagini", hint: "homepage-preview si homepage-preview-v2" },
+        { label: "Preview", value: "Live bridge", hint: "Visual Builder + homepage publica actuala" },
         { label: "Tema", value: "My Darrin", hint: "Space Grotesk + token-uri existente" },
         { label: "Backoffice", value: "Unificat", hint: "Tailwind + utilitare comune" },
       ]}
       quickLinks={[
         {
-          title: "Preview homepage V1",
-          description: "Verifica pagina de preview folosita pentru explorarea directiei vizuale a brandului.",
-          href: "/homepage-preview",
-          cta: "Deschide preview",
+          title: "Visual Builder",
+          description: "Administreaza varianta actuala a homepage-ului, header-ului si footer-ului din panoul activ.",
+          href: "/system/public-site-content",
+          cta: "Deschide builder",
         },
         {
-          title: "Preview homepage V2",
-          description: "Verifica iteratia vizuala mai noua pastrata deja in proiect pentru aliniere de design.",
-          href: "/homepage-preview-v2",
-          cta: "Deschide preview V2",
+          title: "Homepage publica live",
+          description: "Verifica direct experienta publica actuala, nu iteratiile istorice de mockup.",
+          href: "https://mydarrin.homebestpal.com/",
+          cta: "Deschide homepage",
         },
         {
           title: "Dashboard administrativ",
@@ -34,14 +34,14 @@ export default function DesignSystemAdminPage() {
       ]}
       statusItems={[
         { label: "Componente shared", value: "READY" },
-        { label: "Preview iteratii", value: "READY" },
+        { label: "Preview iteratii", value: "ARCHIVED" },
         { label: "Token-uri dedicate", value: "PARTIAL" },
         { label: "Documentare UI", value: "IN PROGRES" },
       ]}
       focus={[
-        "Zona centralizeaza designul fara a muta sau rescrie preview-urile existente.",
+        "Zona centralizeaza designul in jurul builder-ului activ si al shell-ului executiv din backoffice.",
         "Componentele backoffice actuale devin baza unui design system administrativ coerent.",
-        "Pagini de preview raman accesibile pentru decizii vizuale si iteratii viitoare.",
+        "Mockup-urile istorice raman doar ca redirect-uri de compatibilitate, nu ca sursa de adevar vizuala.",
       ]}
     />
   );

@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db
-from app.core.security import get_current_admin_user
+from app.core.security import ensure_module_access, get_current_admin_profile, get_current_admin_user
 from app.models.user import User, UserRole
+from app.modules.site_content.schemas import SiteContentPatchRequest
+from app.modules.site_content.service import patch_page_content_value
 from app.schemas.user import UserResponse, UserUpdate
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -14,11 +16,17 @@ def _require_super_admin(current_admin: User) -> None:
         raise HTTPException(status_code=403, detail="Super admin access required")
 
 
+def _require_backoffice_access(current_admin: User) -> None:
+    if "backoffice:access" not in UserResponse.from_user(current_admin).permissions:
+        raise HTTPException(status_code=403, detail="Backoffice access required")
+
+
 @router.get("/users", response_model=list[UserResponse])
 def get_all_users(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user),
 ):
+    _require_backoffice_access(current_admin)
     users = db.query(User).all()
     return [UserResponse.from_user(user) for user in users]
 
@@ -28,6 +36,7 @@ def get_pending_users(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user),
 ):
+    _require_backoffice_access(current_admin)
     users = db.query(User).filter(User.verification_status == "PENDING").all()
     return [UserResponse.from_user(user) for user in users]
 
@@ -38,6 +47,7 @@ def get_user(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user),
 ):
+    _require_backoffice_access(current_admin)
     user = db.query(User).filter(User.id == user_id).first()
 
     if not user:
@@ -52,6 +62,7 @@ def activate_user(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user),
 ):
+    _require_backoffice_access(current_admin)
     user = db.query(User).filter(User.id == user_id).first()
 
     if not user:
@@ -69,6 +80,7 @@ def deactivate_user(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user),
 ):
+    _require_backoffice_access(current_admin)
     user = db.query(User).filter(User.id == user_id).first()
 
     if not user:
@@ -87,6 +99,7 @@ def update_user_role(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user),
 ):
+    _require_backoffice_access(current_admin)
     _require_super_admin(current_admin)
 
     user = db.query(User).filter(User.id == user_id).first()
@@ -118,6 +131,7 @@ def update_user_profile(
     db: Session = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user),
 ):
+    _require_backoffice_access(current_admin)
     user = db.query(User).filter(User.id == user_id).first()
 
     if not user:
@@ -142,3 +156,23 @@ def update_user_profile(
     db.commit()
     db.refresh(user)
     return UserResponse.from_user(user)
+
+
+@router.patch("/content-sync")
+def patch_content_sync(
+    payload: SiteContentPatchRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user),
+    admin_profile=Depends(get_current_admin_profile),
+):
+    _require_backoffice_access(current_admin)
+    ensure_module_access(current_admin, admin_profile, "site_content")
+    if "design_edit:use" not in UserResponse.from_user(current_admin).permissions:
+        raise HTTPException(status_code=403, detail="Visual Site Editor access required")
+    page = patch_page_content_value(db, payload.slug, payload.path, payload.value)
+    return {
+        "slug": page.slug,
+        "updated_at": page.updated_at.isoformat() if page.updated_at else None,
+        "path": payload.path,
+        "value": payload.value,
+    }

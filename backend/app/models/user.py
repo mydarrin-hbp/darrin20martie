@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy import Enum, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
@@ -60,3 +60,4 @@ class User(Base):
     city: Mapped[str | None] = mapped_column(String(120), nullable=True)
     role: Mapped[str | None] = mapped_column(String(50), nullable=True, default=UserRole.CLIENT.value)
     verification_status: Mapped[str | None] = mapped_column(String(50), nullable=True, default="PENDING")
+    admin_profile = relationship("Admin", back_populates="user", uselist=False, foreign_keys="Admin.user_id")

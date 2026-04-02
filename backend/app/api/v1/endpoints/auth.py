@@ -8,7 +8,9 @@ from app.core.auth import create_access_token, hash_password, verify_password
 from app.core.config import settings
 from app.core.dependencies import get_db
 from app.core.security import get_current_user
+from app.core.limiter import limiter
 from app.models.user import User, UserRole
+from app.schemas.admin_rbac import AdminInviteAcceptRequest
 from app.models.signup_lead import SignupLead
 from app.schemas.auth import (
     LoginRequest,
@@ -21,11 +23,7 @@ from app.schemas.auth import (
     TokenResponse,
 )
 from app.schemas.user import UserResponse, get_role_permissions
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-
-limiter = Limiter(key_func=get_remote_address)
-
+from app.services.admin_rbac_service import accept_admin_invitation
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
@@ -65,7 +63,8 @@ def _get_lead_or_404(db: Session, lead_id: int) -> SignupLead:
 
 
 @router.post("/signup-leads/start", response_model=SignupLeadResponse)
-def start_signup_lead(data: SignupLeadStartRequest, db: Session = Depends(get_db)):
+@limiter.limit("8 per 15 minutes")
+def start_signup_lead(request: Request, data: SignupLeadStartRequest, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == data.email).first()
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
@@ -105,7 +104,8 @@ def start_signup_lead(data: SignupLeadStartRequest, db: Session = Depends(get_db
 
 
 @router.post("/signup-leads/verify-phone", response_model=SignupLeadResponse)
-def verify_signup_lead_phone(data: SignupLeadVerifyRequest, db: Session = Depends(get_db)):
+@limiter.limit("10 per 15 minutes")
+def verify_signup_lead_phone(request: Request, data: SignupLeadVerifyRequest, db: Session = Depends(get_db)):
     lead = db.query(SignupLead).filter(SignupLead.email == data.email).first()
     if not lead:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Signup lead not found")
@@ -136,7 +136,8 @@ def get_signup_lead(lead_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/signup-leads/select-role", response_model=SignupLeadResponse)
-def select_signup_role(data: SignupLeadSelectRoleRequest, db: Session = Depends(get_db)):
+@limiter.limit("10 per hour")
+def select_signup_role(request: Request, data: SignupLeadSelectRoleRequest, db: Session = Depends(get_db)):
     if data.role.value not in PUBLIC_SIGNUP_ROLES:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -161,7 +162,8 @@ def select_signup_role(data: SignupLeadSelectRoleRequest, db: Session = Depends(
 
 
 @router.post("/register-complete", response_model=UserResponse)
-def complete_register(data: SignupLeadCompleteRequest, db: Session = Depends(get_db)):
+@limiter.limit("6 per hour")
+def complete_register(request: Request, data: SignupLeadCompleteRequest, db: Session = Depends(get_db)):
     lead = _get_lead_or_404(db, data.lead_id)
 
     if lead.phone_verified_at is None:
@@ -198,12 +200,8 @@ def complete_register(data: SignupLeadCompleteRequest, db: Session = Depends(get
 
 
 @router.post("/register", response_model=UserResponse)
-@limiter.limit("3 per hour", exempt_when=lambda: True)
-def register(
-    request: Request,
-    data: RegisterRequest,
-    db: Session = Depends(get_db),
-):
+@limiter.limit("3 per hour")
+def register(request: Request, data: RegisterRequest, db: Session = Depends(get_db)):
     if data.role.value in {UserRole.ADMIN.value, UserRole.SUPER_ADMIN.value}:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -237,11 +235,7 @@ def register(
 
 @router.post("/login", response_model=TokenResponse)
 @limiter.limit("5 per 15 minutes")
-def login(
-    request: Request,
-    data: LoginRequest,
-    db: Session = Depends(get_db),
-):
+def login(request: Request, data: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == data.email).first()
 
     if not user:
@@ -268,8 +262,17 @@ def login(
             detail="Account pending approval",
         )
 
-    permissions = get_role_permissions(user.role)
-    token = create_access_token({"sub": str(user.id), "role": user.role, "permissions": permissions})
+    permissions = get_role_permissions(user.role, admin_profile=user.admin_profile)
+    token = create_access_token(
+        {
+            "sub": str(user.id),
+            "role": user.role,
+            "permissions": permissions,
+            "admin_role_key": getattr(user.admin_profile, "role_key", None),
+            "country_access": getattr(user.admin_profile, "country_access", []) or [],
+            "module_access": getattr(user.admin_profile, "module_access", []) or [],
+        }
+    )
 
     return TokenResponse(
         access_token=token,
@@ -282,9 +285,23 @@ def login(
         role=user.role,
         verification_status=user.verification_status,
         permissions=permissions,
+        admin_role_key=getattr(user.admin_profile, "role_key", None),
+        country_access=getattr(user.admin_profile, "country_access", []) or [],
+        module_access=getattr(user.admin_profile, "module_access", []) or [],
+        design_edit="visual_cms" in {str(item).lower() for item in (getattr(user.admin_profile, "module_access", []) or [])},
     )
 
 
 @router.get("/me", response_model=UserResponse)
 def me(current_user: User = Depends(get_current_user)):
     return UserResponse.from_user(current_user)
+
+
+@router.post("/admin-invite/accept", response_model=UserResponse)
+def accept_admin_invite(data: AdminInviteAcceptRequest, db: Session = Depends(get_db)):
+    result = accept_admin_invitation(db, token=data.token, password=data.password, full_name=data.full_name)
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invitation not found")
+    if result == "invitation_not_pending":
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Invitation is no longer pending")
+    return UserResponse.from_user(result)

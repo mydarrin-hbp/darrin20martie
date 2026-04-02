@@ -1,7 +1,30 @@
-import { PublicCheckoutPage } from "@/components/public-site-v3";
-import { getSitePageContent } from "@/lib/site-content";
+import { Suspense } from "react";
 
-export default async function CheckoutPage() {
-  const page = await getSitePageContent("checkout");
-  return <PublicCheckoutPage page={page} />;
+import { PublicCheckoutPage } from "@/components/public-site-v3";
+import { getPublicCatalogPrice, getPublicCatalogServiceBySlug, getSitePageContent } from "@/lib/site-content";
+
+export default async function CheckoutPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ slug?: string; target_address?: string; place_id?: string }>;
+}) {
+  const params = (await searchParams) ?? {};
+  const slug = params.slug ?? "reparat-calorifer";
+  const targetAddress = params.target_address ?? null;
+  const placeId = params.place_id ?? null;
+
+  const [page, card, dynamicPrice] = await Promise.all([
+    getSitePageContent("checkout"),
+    getPublicCatalogServiceBySlug(slug),
+    getPublicCatalogPrice(slug, { targetAddress: targetAddress ?? undefined, placeId: placeId ?? undefined }),
+  ]);
+
+  return (
+    <Suspense fallback={null}>
+      <PublicCheckoutPage
+        page={page}
+        context={{ slug, card, dynamicPrice, targetAddress, placeId }}
+      />
+    </Suspense>
+  );
 }

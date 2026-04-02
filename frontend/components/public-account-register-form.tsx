@@ -22,6 +22,12 @@ type SignupLeadResponse = {
   redirect_path?: string | null;
 };
 
+type RegisterUserResponse = {
+  id: number;
+  role: SignupRole;
+  verification_status: string;
+};
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 const GATE = process.env.NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION;
 
@@ -56,9 +62,11 @@ function roleLabel(role: SignupRole) {
 
 export function PublicAccountRegisterForm() {
   const router = useRouter();
+  const [registerStep, setRegisterStep] = useState<"email" | "password" | "phone" | "sms">("email");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [smsCode, setSmsCode] = useState("");
@@ -88,6 +96,7 @@ export function PublicAccountRegisterForm() {
 
       const payload = await parseApiResponse<SignupLeadResponse>(response);
       setLead(payload);
+      setRegisterStep("sms");
       setMessage(
         payload.sms_debug_code
           ? `Datele au fost salvate. Cod SMS de test: ${payload.sms_debug_code}`
@@ -152,51 +161,97 @@ export function PublicAccountRegisterForm() {
       </div>
 
       <div className="v3-signup-progress">
-        <div className="v3-signup-progress-step v3-signup-progress-step-active">1. Date contact</div>
-        <div className={`v3-signup-progress-step ${lead ? "v3-signup-progress-step-ready" : ""}`}>2. Validare SMS</div>
-        <div className="v3-signup-progress-step">3. Rol dedicat</div>
+        <div className={`v3-signup-progress-step ${registerStep === "email" ? "v3-signup-progress-step-active" : ""}`}>1. Email</div>
+        <div className={`v3-signup-progress-step ${registerStep === "password" ? "v3-signup-progress-step-active" : registerStep !== "email" ? "v3-signup-progress-step-ready" : ""}`}>2. Parola</div>
+        <div className={`v3-signup-progress-step ${registerStep === "phone" ? "v3-signup-progress-step-active" : registerStep === "sms" ? "v3-signup-progress-step-ready" : ""}`}>3. Telefon</div>
+        <div className={`v3-signup-progress-step ${registerStep === "sms" ? "v3-signup-progress-step-active" : ""}`}>4. Cod SMS</div>
       </div>
 
-      <form className="v3-register-form v3-register-form-card" onSubmit={startLead}>
+      <div className="v3-register-form v3-register-form-card">
         <div className="v3-signup-card-head">
           <div className="v3-eyebrow">Cont nou</div>
-          <h3 className="v3-signup-card-title">Incepem simplu, cu datele esentiale</h3>
+          <h3 className="v3-signup-card-title">Flux rapid, in pasi clari (client, partener, investitor)</h3>
           <p className="v3-signup-card-copy">
-            Formularul de inceput ramane scurt si clar. Salvam progresul imediat, apoi validam telefonul si continuam fara sa incarcam utilizatorul cu prea multe campuri.
+            Pas cu pas: email, parola, telefon si cod SMS. Dupa validare alegi rolul potrivit si finalizezi contul.
           </p>
         </div>
 
-        <div className="v3-form-grid">
-          <label className="v3-form-field">
-            <span>Nume</span>
-            <input className="v3-form-control" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Popescu" required />
-          </label>
-          <label className="v3-form-field">
-            <span>Prenume</span>
-            <input className="v3-form-control" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Ana" required />
-          </label>
-          <label className="v3-form-field">
-            <span>Email</span>
-            <input className="v3-form-control" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="email@mydarrin.com" required />
-          </label>
-          <label className="v3-form-field">
-            <span>Telefon</span>
-            <input className="v3-form-control" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+40 7xx xxx xxx" required />
-          </label>
-          <label className="v3-form-field v3-form-field-full">
-            <span>Oras / adresa scurta</span>
-            <input className="v3-form-control" value={city} onChange={(event) => setCity(event.target.value)} placeholder="Bucuresti, Sector 3" />
-          </label>
-        </div>
+        {registerStep === "email" ? (
+          <form className="v3-form-grid" onSubmit={(event) => {
+            event.preventDefault();
+            if (!email.trim()) {
+              setError("Introdu o adresa de email valida.");
+              return;
+            }
+            setError(null);
+            setRegisterStep("password");
+          }}>
+            <label className="v3-form-field v3-form-field-full">
+              <span>Email</span>
+              <input className="v3-form-control" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="email@mydarrin.com" required />
+            </label>
+            <div className="v3-final-actions">
+              <button type="submit" className="v3-primary-button">
+                Continua
+              </button>
+            </div>
+          </form>
+        ) : null}
 
-        <div className="v3-final-actions">
-          <button type="submit" className="v3-primary-button" disabled={loading}>
-            {loading ? "Se salveaza..." : "Salveaza si trimite cod SMS"}
-          </button>
-        </div>
-      </form>
+        {registerStep === "password" ? (
+          <form className="v3-form-grid" onSubmit={(event) => {
+            event.preventDefault();
+            if (password.trim().length < 8) {
+              setError("Parola trebuie sa aiba minim 8 caractere.");
+              return;
+            }
+            window.localStorage.setItem("mydarrin_signup_password", password);
+            setError(null);
+            setRegisterStep("phone");
+          }}>
+            <label className="v3-form-field">
+              <span>Prenume</span>
+              <input className="v3-form-control" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Ana" required />
+            </label>
+            <label className="v3-form-field">
+              <span>Nume</span>
+              <input className="v3-form-control" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Popescu" required />
+            </label>
+            <label className="v3-form-field v3-form-field-full">
+              <span>Parola</span>
+              <input className="v3-form-control" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Minim 8 caractere" required />
+            </label>
+            <div className="v3-final-actions">
+              <button type="submit" className="v3-primary-button">
+                Continua
+              </button>
+              <button type="button" className="v3-dark-button" onClick={() => setRegisterStep("email")}>
+                Schimba email
+              </button>
+            </div>
+          </form>
+        ) : null}
 
-      {lead ? (
+        {registerStep === "phone" ? (
+          <form className="v3-form-grid" onSubmit={startLead}>
+            <label className="v3-form-field">
+              <span>Telefon</span>
+              <input className="v3-form-control" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+40 7xx xxx xxx" required />
+            </label>
+            <label className="v3-form-field v3-form-field-full">
+              <span>Oras / adresa scurta</span>
+              <input className="v3-form-control" value={city} onChange={(event) => setCity(event.target.value)} placeholder="Bucuresti, Sector 3" />
+            </label>
+            <div className="v3-final-actions">
+              <button type="submit" className="v3-primary-button" disabled={loading}>
+                {loading ? "Se trimite..." : "Trimite SMS"}
+              </button>
+            </div>
+          </form>
+        ) : null}
+      </div>
+
+      {registerStep === "sms" && lead ? (
         <div className="v3-form-section v3-signup-verification-card">
           <div className="v3-eyebrow">Validare telefon</div>
           <div className="v3-inline-note v3-inline-note-soft">
@@ -334,12 +389,18 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
   const [lead, setLead] = useState<SignupLeadResponse | null>(null);
   const [password, setPassword] = useState("");
   const [accepted, setAccepted] = useState(false);
+  const [partnerFiles, setPartnerFiles] = useState<File[]>([]);
+  const [partnerDocStatus, setPartnerDocStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
+    const cached = typeof window !== "undefined" ? window.localStorage.getItem("mydarrin_signup_password") : null;
+    if (cached) {
+      setPassword(cached);
+    }
 
     async function loadLead() {
       try {
@@ -372,6 +433,13 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
     setLoading(true);
     setMessage(null);
     setError(null);
+    setPartnerDocStatus(null);
+
+    if (role === "PARTNER" && partnerFiles.length === 0) {
+      setLoading(false);
+      setError("Pentru parteneri sunt obligatorii documentele (PDF sau imagine).");
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE}/api/v1/auth/register-complete`, {
@@ -383,11 +451,36 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
           role,
         }),
       });
-      const payload = await parseApiResponse<{ role: SignupRole; verification_status: string }>(response);
+      const payload = await parseApiResponse<RegisterUserResponse>(response);
+      if (role === "PARTNER") {
+        for (const file of partnerFiles) {
+          const formData = new FormData();
+          formData.append("user_id", String(payload.id));
+          formData.append("file", file);
+          const uploadResponse = await fetch(`${API_BASE}/api/v1/public/partners/documents`, {
+            method: "POST",
+            headers: GATE ? { "X-Gate-Authorization": GATE } : undefined,
+            body: formData,
+          });
+          await parseApiResponse(uploadResponse);
+        }
+        setPartnerDocStatus("Documentele au fost incarcate. Status: PENDING.");
+      }
       const statusCopy =
         payload.verification_status === "APPROVED"
           ? "Contul este activ imediat."
           : "Contul a intrat in aprobarea operationala.";
+      if (payload.verification_status === "APPROVED") {
+        const roleParam =
+          payload.role === "PARTNER"
+            ? "partner"
+            : payload.role === "INVESTOR"
+              ? "investor"
+              : "client";
+        window.localStorage.removeItem("mydarrin_signup_password");
+        window.location.href = `/my-account?role=${roleParam}`;
+        return;
+      }
       setMessage(`${statusCopy} Rol finalizat: ${roleLabel(payload.role)}.`);
       setPassword("");
       setAccepted(false);
@@ -423,6 +516,18 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
               required
             />
           </label>
+          {role === "PARTNER" ? (
+            <label className="v3-form-field v3-form-field-full">
+              <span>Documente partener (PDF / imagini)</span>
+              <input
+                className="v3-form-control"
+                type="file"
+                accept="application/pdf,image/*"
+                multiple
+                onChange={(event) => setPartnerFiles(Array.from(event.target.files ?? []))}
+              />
+            </label>
+          ) : null}
         </div>
 
         <label className="v3-checkbox-field">
@@ -457,6 +562,7 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
       </div>
 
       {message ? <div className="v3-feedback-card v3-feedback-success">{message}</div> : null}
+      {partnerDocStatus ? <div className="v3-feedback-card v3-feedback-success">{partnerDocStatus}</div> : null}
       {error ? <div className="v3-feedback-card v3-feedback-error">{error}</div> : null}
     </div>
   );

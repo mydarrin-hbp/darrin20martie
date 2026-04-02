@@ -4,19 +4,26 @@ import { FormEvent, Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/components/auth-provider";
-import { BACKOFFICE_GATE_PASSWORD, BACKOFFICE_GATE_USERNAME } from "@/lib/api";
+import { BACKOFFICE_GATE_PASSWORD, BACKOFFICE_GATE_USERNAME, acceptAdminInvite } from "@/lib/api";
+import { getPublicSiteBaseUrl } from "@/lib/public-site";
 
 
 function LoginScreen() {
   const { gateUnlocked, login, unlockGate } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const initialMode = searchParams.get("mode") === "signup" ? "signup" : "login";
+  const [authMode, setAuthMode] = useState<"login" | "signup">(initialMode);
   const [gateUsername, setGateUsername] = useState(BACKOFFICE_GATE_USERNAME);
   const [gatePassword, setGatePassword] = useState(BACKOFFICE_GATE_PASSWORD);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [invitePassword, setInvitePassword] = useState("");
+  const [inviteFullName, setInviteFullName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const inviteToken = searchParams.get("invite");
+  const publicBase = getPublicSiteBaseUrl();
 
   async function onUnlock(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,6 +49,27 @@ function LoginScreen() {
       router.replace(searchParams.get("next") ?? "/dashboard");
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Autentificarea a esuat.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onAcceptInvite(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!inviteToken) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+
+    try {
+      await acceptAdminInvite(inviteToken, invitePassword, inviteFullName || undefined);
+      setEmail("");
+      setPassword("");
+      setInvitePassword("");
+      router.replace("/login?next=/dashboard");
+    } catch (submissionError) {
+      setError(submissionError instanceof Error ? submissionError.message : "Activarea invitatiei a esuat.");
     } finally {
       setLoading(false);
     }
@@ -79,24 +107,87 @@ function LoginScreen() {
               {loading ? "Verific..." : "Deblocheaza panoul"}
             </button>
           </form>
-        ) : (
-          <form onSubmit={onSubmit} className="panel p-8">
-            <div className="text-sm font-medium text-muted">Autentificare admin cu JWT + RBAC</div>
+        ) : inviteToken ? (
+          <form onSubmit={onAcceptInvite} className="panel p-8">
+            <div className="text-sm font-medium text-muted">Activare colaborator</div>
+            <div className="mt-2 text-sm leading-6 text-muted">
+              Invitatie valida detectata. Seteaza parola si activeaza accesul in Back Office.
+            </div>
             <div className="mt-6 grid gap-4">
               <label className="grid gap-2 text-sm text-muted">
-                Email
-                <input className="field" value={email} onChange={(event) => setEmail(event.target.value)} />
+                Nume complet
+                <input className="field" value={inviteFullName} onChange={(event) => setInviteFullName(event.target.value)} />
               </label>
               <label className="grid gap-2 text-sm text-muted">
-                Parola
-                <input className="field" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                Parola noua
+                <input className="field" type="password" value={invitePassword} onChange={(event) => setInvitePassword(event.target.value)} />
               </label>
             </div>
             {error ? <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
             <button type="submit" className="btn-primary mt-6 w-full" disabled={loading}>
-              {loading ? "Autentific..." : "Intra in back office"}
+              {loading ? "Activez..." : "Activeaza contul"}
             </button>
           </form>
+        ) : (
+          <div className="panel p-8">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-sm font-medium text-muted">
+              <span>{authMode === "login" ? "Autentificare admin cu JWT + RBAC" : "Creare cont profesionist"}</span>
+              <div className="inline-flex rounded-full border border-border bg-white/80 p-1">
+                <button
+                  type="button"
+                  className={`rounded-full px-4 py-2 text-xs font-semibold ${authMode === "login" ? "bg-ink text-white" : "text-ink/70"}`}
+                  onClick={() => setAuthMode("login")}
+                >
+                  Intrare in cont
+                </button>
+                <button
+                  type="button"
+                  className={`rounded-full px-4 py-2 text-xs font-semibold ${authMode === "signup" ? "bg-ink text-white" : "text-ink/70"}`}
+                  onClick={() => setAuthMode("signup")}
+                >
+                  Creare cont
+                </button>
+              </div>
+            </div>
+
+            {authMode === "login" ? (
+              <form onSubmit={onSubmit} className="mt-6 grid gap-4">
+                <label className="grid gap-2 text-sm text-muted">
+                  Email
+                  <input className="field" value={email} onChange={(event) => setEmail(event.target.value)} />
+                </label>
+                <label className="grid gap-2 text-sm text-muted">
+                  Parola
+                  <input className="field" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                </label>
+                {error ? <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
+                <button type="submit" className="btn-primary mt-2 w-full" disabled={loading}>
+                  {loading ? "Autentific..." : "Intra in back office"}
+                </button>
+                <button type="button" className="btn-secondary w-full" onClick={() => setAuthMode("signup")}>
+                  Nu ai cont? Creeaza cont
+                </button>
+              </form>
+            ) : (
+              <div className="mt-6 grid gap-4 text-sm text-muted">
+                <p>
+                  Conturile profesionale sunt aprobate controlat. Trimite cererea de acces si vei primi o invitatie oficiala pentru
+                  activare.
+                </p>
+                <div className="grid gap-3">
+                  <a className="btn-primary w-full text-center" href={`${publicBase}/account/create/administrare`}>
+                    Deschide cerere acces
+                  </a>
+                  <a className="btn-secondary w-full text-center" href={`${publicBase}/contact`}>
+                    Contact My Darrin
+                  </a>
+                  <button type="button" className="btn-secondary w-full" onClick={() => setAuthMode("login")}>
+                    Am deja cont, intra in cont
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </main>

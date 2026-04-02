@@ -11,6 +11,8 @@ from app.models.service import Service
 from app.models.subcategory import SubCategory
 from app.modules.cost_engine.models import AdminPriceConfig
 from app.modules.public_catalog.schemas import (
+    PublicCatalogCategoryItem,
+    PublicCatalogSubcategoryItem,
     PublicCatalogServiceCard,
     PublicRateCardSummary,
     PublicServiceTechnicalSpecsResponse,
@@ -233,6 +235,41 @@ def list_public_catalog_services(
         )
 
     return cards
+
+
+def list_public_catalog_categories(db: Session) -> list[PublicCatalogCategoryItem]:
+    rows = db.execute(
+        select(SubCategory)
+        .options(selectinload(SubCategory.category).selectinload(Category.domain))
+        .where(SubCategory.is_active.is_(True))
+        .order_by(SubCategory.id)
+    ).scalars().all()
+
+    grouped: dict[tuple[str, str, str, str], list[PublicCatalogSubcategoryItem]] = {}
+    for subcategory in rows:
+        category = subcategory.category
+        domain = category.domain if category else None
+        if not category or not domain:
+            continue
+        key = (domain.name_ro, domain.slug, category.name_ro, category.slug)
+        grouped.setdefault(key, []).append(
+            PublicCatalogSubcategoryItem(name=subcategory.name_ro, slug=subcategory.slug)
+        )
+
+    items: list[PublicCatalogCategoryItem] = []
+    for (domain_name, domain_slug, category_name, category_slug), subs in grouped.items():
+        items.append(
+            PublicCatalogCategoryItem(
+                domain=domain_name,
+                domain_slug=domain_slug,
+                category=category_name,
+                category_slug=category_slug,
+                subcategories=subs,
+            )
+        )
+
+    items.sort(key=lambda item: (item.domain.lower(), item.category.lower()))
+    return items
 
 
 def get_public_catalog_service_by_slug(db: Session, *, slug: str) -> PublicCatalogServiceCard | None:

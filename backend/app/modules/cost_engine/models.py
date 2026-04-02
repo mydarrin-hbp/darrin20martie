@@ -41,6 +41,11 @@ class AdminPriceConfig(Base):
     indirect_cost_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.10)
     platform_maintenance_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.03)
     mydarrin_platform_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.15)
+    escrow_retention_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    insurance_premium_fixed: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    insurance_premium_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    darrin_management_fee_fixed: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    darrin_management_fee_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     vat_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.21)
     minimum_order_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     minimum_quantity_threshold: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -56,6 +61,78 @@ class AdminPriceConfig(Base):
     )
 
     price_analyses: Mapped[list["PriceAnalysis"]] = relationship(back_populates="admin_price_config")
+
+
+class FinancialConfig(Base):
+    __tablename__ = "financial_configs"
+    __table_args__ = (
+        UniqueConstraint(
+            "country_id",
+            "zone_id",
+            "locality_id",
+            "service_family",
+            name="uq_financial_config_scope",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    country_id: Mapped[int | None] = mapped_column(ForeignKey("countries.id", ondelete="CASCADE"), nullable=True, index=True)
+    zone_id: Mapped[int | None] = mapped_column(ForeignKey("zones.id", ondelete="CASCADE"), nullable=True, index=True)
+    locality_id: Mapped[int | None] = mapped_column(ForeignKey("localities.id", ondelete="SET NULL"), nullable=True, index=True)
+    service_family: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    mydarrin_commission_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.10)
+    labor_margin_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.15)
+    material_margin_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.10)
+    rental_margin_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.15)
+    platform_fee_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.03)
+    indirect_cost_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    escrow_guarantee_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.05)
+    insurance_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    insurance_fixed_amount: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    incomplete_load_fee: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    pump_mobilization_fee: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    pump_price_per_m3: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
+class LaborRate(Base):
+    __tablename__ = "labor_rates"
+    __table_args__ = (
+        UniqueConstraint(
+            "country_id",
+            "zone_id",
+            "locality_id",
+            "skill_code",
+            name="uq_labor_rate_scope",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    country_id: Mapped[int | None] = mapped_column(ForeignKey("countries.id", ondelete="CASCADE"), nullable=True, index=True)
+    zone_id: Mapped[int | None] = mapped_column(ForeignKey("zones.id", ondelete="CASCADE"), nullable=True, index=True)
+    locality_id: Mapped[int | None] = mapped_column(ForeignKey("localities.id", ondelete="SET NULL"), nullable=True, index=True)
+    skill_code: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    skill_label: Mapped[str] = mapped_column(String(255), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="RON")
+    base_rate: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    weekend_multiplier: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
+    holiday_multiplier: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
+    night_multiplier: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
 
 
 class PriceAnalysis(Base):
@@ -87,6 +164,11 @@ class PriceAnalysis(Base):
     indirect_cost_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     platform_maintenance_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     mydarrin_platform_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    escrow_retention_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    insurance_premium_fixed: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    insurance_premium_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    darrin_management_fee_fixed: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    darrin_management_fee_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     vat_percentage: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     platform_margin_coefficient: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     vat_coefficient: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -94,6 +176,9 @@ class PriceAnalysis(Base):
     indirect_cost_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     platform_maintenance_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     mydarrin_platform_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    escrow_retention_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    insurance_premium_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    darrin_management_fee_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     adjusted_subtotal: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
@@ -114,6 +199,9 @@ class CostCalculation(Base):
     indirect_cost_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     platform_maintenance_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     mydarrin_platform_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    escrow_retention_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    insurance_premium_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    darrin_management_fee_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     net_total: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     platform_margin_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     vat_value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)

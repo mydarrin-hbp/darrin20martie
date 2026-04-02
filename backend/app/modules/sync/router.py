@@ -21,6 +21,7 @@ from app.modules.sync.service import (
     stream_sync_events,
     update_order_status,
 )
+from app.services.cache_service import get_or_set
 from app.modules.cost_engine.schemas import ServiceLevel
 from app.schemas.price_analysis import RecipeLevelName
 
@@ -30,7 +31,7 @@ admin_router = APIRouter(prefix="/backoffice/sync", tags=["AdminSync"], dependen
 
 @public_router.get("/manifest", response_model=PublicSyncManifestResponse)
 def get_sync_manifest_route(db: Session = Depends(get_db)):
-    return get_public_sync_manifest(db)
+    return get_or_set("public_sync:manifest", lambda: get_public_sync_manifest(db), ttl_seconds=45)
 
 
 @public_router.get("/catalog-price/{slug}", response_model=PublicCatalogPriceResponse)
@@ -113,13 +114,13 @@ async def stream_site_content_events():
 
 
 @public_router.get("/order-status/{order_ref}", response_model=OrderStatusSnapshotResponse)
-def get_order_status_route(order_ref: str):
-    return get_order_status_snapshot(order_ref)
+def get_order_status_route(order_ref: str, db: Session = Depends(get_db)):
+    return get_order_status_snapshot(db, order_ref)
 
 
 @public_router.get("/order-status/stream/{order_ref}")
-async def stream_order_status_route(order_ref: str):
-    initial_snapshot = get_order_status_snapshot(order_ref).model_dump(mode="json")
+async def stream_order_status_route(order_ref: str, db: Session = Depends(get_db)):
+    initial_snapshot = get_order_status_snapshot(db, order_ref).model_dump(mode="json")
     return StreamingResponse(
         stream_sync_events(f"order-status:{order_ref}", initial_payload=initial_snapshot),
         media_type="text/event-stream",

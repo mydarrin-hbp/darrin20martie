@@ -14,3 +14,4 @@ PyYAML
 google-genai
 google-cloud-storage
 openpyxl
+Pillow

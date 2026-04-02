@@ -12,6 +12,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.service import Service
+from app.modules.orders.models import Order
 from app.modules.cost_engine.models import AdminPriceConfig
 from app.modules.cost_engine.schemas import CostDraftRequest, PartialAvailabilityResponse, ServiceLevel
 from app.modules.cost_engine.service import calculate_draft
@@ -237,6 +238,128 @@ def _build_minimum_order_note(minimum_order_applied: bool) -> str | None:
     return "Acesta este tariful minim care acopera deplasarea si logistica pentru zona dvs."
 
 
+def _resolve_public_currency(
+    *,
+    country_code: str,
+    fallback_currency: str | None,
+    geo_fiscal_context: Any | None,
+) -> tuple[str, str]:
+    currency = fallback_currency or country_code
+    symbol = fallback_currency or country_code
+    if geo_fiscal_context and geo_fiscal_context.country_code == country_code:
+        currency = geo_fiscal_context.currency_code or currency
+        symbol = geo_fiscal_context.currency_symbol or currency
+    return currency, symbol
+
+
+def _build_public_unavailability_message(reason: str) -> str:
+    messages = {
+        "price_config_not_found": "Pretul nu este configurat inca pentru aceasta zona.",
+        "resource_unavailable": "Serviciul este indisponibil temporar in zona selectata.",
+        "partial_available": "Serviciul este disponibil partial si necesita validare operationala.",
+    }
+    return messages.get(reason, "Momentan nu putem calcula pretul final pentru acest serviciu.")
+
+
+def _build_catalog_unavailable_response(
+    *,
+    service: Service,
+    country: Country,
+    zone: Zone,
+    locality: Locality | None,
+    fallback_currency: str | None,
+    geo_fiscal_context: Any | None,
+    status_value: str,
+    partial_availability: dict[str, Any] | None = None,
+) -> PublicCatalogPriceResponse:
+    currency, currency_symbol = _resolve_public_currency(
+        country_code=country.code,
+        fallback_currency=fallback_currency,
+        geo_fiscal_context=geo_fiscal_context,
+    )
+    return PublicCatalogPriceResponse(
+        slug=service.slug,
+        service_name=service.name,
+        currency=currency,
+        currency_symbol=currency_symbol,
+        legislation_code=country.code,
+        country_code=country.code,
+        zone_slug=zone.slug,
+        locality_slug=locality.slug if locality else None,
+        availability_status=status_value,
+        partial_availability=partial_availability
+        or {
+            "status": status_value,
+            "message": _build_public_unavailability_message(status_value),
+        },
+        minimum_order_applied=False,
+        minimum_order_note=None,
+        recommended_level=DevizLevelName.ARGINT.value,
+        base_gross_total=0,
+        delivery_badge=None,
+        delivery_lead_time_days=None,
+        levels=[],
+        last_calculated_at=_utcnow(),
+    )
+
+
+def _build_breakdown_unavailable_response(
+    *,
+    service: Service,
+    country: Country,
+    zone: Zone,
+    locality: Locality | None,
+    fallback_currency: str | None,
+    geo_fiscal_context: Any | None,
+    status_value: str,
+    service_level: ServiceLevel,
+    recipe_level: RecipeLevelName,
+    urgency: bool,
+    partial_availability: dict[str, Any] | None = None,
+) -> PublicPriceBreakdownResponse:
+    currency, currency_symbol = _resolve_public_currency(
+        country_code=country.code,
+        fallback_currency=fallback_currency,
+        geo_fiscal_context=geo_fiscal_context,
+    )
+    return PublicPriceBreakdownResponse(
+        slug=service.slug,
+        service_name=service.name,
+        currency=currency,
+        currency_symbol=currency_symbol,
+        legislation_code=country.code,
+        country_code=country.code,
+        zone_slug=zone.slug,
+        locality_slug=locality.slug if locality else None,
+        availability_status=status_value,
+        partial_availability=partial_availability
+        or {
+            "status": status_value,
+            "message": _build_public_unavailability_message(status_value),
+        },
+        minimum_order_applied=False,
+        minimum_order_note=None,
+        service_level=service_level.value,
+        recipe_level=recipe_level.value,
+        urgency=urgency,
+        distributie_furnizori=0,
+        cost_direct=0,
+        cost_regie=0,
+        mentenanta_platforma=0,
+        venit_platforma=0,
+        garantie_buna_executie=0,
+        taxe_si_garantii=0,
+        tva=0,
+        total_facturabil=0,
+        package_label=None,
+        package_unit=None,
+        included_components=[],
+        delivery_badge=None,
+        delivery_lead_time_days=None,
+        last_calculated_at=_utcnow(),
+    )
+
+
 def _infer_sync_service_type(service: Service) -> str:
     normalized_slug = (service.slug or "").lower()
     if "gazon" in normalized_slug or "grass" in normalized_slug or "landscape" in normalized_slug:
@@ -341,7 +464,19 @@ def get_public_catalog_price(
         )
     ).scalars().first()
     if not pricing_config:
-        return "price_config_not_found"
+        return _build_catalog_unavailable_response(
+            service=service,
+            country=country,
+            zone=zone,
+            locality=locality,
+            fallback_currency=country.code,
+            geo_fiscal_context=geo_fiscal_context,
+            status_value="resource_unavailable",
+            partial_availability={
+                "status": "resource_unavailable",
+                "message": _build_public_unavailability_message("price_config_not_found"),
+            },
+        )
 
     if pricing_config.zone_id and pricing_config.zone_id != zone.id:
         configured_zone = db.get(Zone, pricing_config.zone_id)
@@ -376,27 +511,29 @@ def get_public_catalog_price(
             ),
         )
         if isinstance(result, str):
-            return result
+            return _build_catalog_unavailable_response(
+                service=service,
+                country=country,
+                zone=zone,
+                locality=locality,
+                fallback_currency=pricing_config.currency,
+                geo_fiscal_context=geo_fiscal_context,
+                status_value="resource_unavailable",
+                partial_availability={
+                    "status": "resource_unavailable",
+                    "message": _build_public_unavailability_message(result),
+                },
+            )
         if isinstance(result, PartialAvailabilityResponse):
-            return PublicCatalogPriceResponse(
-                slug=service.slug,
-                service_name=service.name,
-                currency=pricing_config.currency,
-                currency_symbol=pricing_config.currency,
-                legislation_code=pricing_config.legislation_code,
-                country_code=country.code,
-                zone_slug=zone.slug,
-                locality_slug=locality.slug if locality else None,
-                availability_status=result.status,
+            return _build_catalog_unavailable_response(
+                service=service,
+                country=country,
+                zone=zone,
+                locality=locality,
+                fallback_currency=pricing_config.currency,
+                geo_fiscal_context=geo_fiscal_context,
+                status_value=result.status,
                 partial_availability=result.model_dump(mode="json"),
-                minimum_order_applied=False,
-                minimum_order_note=None,
-                recommended_level=level_name.value,
-                base_gross_total=0,
-                delivery_badge=None,
-                delivery_lead_time_days=None,
-                levels=[],
-                last_calculated_at=_utcnow(),
             )
         raw_cost_results[level_name] = result
 
@@ -424,15 +561,10 @@ def get_public_catalog_price(
 
     recommended_result = raw_cost_results[recommended_level]
     base = recommended_result.calculation
-    response_currency = (
-        geo_fiscal_context.currency_code
-        if geo_fiscal_context and geo_fiscal_context.country_code == country.code
-        else pricing_config.currency
-    )
-    response_currency_symbol = (
-        geo_fiscal_context.currency_symbol
-        if geo_fiscal_context and geo_fiscal_context.country_code == country.code
-        else pricing_config.currency
+    response_currency, response_currency_symbol = _resolve_public_currency(
+        country_code=country.code,
+        fallback_currency=pricing_config.currency,
+        geo_fiscal_context=geo_fiscal_context,
     )
     return PublicCatalogPriceResponse(
         slug=service.slug,
@@ -517,7 +649,22 @@ def syncPublicPrices(
         )
     ).scalars().first()
     if not pricing_config:
-        return "price_config_not_found"
+        return _build_breakdown_unavailable_response(
+            service=service,
+            country=country,
+            zone=zone,
+            locality=locality,
+            fallback_currency=country.code,
+            geo_fiscal_context=geo_fiscal_context,
+            status_value="resource_unavailable",
+            service_level=service_level,
+            recipe_level=recipe_level,
+            urgency=urgency,
+            partial_availability={
+                "status": "resource_unavailable",
+                "message": _build_public_unavailability_message("price_config_not_found"),
+            },
+        )
 
     if pricing_config.zone_id and pricing_config.zone_id != zone.id:
         configured_zone = db.get(Zone, pricing_config.zone_id)
@@ -543,59 +690,52 @@ def syncPublicPrices(
         ),
     )
     if isinstance(draft, str):
-        return draft
-    if isinstance(draft, PartialAvailabilityResponse):
-        return PublicPriceBreakdownResponse(
-            slug=service.slug,
-            service_name=service.name,
-            currency=pricing_config.currency,
-            currency_symbol=pricing_config.currency,
-            legislation_code=pricing_config.legislation_code,
-            country_code=country.code,
-            zone_slug=zone.slug,
-            locality_slug=locality.slug if locality else None,
-            availability_status=draft.status,
-            partial_availability=draft.model_dump(mode="json"),
-            minimum_order_applied=False,
-            minimum_order_note=None,
-            service_level=service_level.value,
-            recipe_level=recipe_level.value,
+        return _build_breakdown_unavailable_response(
+            service=service,
+            country=country,
+            zone=zone,
+            locality=locality,
+            fallback_currency=pricing_config.currency,
+            geo_fiscal_context=geo_fiscal_context,
+            status_value="resource_unavailable",
+            service_level=service_level,
+            recipe_level=recipe_level,
             urgency=urgency,
-            distributie_furnizori=0,
-            cost_direct=0,
-            cost_regie=0,
-            mentenanta_platforma=0,
-            venit_platforma=0,
-            garantie_buna_executie=0,
-            taxe_si_garantii=0,
-            tva=0,
-            total_facturabil=0,
-            package_label=None,
-            package_unit=None,
-            included_components=[],
-            delivery_badge=None,
-            delivery_lead_time_days=None,
-            last_calculated_at=_utcnow(),
+            partial_availability={
+                "status": "resource_unavailable",
+                "message": _build_public_unavailability_message(draft),
+            },
+        )
+    if isinstance(draft, PartialAvailabilityResponse):
+        return _build_breakdown_unavailable_response(
+            service=service,
+            country=country,
+            zone=zone,
+            locality=locality,
+            fallback_currency=pricing_config.currency,
+            geo_fiscal_context=geo_fiscal_context,
+            status_value=draft.status,
+            service_level=service_level,
+            recipe_level=recipe_level,
+            urgency=urgency,
+            partial_availability=draft.model_dump(mode="json"),
         )
     package_meta = _resolve_service_package_metadata(db, service)
 
     direct_cost = round(draft.calculation.cost_direct_total, 2)
     maintenance_cost = round(draft.calculation.platform_maintenance_value, 2)
     platform_commission = round(draft.calculation.mydarrin_platform_value, 2)
-    guarantee_cost = round(direct_cost * pricing_config.indirect_cost_percentage, 2)
+    general_management_fee = round(getattr(draft.calculation, "darrin_management_fee_value", 0.0), 2)
+    insurance_cost = round(getattr(draft.calculation, "insurance_premium_value", 0.0), 2)
+    guarantee_cost = round(getattr(draft.calculation, "escrow_retention_value", 0.0), 2)
     vat_cost = round(draft.calculation.vat_value, 2)
-    cost_regie = round(direct_cost + guarantee_cost + maintenance_cost, 2)
-    taxes_and_guarantees = round(vat_cost + guarantee_cost, 2)
-    platform_revenue = round(platform_commission + maintenance_cost, 2)
-    response_currency = (
-        geo_fiscal_context.currency_code
-        if geo_fiscal_context and geo_fiscal_context.country_code == country.code
-        else pricing_config.currency
-    )
-    response_currency_symbol = (
-        geo_fiscal_context.currency_symbol
-        if geo_fiscal_context and geo_fiscal_context.country_code == country.code
-        else pricing_config.currency
+    cost_regie = round(direct_cost + guarantee_cost + maintenance_cost + insurance_cost + general_management_fee, 2)
+    taxes_and_guarantees = round(vat_cost + guarantee_cost + insurance_cost, 2)
+    platform_revenue = round(platform_commission + maintenance_cost + general_management_fee, 2)
+    response_currency, response_currency_symbol = _resolve_public_currency(
+        country_code=country.code,
+        fallback_currency=pricing_config.currency,
+        geo_fiscal_context=geo_fiscal_context,
     )
 
     return PublicPriceBreakdownResponse(
@@ -620,6 +760,8 @@ def syncPublicPrices(
         mentenanta_platforma=maintenance_cost,
         venit_platforma=platform_revenue,
         garantie_buna_executie=guarantee_cost,
+        insurance_premium=insurance_cost,
+        darrin_management_fee=general_management_fee,
         taxe_si_garantii=taxes_and_guarantees,
         tva=vat_cost,
         total_facturabil=round(draft.calculation.gross_total, 2),
@@ -632,8 +774,32 @@ def syncPublicPrices(
     )
 
 
-def get_order_status_snapshot(order_ref: str) -> OrderStatusSnapshotResponse:
+def _default_order_message(status: str) -> str:
+    messages = {
+        "PENDING_PROVIDER_SELECTION": "Comanda a fost primita si se pregateste alocarea.",
+        "SEARCHING_PROVIDER": "Cautam furnizor disponibil",
+        "ASSIGNED": "Comanda a fost alocata.",
+        "IN_PROGRESS": "Executia este in desfasurare.",
+        "PAID": "Plata a fost confirmata.",
+        "COMPLETED": "Comanda a fost finalizata.",
+        "CANCELLED": "Comanda a fost anulata.",
+    }
+    return messages.get(status, "Status actualizat.")
+
+
+def get_order_status_snapshot(db: Session, order_ref: str) -> OrderStatusSnapshotResponse:
     existing = _order_status_state.get(order_ref)
+    order = db.execute(select(Order).where(Order.order_ref == order_ref)).scalar_one_or_none()
+    if order:
+        return OrderStatusSnapshotResponse(
+            order_ref=order.order_ref,
+            status=order.status,
+            provider_ref=order.provider_ref,
+            provider_name=order.provider_name,
+            message=existing.message if existing and existing.message else _default_order_message(order.status),
+            updated_at=order.updated_at or order.created_at,
+            source="orders.db",
+        )
     if existing:
         return existing
     return OrderStatusSnapshotResponse(
@@ -650,7 +816,7 @@ def update_order_status(order_ref: str, data: OrderStatusUpdateRequest) -> Order
         status=data.status,
         provider_ref=data.provider_ref,
         provider_name=data.provider_name,
-        message=data.message,
+        message=data.message or _default_order_message(data.status),
         updated_at=_utcnow(),
     )
     _order_status_state[order_ref] = snapshot

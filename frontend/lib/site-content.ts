@@ -165,6 +165,9 @@ function createFallbackPage(slug: string): HomepageContent {
     investors: "Devino investitor",
     "investors-create": "Creare cont investitor",
     "service-detail": "Pagina serviciu",
+    about: "Despre My Darrin",
+    contact: "Contact My Darrin",
+    legal: "Legal & Termeni",
   };
 
   return {
@@ -417,6 +420,16 @@ export type PublicSyncManifest = {
   status_stream_enabled: boolean;
 };
 
+export type PublicOrderStatusSnapshot = {
+  order_ref: string;
+  status: string;
+  provider_ref?: string | null;
+  provider_name?: string | null;
+  message?: string | null;
+  updated_at: string;
+  source?: string;
+};
+
 export async function getSitePageContent(slug: string): Promise<HomepageContent> {
   try {
     return await fetchPublicJson<HomepageContent>(`${API_BASE}/api/v1/public/pages/${slug}`);
@@ -516,6 +529,14 @@ export async function getPublicServiceTechnicalSpecs(slug: string): Promise<Publ
 export async function getPublicSyncManifest(): Promise<PublicSyncManifest | null> {
   try {
     return await fetchPublicJson<PublicSyncManifest>(`${API_BASE}/api/v1/public/sync/manifest`);
+  } catch {
+    return null;
+  }
+}
+
+export async function getPublicOrderStatus(orderRef: string): Promise<PublicOrderStatusSnapshot | null> {
+  try {
+    return await fetchPublicJson<PublicOrderStatusSnapshot>(`${API_BASE}/api/v1/public/sync/order-status/${orderRef}`);
   } catch {
     return null;
   }

@@ -4,7 +4,7 @@ export default function MarketingAdminPage() {
   return (
     <AdminHub
       title="Marketing"
-      description="Hub administrativ pentru crestere, continut si coordonare comerciala. In iteratia curenta se sprijina pe fluxurile de clienti, parteneri, investitori si preview-urile de homepage deja existente in proiect."
+      description="Hub administrativ pentru crestere, continut si coordonare comerciala. In iteratia curenta se sprijina pe fluxurile de clienti, parteneri, investitori si pe homepage-ul actual sincronizat prin Visual Builder."
       badge="Marketing hub"
       metrics={[
         { label: "Surse lead", value: "3", hint: "Clienti, Parteneri, Investitori" },
@@ -32,10 +32,10 @@ export default function MarketingAdminPage() {
           cta: "Deschide investitori",
         },
         {
-          title: "Preview landing pages",
-          description: "Revizuieste variantele de homepage pentru initiative de marketing si aliniere de continut.",
-          href: "/homepage-preview-v2",
-          cta: "Deschide preview",
+          title: "Visual Builder",
+          description: "Revizuieste si actualizeaza homepage-ul activ, header-ul, footer-ul si ordinea sectiunilor publice.",
+          href: "/system/public-site-content",
+          cta: "Deschide builder",
         },
       ]}
       statusItems={[

@@ -8,12 +8,15 @@ import { ModuleHeader } from "@/components/module-header";
 import {
   CatalogResourceRecord,
   CatalogResourceType,
+  EntityAttachmentRecord,
   createCatalogResource,
   deleteCatalogResource,
   getCatalogResources,
+  getResourceAttachments,
   importEscoResourceFromFile,
   importEscoResourceFromUrl,
   updateCatalogResource,
+  uploadResourceAttachment,
 } from "@/lib/api";
 
 type ResourceForm = {
@@ -65,6 +68,9 @@ export default function ResourcesPage() {
   const [message, setMessage] = useState("");
   const [escoUrl, setEscoUrl] = useState("");
   const [escoFile, setEscoFile] = useState<File | null>(null);
+  const [attachmentFiles, setAttachmentFiles] = useState<Record<number, File | null>>({});
+  const [attachmentTypes, setAttachmentTypes] = useState<Record<number, string>>({});
+  const [attachments, setAttachments] = useState<Record<number, EntityAttachmentRecord[]>>({});
 
   async function load() {
     if (!token) return;
@@ -86,6 +92,13 @@ export default function ResourcesPage() {
         ]),
       ),
     );
+    const attachmentEntries = await Promise.all(
+      data.map(async (item) => {
+        const result = await getResourceAttachments(token, item.id).catch(() => ({ items: [] }));
+        return [item.id, result.items] as const;
+      }),
+    );
+    setAttachments(Object.fromEntries(attachmentEntries));
   }
 
   useEffect(() => {
@@ -138,6 +151,19 @@ export default function ResourcesPage() {
     const result = await importEscoResourceFromFile(token, escoFile);
     setMessage(`Import JSON ESCO finalizat pentru ${result.uri}. Relatii noi: ${result.relations_created}.`);
     setEscoFile(null);
+  }
+
+  async function handleAttachmentUpload(resourceId: number) {
+    if (!token || !attachmentFiles[resourceId]) return;
+    await uploadResourceAttachment(token, {
+      resourceId,
+      attachmentType: attachmentTypes[resourceId] ?? "DOCUMENT",
+      file: attachmentFiles[resourceId] as File,
+    });
+    const result = await getResourceAttachments(token, resourceId);
+    setAttachments((state) => ({ ...state, [resourceId]: result.items }));
+    setAttachmentFiles((state) => ({ ...state, [resourceId]: null }));
+    setMessage("Documentatia resursei a fost incarcata.");
   }
 
   return (
@@ -218,12 +244,50 @@ export default function ResourcesPage() {
                       <div className="font-semibold text-ink">{item.name_ro}</div>
                       <div className="mt-1">{item.resource_type}</div>
                       <div className="mt-2">{item.base_price} / {item.unit}</div>
+                      <div className="mt-2">{attachments[item.id]?.length ?? 0} atasamente</div>
                     </div>
                     <div className="grid gap-3">
                       <button className="btn-primary" type="button" onClick={() => void handleUpdate(item.id)}>Actualizeaza</button>
                       <Link href={`/backoffice/resources/prices?resource_id=${item.id}`} className="btn-secondary text-center">Configureaza preturi</Link>
                       <button className="btn-secondary" type="button" onClick={() => void handleDelete(item.id)}>Sterge</button>
                     </div>
+                  </div>
+                </div>
+                <div className="mt-4 rounded-2xl border border-border bg-white/70 p-4">
+                  <div className="text-sm font-semibold text-ink">Documentatie resursa</div>
+                  <div className="mt-3 grid gap-3 md:grid-cols-[160px_1fr_140px]">
+                    <select
+                      className="field"
+                      value={attachmentTypes[item.id] ?? "DOCUMENT"}
+                      onChange={(event) => setAttachmentTypes((state) => ({ ...state, [item.id]: event.target.value }))}
+                    >
+                      <option value="DOCUMENT">DOCUMENT</option>
+                      <option value="IMAGE">IMAGE</option>
+                      <option value="VIDEO">VIDEO</option>
+                    </select>
+                    <input
+                      className="field"
+                      type="file"
+                      accept=".pdf,image/*,video/*"
+                      onChange={(event) => setAttachmentFiles((state) => ({ ...state, [item.id]: event.target.files?.[0] ?? null }))}
+                    />
+                    <button className="btn-secondary" type="button" onClick={() => void handleAttachmentUpload(item.id)} disabled={!attachmentFiles[item.id]}>
+                      Upload
+                    </button>
+                  </div>
+                  <div className="mt-3 grid gap-2">
+                    {(attachments[item.id] ?? []).slice(0, 6).map((attachment) => (
+                      <a
+                        key={attachment.id}
+                        className="text-sm text-muted underline-offset-2 hover:underline"
+                        href={`${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000"}${attachment.secure_url}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {attachment.attachment_type} · {attachment.file_name}
+                      </a>
+                    ))}
+                    {attachments[item.id]?.length ? null : <div className="text-sm text-muted">Nicio documentatie incarcata inca.</div>}
                   </div>
                 </div>
               </article>

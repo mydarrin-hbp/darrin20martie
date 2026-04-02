@@ -19,6 +19,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
   headers.delete("host");
   headers.delete("content-length");
   headers.delete("origin");
+  headers.delete("expect");
 
   const init: RequestInit = {
     method: request.method,

@@ -6,7 +6,9 @@ from math import asin, cos, radians, sin, sqrt
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.db.sqlite_compat import ensure_sqlite_runtime_schema
 from app.db.session import SessionLocal
+from app.db.session import engine
 from app.models.price_analysis import CatalogResource, Supplier
 from app.models.service import Service
 from app.modules.geography.models import Country, Locality, Zone
@@ -246,7 +248,7 @@ def verify_minimum_order_logic(db: Session) -> VerificationResult:
 
     passed = (
         getattr(breakdown, "minimum_order_applied", False) is True
-        and _round_amount(breakdown.total_facturabil) == 150.0
+        and _round_amount(breakdown.total_facturabil) == 178.50
     )
     return VerificationResult(
         name="Test Comanda Sub Prag",
@@ -260,6 +262,7 @@ def verify_minimum_order_logic(db: Session) -> VerificationResult:
 
 
 def main() -> None:
+    ensure_sqlite_runtime_schema(engine)
     db = SessionLocal()
     try:
         results = [

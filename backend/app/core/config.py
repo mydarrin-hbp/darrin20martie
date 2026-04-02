@@ -37,6 +37,13 @@ class Settings(BaseSettings):
     GCS_ATTACHMENTS_PREFIX: str = "attachments"
     SIGNUP_SMS_CODE_TTL_MINUTES: int = 10
     SMS_DEBUG_DELIVERY: bool = True
+    SMTP_HOST: str | None = None
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str | None = None
+    SMTP_PASSWORD: str | None = None
+    SMTP_SENDER: str | None = None
+    SMTP_FROM_NAME: str | None = "My Darrin"
+    SMTP_USE_TLS: bool = True
 
     model_config = SettingsConfigDict(
         env_file=".env",

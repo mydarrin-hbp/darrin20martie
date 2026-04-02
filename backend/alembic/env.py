@@ -11,6 +11,7 @@ from app.core.config import settings
 from app.db.base import Base
 import app.models.category  # noqa: F401
 import app.models.domain  # noqa: F401
+import app.models.assets  # noqa: F401
 import app.models.price_analysis  # noqa: F401
 import app.models.service  # noqa: F401
 import app.models.subcategory  # noqa: F401

@@ -14,6 +14,30 @@ class CountryResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class CountryBase(BaseModel):
+    name: str = Field(min_length=2, max_length=100)
+    name_ro: str = Field(min_length=2, max_length=100)
+    name_en: str = Field(min_length=2, max_length=100)
+    slug: str = Field(min_length=2, max_length=120)
+    code: str = Field(min_length=2, max_length=3)
+    currency: str = Field(min_length=3, max_length=3)
+    is_active: bool = True
+
+
+class CountryCreate(CountryBase):
+    pass
+
+
+class CountryUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=100)
+    name_ro: str | None = Field(default=None, min_length=2, max_length=100)
+    name_en: str | None = Field(default=None, min_length=2, max_length=100)
+    slug: str | None = Field(default=None, min_length=2, max_length=120)
+    code: str | None = Field(default=None, min_length=2, max_length=3)
+    currency: str | None = Field(default=None, min_length=3, max_length=3)
+    is_active: bool | None = None
+
+
 class ZoneResponse(BaseModel):
     id: int
     name: str
@@ -25,6 +49,30 @@ class ZoneResponse(BaseModel):
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ZoneBase(BaseModel):
+    country_id: int
+    name: str = Field(min_length=2, max_length=100)
+    name_ro: str = Field(min_length=2, max_length=100)
+    name_en: str = Field(min_length=2, max_length=100)
+    slug: str = Field(min_length=2, max_length=120)
+    multiplier: float = 1.0
+    is_active: bool = True
+
+
+class ZoneCreate(ZoneBase):
+    pass
+
+
+class ZoneUpdate(BaseModel):
+    country_id: int | None = None
+    name: str | None = Field(default=None, min_length=2, max_length=100)
+    name_ro: str | None = Field(default=None, min_length=2, max_length=100)
+    name_en: str | None = Field(default=None, min_length=2, max_length=100)
+    slug: str | None = Field(default=None, min_length=2, max_length=120)
+    multiplier: float | None = None
+    is_active: bool | None = None
 
 
 class LocalityBase(BaseModel):

@@ -9,6 +9,7 @@ from app.modules.site_content.models import SiteContentPage
 from app.modules.site_content.schemas import PublicServiceTaxonomyResponse, SiteContentPageUpdate
 from app.modules.sync.service import publish_site_content_change
 from app.services.catalog_service import get_service_by_slug
+from app.services.cache_service import invalidate_prefix
 from app.services.price_analysis_service import get_service_recipe_activities
 
 
@@ -75,6 +76,7 @@ def _base_site_content() -> dict[str, Any]:
                 "legal": ["Termeni", "GDPR", "Politici"],
             },
             "apps": ["iOS", "Android"],
+            "copyright": "Copyright My Darrin | Operated by Home Best Pal",
         },
         "sync": {
             "source": "backoffice.site_content",
@@ -337,7 +339,28 @@ PAGE_DEFAULTS: dict[str, dict[str, Any]] = {
             "hero": {
                 "headline": "Pagina serviciului este alimentata din backoffice",
                 "subheadline": "Media, descrierea, nivelurile si CTA-urile vin din administrarea serviciului.",
-            }
+            },
+            "serviceTiers": [
+                {
+                    "tierKey": "silver",
+                    "title": "Argint",
+                    "marginMultiplier": 0,
+                    "benefitsMarkdown": "- Configuratie standard\n- Executie eficienta",
+                },
+                {
+                    "tierKey": "gold",
+                    "title": "Aur",
+                    "marginMultiplier": 12,
+                    "benefitsMarkdown": "- Programare prioritara\n- Coordonare extinsa",
+                },
+                {
+                    "tierKey": "platinum",
+                    "title": "Platina",
+                    "marginMultiplier": 20,
+                    "benefitsMarkdown": "- Management dedicat\n- SLA premium",
+                },
+            ],
+            "serviceSectionsOrder": ["hero", "pricing", "specialCatalog", "tiers", "benefits"],
         },
     },
 }
@@ -413,6 +436,109 @@ def update_page(db: Session, slug: str, payload: SiteContentPageUpdate) -> SiteC
     db.commit()
     db.refresh(page)
     publish_site_content_change(page)
+    invalidate_prefix("site_content:page:")
+    invalidate_prefix("public_sync:manifest")
+    return page
+
+
+def patch_page_content_value(db: Session, slug: str, path: str, value: Any) -> SiteContentPage:
+    page = get_or_create_page(db, slug)
+    current = deepcopy(page.content or {})
+    keys = [item.strip() for item in path.split(".") if item.strip()]
+    if not keys:
+        return page
+
+    def _is_index(token: str) -> bool:
+        return token.isdigit()
+
+    def _ensure_list_size(items: list[Any], index: int) -> None:
+        while len(items) <= index:
+            items.append({})
+
+    cursor: Any = current
+    parent: Any = None
+    parent_key: str | None = None
+
+    for index, key in enumerate(keys[:-1]):
+        next_key = keys[index + 1]
+        key_is_index = _is_index(key)
+        next_is_index = _is_index(next_key)
+
+        if key_is_index:
+            list_index = int(key)
+            if not isinstance(cursor, list):
+                replacement: list[Any] = []
+                if isinstance(parent, dict) and parent_key is not None:
+                    parent[parent_key] = replacement
+                elif isinstance(parent, list) and parent_key is not None:
+                    parent[int(parent_key)] = replacement
+                cursor = replacement
+
+            _ensure_list_size(cursor, list_index)
+            existing = cursor[list_index]
+            if next_is_index:
+                if not isinstance(existing, list):
+                    existing = []
+                    cursor[list_index] = existing
+            elif not isinstance(existing, dict):
+                existing = {}
+                cursor[list_index] = existing
+
+            parent = cursor
+            parent_key = key
+            cursor = existing
+            continue
+
+        if not isinstance(cursor, dict):
+            replacement = {}
+            if isinstance(parent, dict) and parent_key is not None:
+                parent[parent_key] = replacement
+            elif isinstance(parent, list) and parent_key is not None:
+                parent[int(parent_key)] = replacement
+            cursor = replacement
+
+        existing = cursor.get(key)
+        if next_is_index:
+            if not isinstance(existing, list):
+                existing = []
+                cursor[key] = existing
+        elif not isinstance(existing, dict):
+            existing = {}
+            cursor[key] = existing
+
+        parent = cursor
+        parent_key = key
+        cursor = existing
+
+    last_key = keys[-1]
+    if _is_index(last_key):
+        if not isinstance(cursor, list):
+            replacement = []
+            if isinstance(parent, dict) and parent_key is not None:
+                parent[parent_key] = replacement
+            elif isinstance(parent, list) and parent_key is not None:
+                parent[int(parent_key)] = replacement
+            cursor = replacement
+        last_index = int(last_key)
+        _ensure_list_size(cursor, last_index)
+        cursor[last_index] = value
+    else:
+        if not isinstance(cursor, dict):
+            replacement = {}
+            if isinstance(parent, dict) and parent_key is not None:
+                parent[parent_key] = replacement
+            elif isinstance(parent, list) and parent_key is not None:
+                parent[int(parent_key)] = replacement
+            cursor = replacement
+        cursor[last_key] = value
+
+    page.content = current
+    db.add(page)
+    db.commit()
+    db.refresh(page)
+    publish_site_content_change(page)
+    invalidate_prefix("site_content:page:")
+    invalidate_prefix("public_sync:manifest")
     return page
 
 

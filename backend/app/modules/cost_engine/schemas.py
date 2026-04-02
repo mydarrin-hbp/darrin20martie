@@ -60,6 +60,11 @@ class AdminPriceConfigBase(BaseModel):
     indirect_cost_percentage: float = Field(ge=0, default=0.10)
     platform_maintenance_percentage: float = Field(ge=0, default=0.03)
     mydarrin_platform_percentage: float = Field(ge=0, default=0.15)
+    escrow_retention_percentage: float = Field(ge=0, default=0.0)
+    insurance_premium_fixed: float = Field(ge=0, default=0.0)
+    insurance_premium_percentage: float = Field(ge=0, default=0.0)
+    darrin_management_fee_fixed: float = Field(ge=0, default=0.0)
+    darrin_management_fee_percentage: float = Field(ge=0, default=0.0)
     vat_percentage: float = Field(ge=0, default=0.21)
     minimum_order_value: float = Field(ge=0, default=0)
     minimum_quantity_threshold: float = Field(ge=0, default=0)
@@ -85,6 +90,11 @@ class AdminPriceConfigUpdate(BaseModel):
     indirect_cost_percentage: float | None = Field(default=None, ge=0)
     platform_maintenance_percentage: float | None = Field(default=None, ge=0)
     mydarrin_platform_percentage: float | None = Field(default=None, ge=0)
+    escrow_retention_percentage: float | None = Field(default=None, ge=0)
+    insurance_premium_fixed: float | None = Field(default=None, ge=0)
+    insurance_premium_percentage: float | None = Field(default=None, ge=0)
+    darrin_management_fee_fixed: float | None = Field(default=None, ge=0)
+    darrin_management_fee_percentage: float | None = Field(default=None, ge=0)
     vat_percentage: float | None = Field(default=None, ge=0)
     minimum_order_value: float | None = Field(default=None, ge=0)
     minimum_quantity_threshold: float | None = Field(default=None, ge=0)
@@ -95,6 +105,98 @@ class AdminPriceConfigUpdate(BaseModel):
 
 
 class AdminPriceConfigResponse(AdminPriceConfigBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class FinancialConfigBase(BaseModel):
+    country_id: int | None = None
+    zone_id: int | None = None
+    locality_id: int | None = None
+    service_family: str | None = None
+    mydarrin_commission_percentage: float = Field(ge=0, default=0.10)
+    labor_margin_percentage: float = Field(ge=0, default=0.15)
+    material_margin_percentage: float = Field(ge=0, default=0.10)
+    rental_margin_percentage: float = Field(ge=0, default=0.15)
+    platform_fee_percentage: float = Field(ge=0, default=0.03)
+    indirect_cost_percentage: float = Field(ge=0, default=0.0)
+    escrow_guarantee_percentage: float = Field(ge=0, default=0.05)
+    insurance_percentage: float = Field(ge=0, default=0.0)
+    insurance_fixed_amount: float = Field(ge=0, default=0.0)
+    incomplete_load_fee: float = Field(ge=0, default=0.0)
+    pump_mobilization_fee: float = Field(ge=0, default=0.0)
+    pump_price_per_m3: float = Field(ge=0, default=0.0)
+    is_active: bool = True
+
+
+class FinancialConfigCreate(FinancialConfigBase):
+    pass
+
+
+class FinancialConfigUpdate(BaseModel):
+    country_id: int | None = None
+    zone_id: int | None = None
+    locality_id: int | None = None
+    service_family: str | None = None
+    mydarrin_commission_percentage: float | None = Field(default=None, ge=0)
+    labor_margin_percentage: float | None = Field(default=None, ge=0)
+    material_margin_percentage: float | None = Field(default=None, ge=0)
+    rental_margin_percentage: float | None = Field(default=None, ge=0)
+    platform_fee_percentage: float | None = Field(default=None, ge=0)
+    indirect_cost_percentage: float | None = Field(default=None, ge=0)
+    escrow_guarantee_percentage: float | None = Field(default=None, ge=0)
+    insurance_percentage: float | None = Field(default=None, ge=0)
+    insurance_fixed_amount: float | None = Field(default=None, ge=0)
+    incomplete_load_fee: float | None = Field(default=None, ge=0)
+    pump_mobilization_fee: float | None = Field(default=None, ge=0)
+    pump_price_per_m3: float | None = Field(default=None, ge=0)
+    is_active: bool | None = None
+
+
+class FinancialConfigResponse(FinancialConfigBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class LaborRateBase(BaseModel):
+    country_id: int | None = None
+    zone_id: int | None = None
+    locality_id: int | None = None
+    skill_code: str = Field(min_length=2, max_length=120)
+    skill_label: str = Field(min_length=2, max_length=255)
+    currency: str = Field(min_length=3, max_length=3, default="RON")
+    base_rate: float = Field(ge=0, default=0.0)
+    weekend_multiplier: float = Field(ge=0, default=1.0)
+    holiday_multiplier: float = Field(ge=0, default=1.0)
+    night_multiplier: float = Field(ge=0, default=1.0)
+    is_active: bool = True
+
+
+class LaborRateCreate(LaborRateBase):
+    pass
+
+
+class LaborRateUpdate(BaseModel):
+    country_id: int | None = None
+    zone_id: int | None = None
+    locality_id: int | None = None
+    skill_code: str | None = Field(default=None, min_length=2, max_length=120)
+    skill_label: str | None = Field(default=None, min_length=2, max_length=255)
+    currency: str | None = Field(default=None, min_length=3, max_length=3)
+    base_rate: float | None = Field(default=None, ge=0)
+    weekend_multiplier: float | None = Field(default=None, ge=0)
+    holiday_multiplier: float | None = Field(default=None, ge=0)
+    night_multiplier: float | None = Field(default=None, ge=0)
+    is_active: bool | None = None
+
+
+class LaborRateResponse(LaborRateBase):
     id: int
     created_at: datetime
     updated_at: datetime
@@ -158,6 +260,11 @@ class PriceAnalysisResponse(BaseModel):
     indirect_cost_percentage: float
     platform_maintenance_percentage: float
     mydarrin_platform_percentage: float
+    escrow_retention_percentage: float
+    insurance_premium_fixed: float
+    insurance_premium_percentage: float
+    darrin_management_fee_fixed: float
+    darrin_management_fee_percentage: float
     vat_percentage: float
     platform_margin_coefficient: float
     vat_coefficient: float
@@ -168,6 +275,9 @@ class PriceAnalysisResponse(BaseModel):
     platform_maintenance_value: float
     platform_maintenance_costs: float
     mydarrin_platform_value: float
+    escrow_retention_value: float
+    insurance_premium_value: float
+    darrin_management_fee_value: float
     platform_costs: float
     adjusted_subtotal: float
     final_price: float
@@ -187,6 +297,9 @@ class CostCalculationResponse(BaseModel):
     platform_maintenance_value: float
     platform_maintenance_costs: float
     mydarrin_platform_value: float
+    escrow_retention_value: float
+    insurance_premium_value: float
+    darrin_management_fee_value: float
     platform_costs: float
     net_total: float
     platform_margin_value: float
@@ -200,6 +313,26 @@ class CostCalculationResponse(BaseModel):
     resources: list[ResourceResponse]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ProformaLineItem(BaseModel):
+    code: str
+    label: str
+    amount: float
+    quantity: float | None = None
+    unit: str | None = None
+    metadata: dict = Field(default_factory=dict)
+
+
+class ProformaPayload(BaseModel):
+    service_slug: str
+    service_name: str
+    currency: str
+    net_total: float
+    vat_value: float
+    gross_total: float
+    line_items: list[ProformaLineItem]
+    financial_flow: dict = Field(default_factory=dict)
 
 
 class CostDraftResponse(BaseModel):
@@ -221,3 +354,4 @@ class CostDraftResponse(BaseModel):
     availability_status: str = "available"
     price_analysis: PriceAnalysisResponse
     calculation: CostCalculationResponse
+    proforma_payload: ProformaPayload

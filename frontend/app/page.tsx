@@ -1,7 +1,25 @@
-import { PublicHomepage } from "@/components/public-site-v3";
-import { getSitePageContent } from "@/lib/site-content";
+import { Suspense } from "react";
 
-export default async function HomePage() {
+import { PublicHomepage } from "@/components/public-site-v3";
+import { getPublicCatalogServices, getSitePageContent } from "@/lib/site-content";
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ role?: string; live?: string; email?: string }>;
+}) {
   const page = await getSitePageContent("homepage");
-  return <PublicHomepage page={page} />;
+  const catalogServices = await getPublicCatalogServices();
+  const params = (await searchParams) ?? {};
+  const liveUserEmail = params.live ? params.email : undefined;
+  return (
+    <Suspense fallback={null}>
+      <PublicHomepage
+        page={page}
+        roleHint={params.role}
+        catalogServices={catalogServices}
+        liveUserEmail={liveUserEmail}
+      />
+    </Suspense>
+  );
 }

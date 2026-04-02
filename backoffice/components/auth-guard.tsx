@@ -14,12 +14,23 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     if (loading) {
       return;
     }
+    const isPartnerRoute = pathname.startsWith("/partner");
+    const hasAdminAccess =
+      !isPartnerRoute &&
+      !!gateUnlocked &&
+      !!token &&
+      !!user &&
+      ["ADMIN", "SUPER_ADMIN"].includes(user.role ?? "") &&
+      !!user.permissions?.includes("backoffice:access");
+    const hasPartnerAccess =
+      isPartnerRoute &&
+      !!gateUnlocked &&
+      !!token &&
+      !!user &&
+      user.role === "PARTNER" &&
+      !!user.permissions?.includes("partner:dashboard");
     if (
-      !gateUnlocked ||
-      !token ||
-      !user ||
-      !["ADMIN", "SUPER_ADMIN"].includes(user.role ?? "") ||
-      !user.permissions?.includes("backoffice:access")
+      (!hasAdminAccess && !hasPartnerAccess)
     ) {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }

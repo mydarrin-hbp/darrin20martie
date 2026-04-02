@@ -8,25 +8,58 @@ import subprocess
 import tempfile
 from pathlib import Path
 from uuid import uuid4
+from io import BytesIO
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.models.price_analysis import CatalogActivity, EntityAttachment
+from app.models.price_analysis import CatalogActivity, CatalogResource, EntityAttachment
 from app.models.service import Service
 from app.schemas.price_analysis import EntityAttachmentResponse
 
 
 ATTACHMENT_TYPES = {"IMAGE": "images", "DOCUMENT": "documents", "VIDEO": "videos"}
 LEVEL_NAMES = {"BRONZ", "ARGINT", "AUR", "PLATINUM"}
-ENTITY_TYPES = {"activity", "service"}
+ENTITY_TYPES = {"activity", "service", "resource"}
 TEMP_GCS_FILES: dict[int, Path] = {}
 
 
 def _slugify(value: str) -> str:
     normalized = re.sub(r"[^a-zA-Z0-9._-]+", "-", value).strip("-").lower()
     return normalized or "attachment"
+
+
+def _should_process_image(mime_type: str | None) -> bool:
+    if not mime_type:
+        return False
+    lowered = mime_type.lower()
+    if lowered.startswith("image/svg"):
+        return False
+    return lowered.startswith("image/")
+
+
+def _convert_image_to_webp(content: bytes) -> tuple[bytes, str] | None:
+    try:
+        from PIL import Image
+    except Exception:
+        return None
+
+    try:
+        image = Image.open(BytesIO(content))
+        image.load()
+    except Exception:
+        return None
+
+    max_size = (1600, 1600)
+    image.thumbnail(max_size)
+    output = BytesIO()
+    save_kwargs = {"format": "WEBP", "quality": 80, "method": 6}
+    if image.mode in ("RGBA", "LA"):
+        image.save(output, **save_kwargs)
+    else:
+        image.convert("RGB").save(output, **save_kwargs)
+    return output.getvalue(), "image/webp"
 
 
 def _storage_root() -> Path:
@@ -126,6 +159,8 @@ def _get_entity(db: Session, entity_type: str, entity_id: int):
         return db.get(CatalogActivity, entity_id)
     if entity_type == "service":
         return db.get(Service, entity_id)
+    if entity_type == "resource":
+        return db.get(CatalogResource, entity_id)
     return None
 
 
@@ -163,12 +198,16 @@ def sync_entity_attachment_fields(db: Session, *, entity_type: str, entity_id: i
             continue
         level_attachments.setdefault(item.level_name, []).append(item.secure_url)
 
-    entity.images = images
-    entity.documents = documents
-    entity.videos = videos
-    entity.level_attachments = level_attachments
-    db.commit()
-    db.refresh(entity)
+    # Activities and services keep a denormalized projection of attachment URLs.
+    # Resources currently use entity_attachments as source-of-truth and don't need
+    # mirrored JSON columns on the model.
+    if all(hasattr(entity, field) for field in ("images", "documents", "videos", "level_attachments")):
+        entity.images = images
+        entity.documents = documents
+        entity.videos = videos
+        entity.level_attachments = level_attachments
+        db.commit()
+        db.refresh(entity)
     return entity
 
 
@@ -204,11 +243,19 @@ def create_entity_attachment(
         return "entity_not_found"
 
     suffix = Path(file_name or "").suffix or mimetypes.guess_extension(mime_type or "") or ""
+    processed_content = content
+    processed_mime = mime_type or mimetypes.guess_type(file_name or "")[0] or "application/octet-stream"
+    if attachment_type == "IMAGE" and _should_process_image(processed_mime):
+        converted = _convert_image_to_webp(content)
+        if converted:
+            processed_content, processed_mime = converted
+            suffix = ".webp"
+            file_name = f"{Path(file_name or 'image').stem}.webp"
     storage_file_name = f"{uuid4().hex}-{_slugify(Path(file_name or 'attachment').stem)}{suffix}"
     storage_key = str(Path(entity_type) / str(entity_id) / storage_file_name).replace("\\", "/")
     file_path = _storage_root() / storage_key
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    file_path.write_bytes(content)
+    file_path.write_bytes(processed_content)
 
     attachment = EntityAttachment(
         entity_type=entity_type,
@@ -216,7 +263,7 @@ def create_entity_attachment(
         attachment_type=attachment_type,
         level_name=level_name.upper() if level_name else None,
         file_name=file_name or storage_file_name,
-        mime_type=mime_type or mimetypes.guess_type(file_name or "")[0] or "application/octet-stream",
+        mime_type=processed_mime,
         storage_key=storage_key,
         secure_url="",
     )
@@ -227,7 +274,7 @@ def create_entity_attachment(
     attachment.secure_url = build_secure_attachment_url(attachment)
     db.commit()
     db.refresh(attachment)
-    _upload_to_gcs(storage_key=storage_key, content=content, mime_type=attachment.mime_type)
+    _upload_to_gcs(storage_key=storage_key, content=processed_content, mime_type=attachment.mime_type)
     sync_entity_attachment_fields(db, entity_type=entity_type, entity_id=entity_id)
     return _serialize_attachment(attachment)
 

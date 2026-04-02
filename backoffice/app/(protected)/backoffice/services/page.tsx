@@ -149,6 +149,7 @@ function ServiceTierEditor({
               className="field"
               placeholder="Multiplicator marja (%)"
               value={tier.marginMultiplier}
+              type="number"
               onChange={(event) =>
                 onChange(
                   tiers.map((item, itemIndex) =>
@@ -190,6 +191,7 @@ export default function ServicesPage() {
   const [form, setForm] = useState<ServiceForm>(emptyForm);
   const [editing, setEditing] = useState<Record<number, ServiceForm>>({});
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [attachmentFiles, setAttachmentFiles] = useState<Record<number, File | null>>({});
   const [attachmentTypes, setAttachmentTypes] = useState<Record<number, string>>({});
   const [attachmentLevels, setAttachmentLevels] = useState<Record<number, string>>({});
@@ -233,14 +235,52 @@ export default function ServicesPage() {
     [services],
   );
 
-async function handleCreate(event: FormEvent<HTMLFormElement>) {
+  function validateForm(payload: ReturnType<typeof toPayload>) {
+    if (!payload.name.trim()) {
+      return "Numele serviciului este obligatoriu.";
+    }
+    if (!payload.slug.trim()) {
+      return "Slug-ul serviciului este obligatoriu.";
+    }
+    if (payload.slug.includes(" ")) {
+      return "Slug-ul nu poate contine spatii.";
+    }
+    const tiers = payload.level_attachments?.service_tiers ?? [];
+    if (tiers.some((tier) => Number.isNaN(Number(tier.marginMultiplier)))) {
+      return "Multiplicatorii de marja trebuie sa fie numerici.";
+    }
+    return "";
+  }
+
+  function validateAttachment(file: File, type: string) {
+    if (type === "IMAGE" && !file.type.startsWith("image/")) {
+      return "Pentru Imagine acceptam doar fisiere image/*.";
+    }
+    if (type === "VIDEO" && !file.type.startsWith("video/")) {
+      return "Pentru Video acceptam doar fisiere video/*.";
+    }
+    if (type === "DOCUMENT" && file.type !== "application/pdf") {
+      return "Pentru Document acceptam doar PDF.";
+    }
+    return "";
+  }
+
+  async function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!token) return;
-    await createService(token, toPayload(form));
+    setError("");
+    setMessage("");
+    const payload = toPayload(form);
+    const validationError = validateForm(payload);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    await createService(token, payload);
     await patchContentSync(token, {
       slug: "service-detail",
       path: "serviceTiers",
-      value: toPayload(form).level_attachments.service_tiers,
+      value: payload.level_attachments.service_tiers,
     });
     setForm(emptyForm);
     setMessage("Serviciul a fost creat.");
@@ -249,7 +289,14 @@ async function handleCreate(event: FormEvent<HTMLFormElement>) {
 
   async function handleUpdate(id: number) {
     if (!token) return;
+    setError("");
+    setMessage("");
     const payload = toPayload(editing[id]);
+    const validationError = validateForm(payload);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     await updateService(token, id, payload);
     await patchContentSync(token, {
       slug: "service-detail",
@@ -262,6 +309,8 @@ async function handleCreate(event: FormEvent<HTMLFormElement>) {
 
   async function handleDelete(id: number) {
     if (!token) return;
+    setError("");
+    setMessage("");
     await deleteService(token, id);
     setMessage("Serviciul a fost sters.");
     await load();
@@ -269,11 +318,20 @@ async function handleCreate(event: FormEvent<HTMLFormElement>) {
 
   async function handleUploadAttachment(serviceId: number) {
     if (!token || !attachmentFiles[serviceId]) return;
+    setError("");
+    setMessage("");
+    const file = attachmentFiles[serviceId] as File;
+    const attachmentType = attachmentTypes[serviceId] ?? "IMAGE";
+    const attachmentError = validateAttachment(file, attachmentType);
+    if (attachmentError) {
+      setError(attachmentError);
+      return;
+    }
     await uploadServiceAttachment(token, {
       serviceId,
-      attachmentType: attachmentTypes[serviceId] ?? "IMAGE",
+      attachmentType,
       levelName: attachmentLevels[serviceId] || undefined,
-      file: attachmentFiles[serviceId] as File,
+      file,
     });
     setMessage("Atasamentul serviciului a fost incarcat.");
     await getServiceAttachments(token, serviceId);
@@ -295,6 +353,7 @@ async function handleCreate(event: FormEvent<HTMLFormElement>) {
       </div>
 
       {message ? <div className="mb-6 rounded-2xl border border-border bg-white/75 px-4 py-3 text-sm text-muted">{message}</div> : null}
+      {error ? <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div> : null}
 
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <section className="panel p-6">

@@ -1,5 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+
+import { resolveLocale } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "My Darrin",
@@ -7,8 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = cookies();
+  const locale = resolveLocale(cookieStore.get("mydarrin_locale")?.value);
   return (
-    <html lang="ro">
+    <html lang={locale}>
       <body>{children}</body>
     </html>
   );

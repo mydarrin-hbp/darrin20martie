@@ -21,6 +21,12 @@ class SiteContentPageUpdate(BaseModel):
     notes: str | None = None
 
 
+class SiteContentPatchRequest(BaseModel):
+    slug: str
+    path: str = Field(min_length=3, max_length=255)
+    value: Any
+
+
 class SiteContentPageListItem(BaseModel):
     slug: str
     title: str

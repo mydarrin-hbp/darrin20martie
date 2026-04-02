@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Inter } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
@@ -22,6 +23,10 @@ import { PublicCheckoutSubmit } from "@/components/public-checkout-submit";
 import { GeoRestrictionGate } from "@/components/geo-restriction-gate";
 import { LiveActivityFeed } from "@/components/live-activity-feed";
 import { VisualEditableText } from "@/components/visual-editable-text";
+import { PublicPaymentStatusClient } from "@/components/public-payment-status-client";
+import { PublicAccountLoginForm } from "@/components/public-account-login-form";
+import { ClientOrders } from "@/components/client-orders";
+import { ClientOrderDetailPanel } from "@/components/client-order-detail";
 import {
   getPublicServiceBySlug,
   publicCrossSellMap,
@@ -52,7 +57,7 @@ function LogoBlock({ page, inverse = false }: { page: HomepageContent; inverse?:
     <div className="v3-logo-block">
       {logoUrl ? (
         <div className="v3-logo-image-shell">
-          <img src={logoUrl} alt={logoText} className="v3-logo-image" />
+          <Image src={logoUrl} alt={logoText} className="v3-logo-image" width={140} height={48} />
         </div>
       ) : (
         <div className="v3-logo-mark">
@@ -143,8 +148,45 @@ type ServiceMediaAssets = {
   documents?: string[];
 };
 
+type SidebarItem = {
+  label: string;
+  href: string;
+  subItems?: Array<{ label: string; href: string }>;
+};
+
+type SidebarSection = {
+  title: string;
+  items: SidebarItem[];
+  highlight?: boolean;
+};
+
+type AccountSidebarItem = {
+  label: string;
+  href: string;
+  meta?: string;
+};
+
+type AccountSidebarSection = {
+  title: string;
+  items: AccountSidebarItem[];
+};
+
 type ResolvedServiceRecord = (typeof publicServiceCatalog)[number] & {
   media?: ServiceMediaAssets;
+};
+
+type CartEntry = {
+  slug: string;
+  card?: PublicCatalogServiceCard | null;
+  dynamicPrice?: PublicCatalogPrice | null;
+};
+
+type CheckoutContext = {
+  slug: string;
+  card?: PublicCatalogServiceCard | null;
+  dynamicPrice?: PublicCatalogPrice | null;
+  targetAddress?: string | null;
+  placeId?: string | null;
 };
 
 const DEFAULT_SERVICE_BENEFITS = ["Pret standardizat", "Garantie", "Asigurare", "Profesionisti verificati"];
@@ -155,6 +197,124 @@ function normalizeMediaAssets(card?: PublicCatalogServiceCard | null): ServiceMe
     videos: (card?.videos ?? []).filter(Boolean),
     documents: (card?.documents ?? []).filter(Boolean),
   };
+}
+
+function normalizeCatalogDimensions(catalogServices?: PublicCatalogServiceCard[]) {
+  const categories = new Map<string, Set<string>>();
+  const domains = new Set<string>();
+
+  if (catalogServices?.length) {
+    for (const service of catalogServices) {
+      if (service.category) {
+        if (!categories.has(service.category)) {
+          categories.set(service.category, new Set());
+        }
+        for (const subcategory of service.subcategories ?? []) {
+          if (subcategory) {
+            categories.get(service.category)?.add(subcategory);
+          }
+        }
+      }
+      if (service.domain) {
+        domains.add(service.domain);
+      }
+    }
+  } else {
+    for (const service of publicServiceCatalog) {
+      if (service.category) {
+        if (!categories.has(service.category)) {
+          categories.set(service.category, new Set());
+        }
+      }
+    }
+  }
+
+  const categoryItems = Array.from(categories.entries())
+    .map(([category, subcategories]) => ({
+      label: category,
+      href: `/catalog?category=${encodeURIComponent(category)}`,
+      subItems: Array.from(subcategories.values())
+        .sort((a, b) => a.localeCompare(b))
+        .slice(0, 8)
+        .map((subcategory) => ({
+          label: subcategory,
+          href: `/catalog?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`,
+        })),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  const domainItems = Array.from(domains.values())
+    .sort((a, b) => a.localeCompare(b))
+    .map((domain) => ({
+      label: domain,
+      href: `/catalog?domain=${encodeURIComponent(domain)}`,
+    }));
+
+  return { categoryItems, domainItems };
+}
+
+function resolveFooterLink(label: string) {
+  const normalized = label.toLowerCase();
+  if (normalized.includes("catalog")) return "/catalog";
+  if (normalized.includes("homepage") || normalized.includes("acasa")) return "/";
+  if (normalized.includes("serviciu")) return "/catalog";
+  if (normalized.includes("partener")) return "/partners/join";
+  if (normalized.includes("invest")) return "/investors";
+  if (normalized.includes("contact")) return "/contact";
+  if (normalized.includes("despre") || normalized.includes("about")) return "/about";
+  if (normalized.includes("gdpr") || normalized.includes("termeni") || normalized.includes("politic")) return "/legal";
+  if (normalized.includes("cont")) return "/account/create";
+  return "/catalog";
+}
+
+function buildFooterGroups(page: HomepageContent) {
+  const footerColumns = page.content.footer?.columns;
+  const footerApps = page.content.footer?.apps;
+  const fallbackColumns = publicFooterColumns;
+  const columnEntries = footerColumns
+    ? Object.entries(footerColumns).map(([title, links]) => ({
+        title,
+        links: links.map((label) => ({ label, href: resolveFooterLink(label) })),
+      }))
+    : fallbackColumns;
+
+  const findColumn = (keywords: string[]) =>
+    columnEntries.find((column) => keywords.some((keyword) => column.title.toLowerCase().includes(keyword)));
+
+  const usefulLinks = findColumn(["servicii", "serviciu", "util"]) ?? columnEntries[0];
+  const legalLinks = findColumn(["legal", "termeni", "gdpr", "politic"]) ?? columnEntries[2] ?? columnEntries[0];
+  const supportLinks = findColumn(["companie", "contact", "suport", "despre"]) ?? columnEntries[1] ?? columnEntries[0];
+  const usefulPages = findColumn(["pagina", "about", "despre", "contact"]) ?? columnEntries[3] ?? columnEntries[0];
+
+  return [
+    {
+      title: "Useful information",
+      links: usefulLinks?.links ?? [],
+    },
+    {
+      title: "Terms & conditions",
+      links: legalLinks?.links ?? [],
+    },
+    {
+      title: "Customer support",
+      links: [
+        ...(supportLinks?.links ?? []),
+        { label: "AI Darrin", href: "/account" },
+        { label: "Suport clienti", href: "/contact" },
+      ],
+    },
+    {
+      title: "Useful pages",
+      links: usefulPages?.links ?? [],
+    },
+  ];
+}
+
+function parseBenefits(markdown?: string | null) {
+  return (markdown ?? "")
+    .split("\n")
+    .map((line) => line.replace(/^\s*-\s*/, "").trim())
+    .filter(Boolean);
 }
 
 function resolveMediaType(assets: ServiceMediaAssets) {
@@ -208,6 +368,12 @@ function parseStaticPrice(startingPrice: string) {
     currencyLabel: normalizeCurrencyLabel(match[2]),
     prefixLabel: startingPrice.toLowerCase().includes("de la") ? "de la" : "",
   };
+}
+
+function parsePriceAmount(value: string) {
+  const normalized = value.replace(/\./g, "").replace(",", ".");
+  const amount = Number(normalized);
+  return Number.isFinite(amount) ? amount : 0;
 }
 
 function resolveServicePrice(
@@ -344,68 +510,96 @@ function PriceLockup({
 
 function PublicHeader({ page }: { page: HomepageContent }) {
   const content = page.content;
-  const menuItems = content.header?.menu?.length ? content.header.menu : publicNavLinks.map((item) => item.label);
+  const headerLinks = [
+    { label: "Servicii", href: "/catalog" },
+    { label: "About", href: "/about" },
+    { label: "InteDarrin AI", href: "/account" },
+    { label: "Devino Partener", href: "/partners/join" },
+    { label: "Devino Investitor", href: "/investors" },
+    { label: "Contact", href: "/contact" },
+  ];
 
   return (
     <header className="v3-header-shell">
       <div className="v3-header-main">
-        <div className="v3-header-main-inner">
+        <div className="v3-header-main-inner v3-header-main-clean">
           <Link href="/" className="v3-header-brand">
             <LogoBlock page={page} />
           </Link>
 
-          <div className="v3-header-delivery">
-            <span className="v3-header-delivery-label">Disponibil in</span>
-            <strong>{content.header?.locationLabel ?? "Bucuresti si Ilfov"}</strong>
-          </div>
+          <nav className="v3-header-links">
+            {headerLinks.map((link) => (
+              <Link key={link.label} href={link.href} className="v3-header-link">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
-          <div className="v3-market-searchbar">
-            <div className="v3-market-search-filter">Toate</div>
-            <div className="v3-market-search-input">{content.header?.searchPlaceholder ?? "Cauta servicii, AI, poze, video sau cod serviciu"}</div>
-            <Link href="/catalog" className="v3-market-search-action">
-              Cauta
-            </Link>
-          </div>
-
-          <div className="v3-header-actions">
-            <div className="v3-header-locale">
-              <span className="v3-header-flag">RO</span>
-              <span>{content.header?.language ?? "Romanian"}</span>
+          <div className="v3-header-search">
+            <div className="v3-market-searchbar v3-market-searchbar-compact">
+              <input
+                className="v3-market-search-input"
+                placeholder={content.header?.searchPlaceholder ?? "Cauta servicii, AI, poze, video sau cod serviciu"}
+                aria-label="Cauta servicii"
+              />
+              <Link href="/catalog" className="v3-market-search-action">
+                Cauta
+              </Link>
             </div>
-            <Link href="https://admin.mydarrin.homebestpal.com" className="v3-header-account-chip">
-              <span className="v3-header-account-label">Administrare</span>
-              <strong>Backoffice</strong>
-            </Link>
-            <Link href="/account" className="v3-header-account-chip">
-              <span className="v3-header-account-label">Salut, intra in cont</span>
-              <strong>Cont & onboarding</strong>
-            </Link>
-            <Link href="/checkout" className="v3-header-orders-chip">
-              <span>Comenzi</span>
-              <strong>& status</strong>
-            </Link>
+          </div>
+
+          <div className="v3-header-actions v3-header-actions-clean">
+            <div className="v3-header-account">
+              <button type="button" className="v3-header-account-chip" aria-haspopup="true">
+                <span className="v3-header-account-icon" aria-hidden />
+                <span className="v3-header-account-label">
+                  Contul meu
+                </span>
+              </button>
+              <div className="v3-header-account-menu">
+                <div className="v3-header-account-title">Momentan nu esti autentificat</div>
+                <Link href="/account" className="v3-primary-button">
+                  Autentifica-te
+                </Link>
+                <Link href="/account/create" className="v3-dark-button">
+                  Creeaza cont
+                </Link>
+              </div>
+            </div>
             <Link href="/cart" className="v3-header-cart-chip">
-              <span className="v3-chip-badge">3</span>
               <strong>Cos</strong>
             </Link>
             <Link href="/account" className="v3-ai-chip v3-ai-chip-header">
-              Darrin AI
+              <span className="v3-ai-icon" aria-hidden />
+              AI Darrin
             </Link>
           </div>
         </div>
-
-        <div className="v3-header-nav-strip">
-          <div className="v3-header-nav-inner">
-            <Link href="/catalog" className="v3-header-nav-emphasis">
-              Toate serviciile
+      </div>
+      <div className="v3-header-contrast-strip">
+        <div className="v3-header-contrast-inner">
+          <span>Acces rapid</span>
+          <div className="v3-header-contrast-links">
+            <Link href="/my-account" className="v3-header-contrast-link">
+              Contul meu
             </Link>
-            {menuItems.map((itemLabel) => (
-              <Link key={itemLabel} href="/catalog" className="v3-header-strip-link">
-                {itemLabel}
-              </Link>
-            ))}
-            <Link href="/account/create" className="v3-header-strip-link v3-header-strip-link-accent">
-              Creeaza cont
+            <Link href="/contact" className="v3-header-contrast-link">
+              Suport clienti
+            </Link>
+            <Link href="/account" className="v3-header-contrast-link">
+              InteDarrin AI
+            </Link>
+            <Link href="/my-account?role=partner" className="v3-header-contrast-link">
+              Parteneri
+            </Link>
+            <Link href="/my-account?role=investor" className="v3-header-contrast-link">
+              Investitori
+            </Link>
+            <Link href="/my-account?role=provider" className="v3-header-contrast-link">
+              Provideri
+            </Link>
+            <Link href="/my-account?role=admin" className="v3-header-contrast-link">
+              Admin
             </Link>
           </div>
         </div>
@@ -415,14 +609,30 @@ function PublicHeader({ page }: { page: HomepageContent }) {
 }
 
 function PublicFooter({ page }: { page: HomepageContent }) {
-  const branding = page.content.branding;
-  const footerColumns = page.content.footer?.columns;
-  const footerApps = page.content.footer?.apps;
+  const footerGroups = buildFooterGroups(page);
+  const hbpResources = [
+    {
+      title: "Useful information",
+      links: ["Terms and conditions", "Privacy Policy", "ANPC", "How to order online", "Delivery of orders"],
+    },
+    {
+      title: "Terms and conditions",
+      links: ["Payment methods", "General conditions", "Processing of personal data", "Posted services"],
+    },
+    {
+      title: "Policy on the use of cookies",
+      links: ["Online resolution of disputes", "Customer support", "ANPC-SAL", "Support for partners"],
+    },
+    {
+      title: "Useful pages",
+      links: ["About us", "Company", "Contact", "My account", "Repair form", "Call center"],
+    },
+  ];
 
   return (
     <footer className="v3-footer">
       <div className="v3-footer-inner">
-        <div>
+        <div className="v3-footer-brand">
           <LogoBlock page={page} inverse />
           <p className="v3-footer-copy">
             Platforma publica My Darrin pentru servicii la cerere, AI operational si profesionisti verificati. Continutul
@@ -436,40 +646,63 @@ function PublicFooter({ page }: { page: HomepageContent }) {
             <Pill>[ICON]</Pill>
           </div>
           <div className="v3-footer-actions">
-            {(footerApps?.[0] ?? "iOS App") ? (
-              <Link href="/" className="v3-store-link">
-                {footerApps?.[0] ?? "iOS App"}
-              </Link>
-            ) : null}
-            {(footerApps?.[1] ?? "Android App") ? (
-              <Link href="/account/create" className="v3-store-link v3-store-link-orange">
-                {footerApps?.[1] ?? "Android App"}
-              </Link>
-            ) : null}
             <span className="v3-language-chip">RO | EN</span>
+          </div>
+          <div className="v3-footer-topbar v3-footer-topbar-simple">
+            <div className="v3-footer-topbar-title">Aboneaza-te / Trimite feedback</div>
+            <div className="v3-footer-topbar-actions">
+              <input className="v3-footer-input" placeholder="Adresa de email" aria-label="Email feedback" />
+              <button type="button" className="v3-footer-cta">
+                Trimite
+              </button>
+            </div>
+            <div className="v3-footer-topbar-apps">
+              <span>Aplicatia My Darrin</span>
+              <div className="v3-footer-app-grid">
+                <span className="v3-footer-app-badge">App Store</span>
+                <span className="v3-footer-app-badge">Google Play</span>
+                <span className="v3-footer-app-badge">AppGallery</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="v3-footer-grid">
-          {(footerColumns
-            ? Object.entries(footerColumns).map(([title, links]) => ({
-                title,
-                links: links.map((label) => ({ label, href: "/catalog" })),
-              }))
-            : publicFooterColumns
-          ).map((column) => (
-            <div key={column.title}>
-              <div className="v3-footer-title">{column.title}</div>
-              <div className="v3-footer-links">
-                {column.links.map((link) => (
-                  <Link key={link.label} href={link.href}>
-                    {link.label}
-                  </Link>
-                ))}
+        <div className="v3-footer-left">
+          <div className="v3-footer-groups">
+            {footerGroups.map((group) => (
+              <div key={group.title} className="v3-footer-group">
+                <div className="v3-footer-title">{group.title}</div>
+                <div className="v3-footer-inline-links">
+                  {group.links.map((link) =>
+                    link.href.startsWith("http") ? (
+                      <a key={link.label} href={link.href} target="_blank" rel="noreferrer">
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link key={link.label} href={link.href}>
+                        {link.label}
+                      </Link>
+                    ),
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <div className="v3-footer-resources">
+            {hbpResources.map((group) => (
+              <div key={group.title} className="v3-footer-resource-col">
+                <div className="v3-footer-resource-title">{group.title}</div>
+                <div className="v3-footer-resource-links">
+                  {group.links.map((label) => (
+                    <span key={label}>{label}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+
       </div>
 
       <div className="v3-footer-meta">
@@ -615,9 +848,149 @@ function AccountBenefitsPanel({
   );
 }
 
-export function PublicHomepage({ page, roleHint }: { page: HomepageContent; roleHint?: string }) {
+function AccountEntryCard({
+  title,
+  description,
+  loginHref,
+  registerHref,
+  footerNote,
+  eyebrow = "Conturi profesionale",
+}: {
+  title: string;
+  description: string;
+  loginHref: string;
+  registerHref: string;
+  footerNote?: string;
+  eyebrow?: string;
+}) {
+  return (
+    <div className="v3-entry-card">
+      <div className="v3-card-kicker">{eyebrow}</div>
+      <div className="v3-entry-card-title">{title}</div>
+      <p className="v3-muted-copy">{description}</p>
+      <div className="v3-entry-card-actions">
+        <Link href={loginHref} className="v3-primary-button">
+          Autentifica-te
+        </Link>
+        <Link href={registerHref} className="v3-dark-button">
+          Creeaza cont
+        </Link>
+      </div>
+      {footerNote ? <div className="v3-inline-note">{footerNote}</div> : null}
+    </div>
+  );
+}
+
+function RoleAccessPanel({
+  title,
+  description,
+  loginHref,
+  registerHref,
+  footerNote,
+}: {
+  title: string;
+  description: string;
+  loginHref: string;
+  registerHref: string;
+  footerNote?: string;
+}) {
+  return (
+    <div className="v3-role-access">
+      <div>
+        <div className="v3-card-kicker">Acces cont</div>
+        <h2 className="v3-section-title">{title}</h2>
+        <p className="v3-page-description">{description}</p>
+        {footerNote ? <div className="v3-inline-note v3-inline-note-soft">{footerNote}</div> : null}
+      </div>
+      <div className="v3-role-access-actions">
+        <Link href={loginHref} className="v3-primary-button">
+          Autentifica-te
+        </Link>
+        <Link href={registerHref} className="v3-dark-button">
+          Creeaza cont
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function AccountDashboardShell({
+  page,
+  roleLabel,
+  title,
+  description,
+  sidebar,
+  headerStats,
+  children,
+  action,
+}: {
+  page: HomepageContent;
+  roleLabel: string;
+  title: string;
+  description: string;
+  sidebar: AccountSidebarSection[];
+  headerStats: Array<{ label: string; value: string; hint?: string }>;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
+  return (
+    <PublicShell page={page}>
+      <section className="v3-panel-card">
+        <div className="v3-page-hero">
+          <div>
+            <div className="v3-eyebrow">{roleLabel}</div>
+            <h1 className="v3-page-title">{title}</h1>
+            <p className="v3-page-description">{description}</p>
+          </div>
+          {action}
+        </div>
+        <div className="v3-account-stats">
+          {headerStats.map((stat) => (
+            <div key={stat.label} className="v3-account-stat-card">
+              <div className="v3-account-stat-label">{stat.label}</div>
+              <div className="v3-account-stat-value">{stat.value}</div>
+              {stat.hint ? <div className="v3-account-stat-hint">{stat.hint}</div> : null}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="v3-account-shell">
+        <aside className="v3-account-sidebar">
+          {sidebar.map((section) => (
+            <div key={section.title} className="v3-account-sidebar-section">
+              <div className="v3-account-sidebar-title">{section.title}</div>
+              <div className="v3-account-sidebar-items">
+                {section.items.map((item) => (
+                  <Link key={item.href} href={item.href} className="v3-account-sidebar-link">
+                    <span>{item.label}</span>
+                    {item.meta ? <span className="v3-account-sidebar-meta">{item.meta}</span> : null}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </aside>
+        <div className="v3-account-main">{children}</div>
+      </section>
+    </PublicShell>
+  );
+}
+
+export function PublicHomepage({
+  page,
+  roleHint,
+  catalogServices,
+  liveUserEmail,
+}: {
+  page: HomepageContent;
+  roleHint?: string;
+  catalogServices?: PublicCatalogServiceCard[];
+  liveUserEmail?: string;
+}) {
   const content = page.content;
   const services = buildHomepageServices(page);
+  const { categoryItems, domainItems } = normalizeCatalogDimensions(catalogServices);
   const heroImageUrl = content.mediaLibrary?.heroImageUrl;
   const slogan = content.branding?.slogan ?? "Structura marketplace aprobata";
   const detectedRole = (roleHint ?? "CLIENT").toUpperCase() as "CLIENT" | "INVESTOR" | "PARTNER";
@@ -649,6 +1022,16 @@ export function PublicHomepage({ page, roleHint }: { page: HomepageContent; role
 
   return (
     <PublicShell page={page}>
+      {liveUserEmail ? (
+        <section className="v3-live-banner">
+          <div className="v3-live-banner-card">
+            <div className="v3-live-pill">Live</div>
+            <div>
+              <strong>Cont activ.</strong> Esti live inregistrat ca {liveUserEmail}.
+            </div>
+          </div>
+        </section>
+      ) : null}
       <section className="v3-marketplace-stage">
         <article className="v3-marketplace-notice">
           <div className="v3-card-kicker">{slogan}</div>
@@ -692,53 +1075,106 @@ export function PublicHomepage({ page, roleHint }: { page: HomepageContent; role
 
       <div className="v3-grid-layout">
         <aside className="v3-sidebar-card">
-          <div className="v3-kicker">Panou administrare</div>
-          <h2 className="v3-sidebar-title">Structura Backoffice</h2>
+          <div className="v3-kicker">Sidebar sincronizat</div>
+          <h2 className="v3-sidebar-title">Navigare publica</h2>
           <p className="v3-muted-copy">
-            Varianta publica foloseste aceeasi logica aprobata: Super Admin configureaza continutul, media si CTA-urile din
-            Backoffice, apoi sincronizarea publica este vizibila imediat in homepage, catalog si pagina de serviciu.
+            Structura din stanga oglindeste doar sectiunile publice aprobate in Backoffice. Orice ajustare de categorii,
+            domenii sau linkuri se sincronizeaza automat aici.
           </p>
 
-          <div className="v3-admin-entry-card">
-            <div className="v3-card-kicker">Acces Backoffice</div>
-            <h3 className="v3-admin-entry-title">Panoul de administrare este separat si ramane pe subdomeniul dedicat</h3>
-            <p className="v3-muted-copy">
-              Vizitatorii folosesc `mydarrin.homebestpal.com`, iar administratorii intra in Backoffice prin ruta dedicata pentru
-              rolurile Admin si Super Admin.
-            </p>
-            <div className="v3-admin-entry-actions">
-              <Link href="https://admin.mydarrin.homebestpal.com" className="v3-dark-button">
-                Deschide Backoffice
-              </Link>
-              <span className="v3-inline-note">Roluri permise: Super Admin, Admin</span>
-            </div>
-          </div>
-
-          <div className="v3-sidebar-stack">
-            {[
+          <div className="v3-sidebar-accordion">
+            {([
               {
-                title: "Homepage publica",
-                branches: ["Hero", "Categorii rapide", "Dual entry", "Featured services", "How it works", "Beneficii", "CTA final", "Footer public"],
+                title: "Servicii",
+                items: categoryItems.length
+                  ? categoryItems
+                  : [
+                      { label: "Servicii principale", href: "/catalog" },
+                      { label: "Catalog complet", href: "/catalog" },
+                    ],
+                highlight: true,
               },
               {
-                title: "Catalog servicii",
-                branches: ["Categorii", "Subcategorii", "Carduri servicii", "Preturi de pornire", "Rating", "Filtre si sortare"],
+                title: "Domenii",
+                items: domainItems.length
+                  ? domainItems
+                  : [
+                      { label: "Rezidential", href: "/catalog" },
+                      { label: "Commercial", href: "/catalog" },
+                      { label: "Industrial", href: "/catalog" },
+                    ],
               },
               {
-                title: "Pagini servicii",
-                branches: ["Galerie media", "Pachete si niveluri", "Deviz", "Furnizori", "Documente", "Recenzii"],
+                title: "Devino Partener",
+                items: [
+                  { label: "Inscriere Partener", href: "/partners/join" },
+                  { label: "Creeaza Cont Partener", href: "/account/create" },
+                ],
               },
-            ].map((section, index) => (
-              <article key={section.title} className={`v3-sidebar-module ${index === 0 ? "v3-sidebar-module-highlight" : ""}`}>
-                <div className="v3-sidebar-module-title">{section.title}</div>
-                <div className="v3-sidebar-branch-list">
-                  {section.branches.map((branch) => (
-                    <div key={branch} className="v3-sidebar-branch">
-                      {branch}
+              {
+                title: "Devino Investitor",
+                items: [
+                  { label: "Program Investitori", href: "/investors" },
+                  { label: "Creeaza Cont Investitor", href: "/investors/create" },
+                ],
+              },
+              {
+                title: "Asiguratori",
+                items: [
+                  { label: "Parteneriate Asiguratori", href: "/contact" },
+                  { label: "Integrare Asigurari", href: "/contact" },
+                ],
+              },
+              {
+                title: "Clienti",
+                items: [
+                  { label: "Cont Client", href: "/account" },
+                  { label: "Creeaza Cont Client", href: "/account/create" },
+                ],
+              },
+              {
+                title: "Contact",
+                items: [
+                  { label: "Contact My Darrin", href: "/contact" },
+                  { label: "AI Darrin", href: "/account" },
+                ],
+              },
+              {
+                title: "Info / Legal",
+                items: [
+                  { label: "Despre My Darrin", href: "/about" },
+                  { label: "Termeni & GDPR", href: "/legal" },
+                ],
+              },
+            ] as SidebarSection[]).map((section, index) => (
+              <details
+                key={section.title}
+                className={`v3-sidebar-accordion-item ${section.highlight ? "v3-sidebar-accordion-item-highlight" : ""}`}
+                open={index === 0}
+              >
+                <summary className="v3-sidebar-accordion-summary">
+                  <span>{section.title}</span>
+                  <span className="v3-sidebar-accordion-icon" aria-hidden />
+                </summary>
+                <div className="v3-sidebar-accordion-body">
+                  {section.items.map((item) => (
+                    <div key={item.label} className="v3-sidebar-accordion-row">
+                      <Link href={item.href} className="v3-sidebar-accordion-link">
+                        {item.label}
+                      </Link>
+                      {item.subItems?.length ? (
+                        <div className="v3-sidebar-subitems">
+                          {item.subItems.map((subItem) => (
+                            <Link key={subItem.label} href={subItem.href} className="v3-sidebar-subitem">
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                   ))}
                 </div>
-              </article>
+              </details>
             ))}
           </div>
         </aside>
@@ -1120,7 +1556,15 @@ export function PublicCatalogPage({
             return (
             <article key={service.slug} className="v3-catalog-card">
               <div className={`v3-catalog-media ${accentClass(service.accent)}`}>
-                {hasImage ? <img src={mediaAssets.images?.[0]} alt={service.title} className="v3-media-image" /> : null}
+                {hasImage ? (
+                  <Image
+                    src={mediaAssets.images?.[0] ?? ""}
+                    alt={service.title}
+                    className="v3-media-image"
+                    width={520}
+                    height={360}
+                  />
+                ) : null}
                 {hasImage ? <span className="v3-media-overlay" /> : null}
                 <Pill>{service.mediaType}</Pill>
                 <span className="v3-rating-badge">AIPL {service.rating}</span>
@@ -1216,9 +1660,10 @@ export function PublicServicePage({
   const pricePulseKey = placeId ?? targetAddress ?? null;
   const activeIntervention =
     service.availableInterventions?.find((item) => item.label === service.interventionType) ?? service.availableInterventions?.[0];
-  const checkoutHref = `/checkout?slug=${encodeURIComponent(slug)}${
-    activeIntervention?.label ? `&intervention=${encodeURIComponent(activeIntervention.label)}` : ""
-  }${targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""}${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}&escrow_note=${encodeURIComponent("5%")}`;
+    const checkoutHref = `/checkout?slug=${encodeURIComponent(slug)}${
+      activeIntervention?.label ? `&intervention=${encodeURIComponent(activeIntervention.label)}` : ""
+    }${targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""}${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}&escrow_note=${encodeURIComponent("5%")}`;
+    const cartHref = `/cart?slug=${encodeURIComponent(slug)}${targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""}${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}`;
   const serviceHeadline = page.content.hero?.headline ?? service.title;
   const serviceSubheadline = page.content.hero?.subheadline ?? service.description;
   const serviceBenefits = page.content.benefits?.length ? page.content.benefits : service.benefits?.length ? service.benefits : DEFAULT_SERVICE_BENEFITS;
@@ -1275,9 +1720,9 @@ export function PublicServicePage({
               <Link href={checkoutHref} className={`v3-primary-button ${dynamicPrice?.availability_status === "partial_available" ? "v3-primary-button-warning" : ""}`}>
                 {dynamicPrice?.availability_status === "partial_available" ? "Comanda cu verificare" : "Continua spre checkout"}
               </Link>
-              <Link href="/cart" className="v3-dark-button">
-                Adauga in cos
-              </Link>
+                <Link href={cartHref} className="v3-dark-button">
+                  Adauga in cos
+                </Link>
             </div>
             {deliveryBadge ? <div className="v3-inline-note">{deliveryBadge}</div> : null}
             {availabilityWarning ? <div className="v3-warning-note">{availabilityWarning}</div> : null}
@@ -1308,7 +1753,7 @@ export function PublicServicePage({
               heroMediaType === "video" ? (
                 <video className="v3-media-frame" src={heroMedia} controls />
               ) : (
-                <img className="v3-media-frame" src={heroMedia} alt={service.title} />
+                <Image className="v3-media-frame" src={heroMedia} alt={service.title} width={720} height={480} />
               )
             ) : (
               <div className="v3-detail-media-label">[{service.mediaType}] Galerie media configurata din Backoffice</div>
@@ -1349,13 +1794,18 @@ export function PublicServicePage({
             <div key={item.resource_id} className="v3-technical-card">
               <div className="v3-card-kicker">{item.resource_type}</div>
               <strong>{item.resource_name}</strong>
-              <div className="v3-technical-list">
-                {Object.entries(item.technical_specs ?? {}).slice(0, 6).map(([key, value]) => (
-                  <div key={key} className="v3-technical-row">
-                    <span>{key}</span>
-                    <strong>{String(value)}</strong>
-                  </div>
-                ))}
+              <div className="v3-technical-table">
+                {Object.entries(item.technical_specs ?? {})
+                  .slice(0, 6)
+                  .map(([key, value]) => (
+                    <div key={key} className="v3-technical-row">
+                      <span className="v3-technical-key">
+                        <span className="v3-technical-icon" aria-hidden />
+                        {key}
+                      </span>
+                      <strong>{String(value)}</strong>
+                    </div>
+                  ))}
               </div>
             </div>
           ))}
@@ -1577,14 +2027,25 @@ export function PublicServicePage({
     tiers: (
       <article className="v3-section-card" key="tiers">
         <div className="v3-eyebrow">Pachete si niveluri</div>
-        <h2 className="v3-section-title">Preturi si configuratii vizibile public dupa aprobare</h2>
-        <div className="v3-level-grid">
+        <h2 className="v3-section-title">Alege nivelul potrivit cu un layout curat si comparabil</h2>
+        <div className="v3-tier-tabs">
           {serviceTiers.map((tier, index) => (
-            <div key={tier.tierKey} className="v3-level-card">
-              <VisualEditableText slug="service-detail" path={`serviceTiers.${index}.title`} value={tier.title} as="div" className="v3-level-label" />
-              <div className="v3-level-price">{resolvedPrice.levels[index]?.price ?? resolvedPrice.levels[0]?.price ?? resolvedPrice.startingPrice}</div>
-              <div className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted">Marja +{tier.marginMultiplier ?? 0}%</div>
-              <VisualEditableText slug="service-detail" path={`serviceTiers.${index}.benefitsMarkdown`} value={tier.benefitsMarkdown ?? "Pachet configurabil din Backoffice."} as="div" multiline className="mt-3 text-sm text-muted whitespace-pre-line" />
+            <div key={tier.tierKey} className={`v3-tier-card ${index === 1 ? "v3-tier-card-featured" : ""}`}>
+              <div className="v3-tier-card-head">
+                <VisualEditableText slug="service-detail" path={`serviceTiers.${index}.title`} value={tier.title} as="div" className="v3-tier-card-title" />
+                <div className="v3-tier-card-price">
+                  {resolvedPrice.levels[index]?.price ?? resolvedPrice.levels[0]?.price ?? resolvedPrice.startingPrice}
+                </div>
+              </div>
+              <div className="v3-tier-card-meta">Marja +{tier.marginMultiplier ?? 0}% · Vizibil public dupa aprobare</div>
+              <div className="v3-tier-card-list">
+                {parseBenefits(tier.benefitsMarkdown ?? "Pachet configurabil din Backoffice.").map((benefit) => (
+                  <div key={benefit} className="v3-tier-card-item">
+                    <span className="v3-tier-card-icon" aria-hidden />
+                    <span>{benefit}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -1663,6 +2124,7 @@ function GenericPublicLanding({
   primaryLabel,
   secondaryHref,
   secondaryLabel,
+  accessPanel,
 }: {
   page: HomepageContent;
   eyebrow: string;
@@ -1676,6 +2138,7 @@ function GenericPublicLanding({
   primaryLabel: string;
   secondaryHref: string;
   secondaryLabel: string;
+  accessPanel?: ReactNode;
 }) {
   return (
     <PublicShell page={page}>
@@ -1723,6 +2186,10 @@ function GenericPublicLanding({
           </div>
         </article>
       </section>
+
+      {accessPanel ? (
+        <section className="v3-section-card v3-section-card-soft v3-role-access-shell">{accessPanel}</section>
+      ) : null}
     </PublicShell>
   );
 }
@@ -1742,6 +2209,15 @@ export function PublicPartnerLandingPage({ page }: { page: HomepageContent }) {
       primaryLabel="Creeaza cont partener"
       secondaryHref="/catalog"
       secondaryLabel="Vezi servicii"
+      accessPanel={
+        <RoleAccessPanel
+          title="Partener / Provider - acces si creare cont"
+          description="Ai deja cont aprobat? Te autentifici si intri direct in fluxul operational. Pentru cont nou, pornesti cu cererea de partener si documentele obligatorii."
+          loginHref="/account"
+          registerHref="/partners/join"
+          footerNote="Conturile partenerilor se activeaza dupa validare. Dupa aprobare apari live pe homepage."
+        />
+      }
     />
   );
 }
@@ -1761,6 +2237,72 @@ export function PublicInvestorLandingPage({ page }: { page: HomepageContent }) {
       primaryLabel="Creeaza cont investitor"
       secondaryHref="/account"
       secondaryLabel="Contact"
+      accessPanel={
+        <RoleAccessPanel
+          title="Investitor - acces si creare cont"
+          description="Ai deja cont investitor aprobat? Intra direct cu autentificare. Pentru cont nou, incepi cu formularul dedicat investitorilor."
+          loginHref="/account"
+          registerHref="/investors/create"
+          footerNote="Validarea investitorilor este separata si se confirma prin email."
+        />
+      }
+    />
+  );
+}
+
+export function PublicAboutPage({ page }: { page: HomepageContent }) {
+  return (
+    <GenericPublicLanding
+      page={page}
+      eyebrow="Despre My Darrin"
+      title="Platforma My Darrin livreaza servicii la cerere, cu AI operational si executie verificata."
+      description="Pastrezi acelasi stil V3 aprobat si o structura clara: cine suntem, cum functionam si ce garanteaza platforma."
+      leftTitle="Ce oferim"
+      leftItems={["Catalog standardizat", "AI pentru selectie rapida", "Flux comanda-plată-status", "Echipe verificate si raportare completa"]}
+      rightTitle="De ce conteaza"
+      rightItems={["Transparenta in preturi si termene", "Validare operationala pentru parteneri", "Date si media centralizate", "Acces rapid la suport si contact"]}
+      primaryHref="/catalog"
+      primaryLabel="Vezi servicii"
+      secondaryHref="/contact"
+      secondaryLabel="Contact"
+    />
+  );
+}
+
+export function PublicContactPage({ page }: { page: HomepageContent }) {
+  return (
+    <GenericPublicLanding
+      page={page}
+      eyebrow="Contact"
+      title="Echipa My Darrin este pregatita pentru clienti, parteneri si investitori."
+      description="Folosim aceeasi estetica aprobata V3 si oferim acces rapid la AI Darrin, onboarding si suport operational."
+      leftTitle="Suport rapid"
+      leftItems={["AI Darrin 24/7", "Status comanda in timp real", "Onboarding dedicat", "Raspuns documentat"]}
+      rightTitle="Canale disponibile"
+      rightItems={["Formular de contact in cont", "Email operational", "Workflow de ticketing in Backoffice", "Escaladare catre Super Admin"]}
+      primaryHref="/account"
+      primaryLabel="Deschide AI Darrin"
+      secondaryHref="/account/create"
+      secondaryLabel="Creeaza cont"
+    />
+  );
+}
+
+export function PublicLegalPage({ page }: { page: HomepageContent }) {
+  return (
+    <GenericPublicLanding
+      page={page}
+      eyebrow="Legal & Termeni"
+      title="Transparenta legala pentru clienti, parteneri si investitori."
+      description="Termenii, GDPR si politicile raman accesibile si clare, cu acelasi limbaj vizual V3 aprobat."
+      leftTitle="Documente cheie"
+      leftItems={["Termeni si conditii", "Politica de confidentialitate", "GDPR & protectia datelor", "Politica de plata"]}
+      rightTitle="Conformitate"
+      rightItems={["Roluri si permisiuni documentate", "Loguri si audit pentru actiuni", "Date minimizate si criptate", "Acces la suport legal la cerere"]}
+      primaryHref="/contact"
+      primaryLabel="Solicita asistenta"
+      secondaryHref="/catalog"
+      secondaryLabel="Inapoi la servicii"
     />
   );
 }
@@ -1797,30 +2339,11 @@ export function PublicAccountPage({ page }: { page: HomepageContent }) {
             <div className="v3-auth-divider">
               <span>sau identifica-te prin email</span>
             </div>
-
-            <div className="v3-auth-form-grid">
-              <label className="v3-form-field">
-                <span>Adresa de e-mail</span>
-                <input className="v3-form-control v3-form-control-rect" placeholder="email@mydarrin.com" />
-              </label>
-              <label className="v3-form-field">
-                <span>Parola</span>
-                <input className="v3-form-control v3-form-control-rect" type="password" placeholder="Introdu parola" />
-              </label>
-            </div>
+            <PublicAccountLoginForm />
 
             <Link href="/account/create" className="v3-auth-forgot-link">
               Ai uitat parola sau nu ai cont? Continua cu inregistrarea.
             </Link>
-
-            <div className="v3-auth-actions">
-              <Link href="/account/create" className="v3-primary-button v3-auth-primary">
-                Creeaza cont client
-              </Link>
-              <Link href="/catalog" className="v3-dark-button">
-                Explora catalog
-              </Link>
-            </div>
 
             <div className="v3-auth-inline-note">
               Fluxul activ public este crearea contului cu verificare telefon. Autentificarea sociala si loginul client final se conecteaza in etapa urmatoare, fara sa schimbam aceasta structura aprobata.
@@ -1828,20 +2351,54 @@ export function PublicAccountPage({ page }: { page: HomepageContent }) {
           </div>
         </article>
 
-        <AccountBenefitsPanel
-          title="Avantajele tale cu un cont My Darrin"
-          items={[
-            "Pornesti de la AI, cautare mare si selectie rapida din catalog.",
-            "Salvezi servicii, niveluri si comenzi in acelasi traseu public.",
-            "Primesti actualizari pentru devize, checkout si status plata.",
-            "Onboardingul pentru client, partener sau investitor ramane separat si clar.",
-          ]}
-          footer={
-            <div className="v3-auth-side-note">
-              Accesul pentru `Admin` si `Super Admin` ramane separat in Backoffice.
-            </div>
-          }
-        />
+        <div className="v3-auth-side-stack">
+          <RoleAccessPanel
+            title="Client - acces rapid"
+            description="Ai deja cont client aprobat? Autentifica-te. Daca esti nou, creeaza contul in 3 pasi si vei aparea live dupa aprobare."
+            loginHref="/account"
+            registerHref="/account/create"
+            footerNote="Structura urmeaza modelul marketplace (login + creare cont separat)."
+          />
+          <AccountEntryCard
+            title="Client My Darrin"
+            description="Cont dedicat pentru comenzi, statusuri si asistenta AI. Dupa aprobarea contului, vei aparea live in homepage."
+            loginHref="/account"
+            registerHref="/account/create"
+          />
+          <AccountEntryCard
+            title="Partener / Provider"
+            description="Fluxul de partener include documente obligatorii si aprobare operationala. Crearea contului se face separat."
+            loginHref="/partners/join"
+            registerHref="/partners/join"
+          />
+          <AccountEntryCard
+            title="Investitor"
+            description="Acces dedicat pentru interes investitional, rundele seed si comunicare. Conturile sunt validate separat."
+            loginHref="/investors"
+            registerHref="/investors/create"
+          />
+          <AccountEntryCard
+            title="Admin Backoffice"
+            description="Conturile administrative se acorda doar prin invitatie email si aprobare Super Admin."
+            loginHref="/account/create/administrare"
+            registerHref="/account/create/administrare"
+            footerNote="Permisiunile sunt bifate din catalogul complet de module backoffice."
+          />
+          <AccountBenefitsPanel
+            title="Avantajele tale cu un cont My Darrin"
+            items={[
+              "Pornesti de la AI, cautare mare si selectie rapida din catalog.",
+              "Salvezi servicii, niveluri si comenzi in acelasi traseu public.",
+              "Primesti actualizari pentru devize, checkout si status plata.",
+              "Onboardingul pentru client, partener sau investitor ramane separat si clar.",
+            ]}
+            footer={
+              <div className="v3-auth-side-note">
+                Accesul pentru `Admin` si `Super Admin` ramane separat in Backoffice.
+              </div>
+            }
+          />
+        </div>
       </section>
     </PublicShell>
   );
@@ -2131,6 +2688,23 @@ export function PublicAdminAccessPage({ page }: { page: HomepageContent }) {
                 ))}
               </div>
 
+              <div className="v3-admin-entry-card">
+                <div className="v3-admin-entry-title">Acces admin prin invitatie</div>
+                <p>
+                  Fiecare admin invitat este aprobat de Super Admin, iar permisiunile sunt bifate din catalogul complet de
+                  module Backoffice.
+                </p>
+                <div className="v3-admin-entry-actions">
+                  <Link href="http://127.0.0.1:3001/login" className="v3-primary-button">
+                    Autentifica-te
+                  </Link>
+                  <Link href="/contact" className="v3-dark-button">
+                    Cere invitatie
+                  </Link>
+                </div>
+                <div className="v3-inline-note">Rolurile sunt aprobate, pot fi anulate si sterse din Backoffice.</div>
+              </div>
+
               <div className="v3-final-actions">
                 <Link href="https://admin.mydarrin.homebestpal.com" className="v3-primary-button">
                   Deschide Backoffice
@@ -2147,10 +2721,56 @@ export function PublicAdminAccessPage({ page }: { page: HomepageContent }) {
   );
 }
 
-export function PublicCartPage({ page }: { page: HomepageContent }) {
-  const cartServices = ["reparat-calorifer", "montaj-centrala-termica"]
-    .map((slug) => getPublicServiceBySlug(slug))
-    .filter((service): service is NonNullable<ReturnType<typeof getPublicServiceBySlug>> => Boolean(service));
+export function PublicCartPage({
+  page,
+  cartEntries,
+  checkoutHref,
+}: {
+  page: HomepageContent;
+  cartEntries?: CartEntry[];
+  checkoutHref?: string;
+}) {
+  const fallbackEntries: CartEntry[] = [
+    { slug: "reparat-calorifer" },
+    { slug: "montaj-centrala-termica" },
+  ];
+  const entries = cartEntries?.length ? cartEntries : fallbackEntries;
+
+  const resolvedItems = entries
+    .map((entry, index) => {
+      const fallbackService = getPublicServiceBySlug(entry.slug);
+      let resolvedService: ResolvedServiceRecord | null = null;
+
+      if (entry.card) {
+        const built = buildServiceFromCatalogCard(entry.card, index);
+        resolvedService = fallbackService
+          ? mergeServiceWithCard({ ...fallbackService }, entry.card, index)
+          : built;
+      } else if (fallbackService) {
+        resolvedService = { ...fallbackService };
+      }
+
+      if (!resolvedService) {
+        return null;
+      }
+
+      const resolvedPrice = resolveServicePrice(resolvedService, entry.dynamicPrice);
+      const deliveryBadge = resolveDeliveryBadge(resolvedService, entry.dynamicPrice);
+      return { service: resolvedService, price: resolvedPrice, deliveryBadge };
+    })
+    .filter(Boolean) as Array<{
+    service: ResolvedServiceRecord;
+    price: ResolvedServicePrice;
+    deliveryBadge?: string | null;
+  }>;
+
+  const subtotal = resolvedItems.reduce((sum, item) => sum + parsePriceAmount(item.price.primaryValue), 0);
+  const currencyLabel = resolvedItems[0]?.price.currencyLabel ?? "RON";
+  const resolvedCheckoutHref =
+    checkoutHref ??
+    (resolvedItems[0]?.service.slug
+      ? `/checkout?slug=${encodeURIComponent(resolvedItems[0].service.slug)}`
+      : "/checkout");
 
   return (
     <PublicShell page={page}>
@@ -2159,33 +2779,72 @@ export function PublicCartPage({ page }: { page: HomepageContent }) {
           <div>
             <div className="v3-eyebrow">Coș</div>
             <h1 className="v3-page-title">Coșul public este aliniat la V3 si pregatit pentru checkout</h1>
-            <p className="v3-page-description">Carduri mari, sumare clare si CTA-uri puternice, in aceeasi geometrie aprobata pe homepage.</p>
+            <p className="v3-page-description">
+              Carduri mari, sumare clare si CTA-uri puternice, in aceeasi geometrie aprobata pe homepage.
+            </p>
           </div>
-          <Link href="/checkout" className="v3-primary-button">
+          <Link href={resolvedCheckoutHref} className="v3-primary-button">
             Continua spre checkout
           </Link>
         </div>
       </section>
 
       <section className="v3-section-card">
+        {resolvedItems.length === 0 ? (
+          <div className="v3-inline-note">Nu exista servicii in cos. Revino in catalog pentru selectie.</div>
+        ) : null}
         <div className="v3-cart-grid">
-          {cartServices.map((service) => (
-            <article key={service.slug} className="v3-cart-card">
-              <div className={`v3-cart-media ${accentClass(service.accent)}`}>[{service.mediaType}]</div>
+          {resolvedItems.map((item) => (
+            <article key={item.service.slug} className="v3-cart-card">
+              <div className={`v3-cart-media ${accentClass(item.service.accent)}`}>[{item.service.mediaType}]</div>
               <div>
-                <div className="v3-service-title">{service.title}</div>
-                <p>{service.summary}</p>
+                <div className="v3-service-title">{item.service.title}</div>
+                <p>{item.service.summary}</p>
+                {item.deliveryBadge ? <div className="v3-inline-note">{item.deliveryBadge}</div> : null}
               </div>
-              <div className="v3-price-text">{service.startingPrice}</div>
+              <div className="v3-price-text">{item.price.startingPrice}</div>
             </article>
           ))}
         </div>
+        {resolvedItems.length ? (
+          <div className="v3-checkout-summary">
+            <div>
+              <span>Subtotal</span>
+              <strong>
+                {formatPriceAmount(subtotal)} {currencyLabel}
+              </strong>
+            </div>
+            <div>
+              <span>Total</span>
+              <strong>
+                {formatPriceAmount(subtotal)} {currencyLabel}
+              </strong>
+            </div>
+          </div>
+        ) : null}
       </section>
     </PublicShell>
   );
 }
 
-export function PublicCheckoutPage({ page }: { page: HomepageContent }) {
+export function PublicCheckoutPage({
+  page,
+  context,
+}: {
+  page: HomepageContent;
+  context?: CheckoutContext;
+}) {
+  const fallbackService = context?.slug ? getPublicServiceBySlug(context.slug) : null;
+  const resolvedService = context?.card
+    ? fallbackService
+      ? mergeServiceWithCard({ ...fallbackService }, context.card, 0)
+      : buildServiceFromCatalogCard(context.card, 0)
+    : fallbackService ?? null;
+  const resolvedPrice = resolvedService ? resolveServicePrice(resolvedService, context?.dynamicPrice ?? null) : null;
+  const totalLabel = resolvedPrice
+    ? `${resolvedPrice.primaryValue} ${resolvedPrice.currencyLabel}`
+    : resolvedService?.startingPrice ?? "de la 0 RON";
+
   return (
     <PublicShell page={page}>
       <section className="v3-panel-card">
@@ -2193,7 +2852,9 @@ export function PublicCheckoutPage({ page }: { page: HomepageContent }) {
           <div>
             <div className="v3-eyebrow">Checkout</div>
             <h1 className="v3-page-title">Checkout-ul pastreaza acelasi ritm vizual si ierarhie aprobata in homepage V3</h1>
-            <p className="v3-page-description">Formular, sumar de comanda si CTA final intr-un layout coerent, pregatit pentru integrarea finala de plata.</p>
+            <p className="v3-page-description">
+              Formular, sumar de comanda si CTA final intr-un layout coerent, pregatit pentru integrarea finala de plata.
+            </p>
           </div>
         </div>
       </section>
@@ -2212,16 +2873,23 @@ export function PublicCheckoutPage({ page }: { page: HomepageContent }) {
         </article>
         <article className="v3-section-card v3-section-card-soft">
           <div className="v3-eyebrow">Rezumat</div>
-          <h2 className="v3-section-title">Reparat calorifer</h2>
+          <h2 className="v3-section-title">{resolvedService?.title ?? "Serviciu selectat"}</h2>
           <div className="v3-checkout-summary">
-            <div><span>Subtotal</span><strong>189 lei</strong></div>
-            <div><span>Transport</span><strong>35 lei</strong></div>
-            <div><span>Total</span><strong>224 lei</strong></div>
+            <div>
+              <span>Subtotal</span>
+              <strong>{totalLabel}</strong>
+            </div>
+            <div>
+              <span>Total</span>
+              <strong>{totalLabel}</strong>
+            </div>
           </div>
-          <div className="v3-inline-note">
-            Garanție de Bună Execuție de 5% este păstrată în Escrow și eliberată către furnizor doar după confirmarea
-            calității de către My Darrin.
-          </div>
+          {resolvedPrice?.minimumOrderNote ? (
+            <div className="v3-inline-note">{resolvedPrice.minimumOrderNote}</div>
+          ) : null}
+          {context?.targetAddress ? (
+            <div className="v3-inline-note">Adresa selectata: {context.targetAddress}</div>
+          ) : null}
           <div className="v3-object-recursion-card">
             <div className="v3-card-kicker">Pachetul de Siguranta My Darrin</div>
             <div className="v3-muted-copy">
@@ -2238,7 +2906,15 @@ export function PublicCheckoutPage({ page }: { page: HomepageContent }) {
   );
 }
 
-export function PublicPaymentStatusPage({ page }: { page: HomepageContent }) {
+export function PublicPaymentStatusPage({
+  page,
+  orderRef,
+  orderStatus,
+}: {
+  page: HomepageContent;
+  orderRef?: string | null;
+  orderStatus?: import("@/lib/site-content").PublicOrderStatusSnapshot | null;
+}) {
   return (
     <PublicShell page={page}>
       <section className="v3-panel-card">
@@ -2252,18 +2928,364 @@ export function PublicPaymentStatusPage({ page }: { page: HomepageContent }) {
       </section>
 
       <section className="v3-section-card">
-        <div className="v3-status-grid">
-          <article className="v3-status-card v3-status-card-success">
-            <div className="v3-status-label">APPROVED</div>
-            <div className="v3-service-title">Plata a fost confirmata</div>
-            <p>Comanda este inregistrata si vizibila pentru Super Admin in Backoffice.</p>
-          </article>
-          <article className="v3-status-card">
-            <div className="v3-status-label">SYNC</div>
-            <div className="v3-service-title">Urmeaza verificarea publica</div>
-            <p>Administratorul poate verifica si aproba ce se vede public pentru serviciul si continutul asociat.</p>
-          </article>
+        {orderRef ? (
+          <PublicPaymentStatusClient orderRef={orderRef} initialStatus={orderStatus ?? null} />
+        ) : (
+          <div className="v3-inline-note">
+            Lipseste referinta comenzii. Revino in checkout pentru a genera un `order_ref`.
+          </div>
+        )}
+      </section>
+    </PublicShell>
+  );
+}
+
+export function PublicClientOrdersPage({ page }: { page: HomepageContent }) {
+  return (
+    <PublicShell page={page}>
+      <section className="v3-panel-card">
+        <div className="v3-page-hero">
+          <div>
+            <div className="v3-eyebrow">Cont client</div>
+            <h1 className="v3-page-title">Istoric comenzi & status live</h1>
+            <p className="v3-page-description">Vezi comenzile tale, starea curenta si actualizari in timp real.</p>
+          </div>
         </div>
+      </section>
+      <section className="v3-section-card">
+        <ClientOrders />
+      </section>
+    </PublicShell>
+  );
+}
+
+export function PublicClientAccountDashboardPage({ page }: { page: HomepageContent }) {
+  return (
+    <AccountDashboardShell
+      page={page}
+      roleLabel="Cont client"
+      title="Dashboard client - comenzi, plati si status live"
+      description="Pagina de administrare client urmeaza structura Backoffice: navigatie laterala, carduri de status si istoric complet."
+      headerStats={[
+        { label: "Comenzi active", value: "2", hint: "In lucru / confirmate" },
+        { label: "Total comenzi", value: "18", hint: "Ultimele 12 luni" },
+        { label: "Plati", value: "97%", hint: "Rata de conversie" },
+      ]}
+      sidebar={[
+        {
+          title: "Comenzi",
+          items: [
+            { label: "Istoric comenzi", href: "/my-account/orders" },
+            { label: "Status live", href: "/my-account/orders" },
+            { label: "Plati & facturi", href: "/my-account/orders" },
+          ],
+        },
+        {
+          title: "Profil",
+          items: [
+            { label: "Date personale", href: "/my-account" },
+            { label: "Adrese & livrare", href: "/my-account" },
+            { label: "Setari cont", href: "/my-account" },
+          ],
+        },
+      ]}
+      action={
+        <Link href="/catalog" className="v3-primary-button">
+          Comanda un serviciu
+        </Link>
+      }
+    >
+      <section className="v3-account-card">
+        <div className="v3-account-card-head">
+          <div>
+            <div className="v3-eyebrow">Comenzile mele</div>
+            <h2 className="v3-section-title">Istoric & status actual</h2>
+          </div>
+          <Link href="/my-account/orders" className="v3-ghost-chip">
+            Vezi toate
+          </Link>
+        </div>
+        <ClientOrders />
+      </section>
+      <section className="v3-account-grid">
+        <div className="v3-account-card">
+          <div className="v3-card-kicker">Preferinte</div>
+          <h3 className="v3-section-title">Canale de comunicare</h3>
+          <p className="v3-page-description">
+            Controlezi notificarile pentru status comenzi, devize si plati direct din cont.
+          </p>
+        </div>
+        <div className="v3-account-card">
+          <div className="v3-card-kicker">Documente</div>
+          <h3 className="v3-section-title">Facturi & rapoarte</h3>
+          <p className="v3-page-description">
+            Toate facturile si documentele sunt generate automat si raman atasate pe fiecare comanda.
+          </p>
+        </div>
+      </section>
+    </AccountDashboardShell>
+  );
+}
+
+export function PublicPartnerAccountDashboardPage({ page }: { page: HomepageContent }) {
+  return (
+    <AccountDashboardShell
+      page={page}
+      roleLabel="Cont partener / provider"
+      title="Dashboard partener - lucrari, executie si validari"
+      description="Structura urmeaza Backoffice: meniu lateral cu module, statusuri de lucru si actiuni rapide."
+      headerStats={[
+        { label: "Comenzi alocate", value: "6", hint: "Active" },
+        { label: "Rata finalizare", value: "93%", hint: "Ultimele 30 zile" },
+        { label: "Rating", value: "4.8", hint: "Evaluari clienti" },
+      ]}
+      sidebar={[
+        {
+          title: "Operatiuni",
+          items: [
+            { label: "Comenzi alocate", href: "/partners/account" },
+            { label: "Programari", href: "/partners/account" },
+            { label: "Livrari & executie", href: "/partners/account" },
+          ],
+        },
+        {
+          title: "Profil partener",
+          items: [
+            { label: "Documente & licente", href: "/partners/account" },
+            { label: "Echipe & resurse", href: "/partners/account" },
+            { label: "Setari cont", href: "/partners/account" },
+          ],
+        },
+      ]}
+      action={
+        <Link href="/account" className="v3-primary-button">
+          Intra in cont
+        </Link>
+      }
+    >
+      <section className="v3-account-card">
+        <div className="v3-account-card-head">
+          <div>
+            <div className="v3-eyebrow">Executie</div>
+            <h2 className="v3-section-title">Joburi active & status</h2>
+          </div>
+          <span className="v3-inline-note v3-inline-note-soft">Sincronizat cu Backoffice</span>
+        </div>
+        <div className="v3-account-timeline">
+          {[
+            "Job #2451 - Pregatire materiale",
+            "Job #2452 - Echipa confirmata",
+            "Job #2453 - In lucru",
+          ].map((item) => (
+            <div key={item} className="v3-account-timeline-row">
+              <span className="v3-account-timeline-dot" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="v3-account-grid">
+        <div className="v3-account-card">
+          <div className="v3-card-kicker">Plati</div>
+          <h3 className="v3-section-title">Decontari curente</h3>
+          <p className="v3-page-description">Situatia platilor se actualizeaza dupa validarea executiei.</p>
+        </div>
+        <div className="v3-account-card">
+          <div className="v3-card-kicker">Documente</div>
+          <h3 className="v3-section-title">Acte, autorizari, asigurari</h3>
+          <p className="v3-page-description">Documentele incarcate raman vizibile in timp real pentru echipa de audit.</p>
+        </div>
+      </section>
+    </AccountDashboardShell>
+  );
+}
+
+export function PublicProviderAccountDashboardPage({ page }: { page: HomepageContent }) {
+  return (
+    <AccountDashboardShell
+      page={page}
+      roleLabel="Cont provider"
+      title="Dashboard provider - stocuri, livrari si SLA"
+      description="Providerii gestioneaza resursele si materialele sincronizate cu Backoffice."
+      headerStats={[
+        { label: "Comenzi livrare", value: "12", hint: "Saptamana curenta" },
+        { label: "Disponibilitate", value: "OK", hint: "Stoc raportat" },
+        { label: "SLA", value: "96%", hint: "Performanta" },
+      ]}
+      sidebar={[
+        {
+          title: "Logistica",
+          items: [
+            { label: "Livrari active", href: "/providers/account" },
+            { label: "Stocuri raportate", href: "/providers/account" },
+            { label: "Programari", href: "/providers/account" },
+          ],
+        },
+        {
+          title: "Profil provider",
+          items: [
+            { label: "Contracte", href: "/providers/account" },
+            { label: "Documente & conformitate", href: "/providers/account" },
+            { label: "Setari cont", href: "/providers/account" },
+          ],
+        },
+      ]}
+      action={
+        <Link href="/account" className="v3-primary-button">
+          Autentifica-te
+        </Link>
+      }
+    >
+      <section className="v3-account-card">
+        <div className="v3-account-card-head">
+          <div>
+            <div className="v3-eyebrow">Livrari</div>
+            <h2 className="v3-section-title">Rute si confirmari</h2>
+          </div>
+          <span className="v3-inline-note v3-inline-note-soft">Backoffice live</span>
+        </div>
+        <div className="v3-account-timeline">
+          {["Livrare #781 - Pregatita", "Livrare #782 - In tranzit", "Livrare #783 - Confirmata"].map((item) => (
+            <div key={item} className="v3-account-timeline-row">
+              <span className="v3-account-timeline-dot" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </AccountDashboardShell>
+  );
+}
+
+export function PublicInvestorAccountDashboardPage({ page }: { page: HomepageContent }) {
+  return (
+    <AccountDashboardShell
+      page={page}
+      roleLabel="Cont investitor"
+      title="Dashboard investitor - portofoliu si rapoarte"
+      description="Datele investitorilor sunt centralizate in zona securizata, cu acces la rapoarte si comunicari."
+      headerStats={[
+        { label: "Portofoliu", value: "Activ", hint: "Seed + follow-on" },
+        { label: "Rapoarte", value: "4", hint: "Ultimele 90 zile" },
+        { label: "Comunicari", value: "Live", hint: "Status actual" },
+      ]}
+      sidebar={[
+        {
+          title: "Investitii",
+          items: [
+            { label: "Portofoliu", href: "/investors/account" },
+            { label: "Rapoarte", href: "/investors/account" },
+            { label: "Calendar", href: "/investors/account" },
+          ],
+        },
+        {
+          title: "Profil investitor",
+          items: [
+            { label: "Preferinte", href: "/investors/account" },
+            { label: "Documente", href: "/investors/account" },
+            { label: "Setari cont", href: "/investors/account" },
+          ],
+        },
+      ]}
+      action={
+        <Link href="/account" className="v3-primary-button">
+          Autentifica-te
+        </Link>
+      }
+    >
+      <section className="v3-account-card">
+        <div className="v3-account-card-head">
+          <div>
+            <div className="v3-eyebrow">Rapoarte</div>
+            <h2 className="v3-section-title">Indicatori & comunicari recente</h2>
+          </div>
+          <span className="v3-inline-note v3-inline-note-soft">Sincronizare BI</span>
+        </div>
+        <div className="v3-account-timeline">
+          {["Raport GMV Q1", "Update rundă seed", "Analiza pipeline parteneri"].map((item) => (
+            <div key={item} className="v3-account-timeline-row">
+              <span className="v3-account-timeline-dot" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </AccountDashboardShell>
+  );
+}
+
+export function PublicAdminAccountDashboardPage({ page }: { page: HomepageContent }) {
+  return (
+    <AccountDashboardShell
+      page={page}
+      roleLabel="Administrare"
+      title="Dashboard admin invitati"
+      description="Accesul administrativ ramane controlat prin invitatii si permisiuni bifate de Super Admin."
+      headerStats={[
+        { label: "Permisiuni", value: "RBAC", hint: "Catalog complet" },
+        { label: "Invitatii", value: "Active", hint: "Flux controlat" },
+        { label: "Audit", value: "Live", hint: "Jurnal actiuni" },
+      ]}
+      sidebar={[
+        {
+          title: "Administrare",
+          items: [
+            { label: "Invitatii & roluri", href: "/admin/account" },
+            { label: "Permisiuni", href: "/admin/account" },
+            { label: "Audit", href: "/admin/account" },
+          ],
+        },
+        {
+          title: "Securitate",
+          items: [
+            { label: "Acces & sesiuni", href: "/admin/account" },
+            { label: "Setari cont", href: "/admin/account" },
+          ],
+        },
+      ]}
+      action={
+        <Link href="http://127.0.0.1:3001/login" className="v3-primary-button">
+          Deschide Backoffice
+        </Link>
+      }
+    >
+      <section className="v3-account-card">
+        <div className="v3-account-card-head">
+          <div>
+            <div className="v3-eyebrow">Invitatii</div>
+            <h2 className="v3-section-title">Status cont administrativ</h2>
+          </div>
+          <span className="v3-inline-note v3-inline-note-soft">Super Admin approval</span>
+        </div>
+        <div className="v3-account-timeline">
+          {[
+            "Invitatie trimisa pe email",
+            "Permisiuni selectate din catalogul backoffice",
+            "Acces activat dupa aprobare",
+          ].map((item) => (
+            <div key={item} className="v3-account-timeline-row">
+              <span className="v3-account-timeline-dot" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </AccountDashboardShell>
+  );
+}
+
+export function PublicClientOrderDetailPage({
+  page,
+  orderRef,
+}: {
+  page: HomepageContent;
+  orderRef: string;
+}) {
+  return (
+    <PublicShell page={page}>
+      <ClientOrderDetailPanel orderRef={orderRef} />
+      <section className="v3-section-card">
+        <PublicPaymentStatusClient orderRef={orderRef} initialStatus={null} />
       </section>
     </PublicShell>
   );

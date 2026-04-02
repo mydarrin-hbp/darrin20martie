@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { useAdminShell } from "@/components/admin-shell-provider";
 import { useAuth } from "@/components/auth-provider";
+import { getPublicSiteBaseUrl } from "@/lib/public-site";
 
 type SidebarItem = {
   href: string;
@@ -91,6 +92,7 @@ const sections: Array<{ title: string; items: SidebarItem[] }> = [
         publicHref: "/checkout",
         children: [
           { href: "/orders", label: "Comenzi & Status", shortLabel: "ORD", icon: "OR", moduleKey: "operations" },
+          { href: "/reviews", label: "Recenzii & Rating", shortLabel: "REV", icon: "RV", moduleKey: "operations" },
           { href: "/admin/order-execution", label: "Executie & Timeline", shortLabel: "EX", icon: "EX", moduleKey: "operations" },
           { href: "/backoffice/resources", label: "Assets de Executie", shortLabel: "AST", icon: "AS", moduleKey: "operations" },
         ],
@@ -128,6 +130,7 @@ const sections: Array<{ title: string; items: SidebarItem[] }> = [
         children: [
           { href: "/investors", label: "Runda SEED", shortLabel: "SD", icon: "SD", moduleKey: "investors", publicHref: "/investors" },
           { href: "/admin/reports-bi", label: "Projected Revenue", shortLabel: "REV", icon: "RV", moduleKey: "financial" },
+          { href: "/insights", label: "Insights Analytics", shortLabel: "INS", icon: "IN", moduleKey: "financial" },
         ],
       },
     ],
@@ -160,6 +163,8 @@ function buildPublicHref(publicHref: string | undefined, editMode: boolean, canD
   if (!publicHref) {
     return null;
   }
+  const base = getPublicSiteBaseUrl();
+  const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
   const params = new URLSearchParams();
   if (editMode && canDesignEdit) {
     params.set("edit_mode", "1");
@@ -167,7 +172,7 @@ function buildPublicHref(publicHref: string | undefined, editMode: boolean, canD
       params.set("admin_token", token);
     }
   }
-  return `${publicHref}${params.toString() ? `?${params.toString()}` : ""}`;
+  return `${normalizedBase}${publicHref}${params.toString() ? `?${params.toString()}` : ""}`;
 }
 
 export function Sidebar() {

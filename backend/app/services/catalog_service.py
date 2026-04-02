@@ -19,6 +19,7 @@ from app.schemas.domain import DomainCreate, DomainUpdate
 from app.schemas.service import ServiceCreate, ServiceUpdate
 from app.schemas.subcategory import SubcategoryCreate, SubcategoryUpdate
 from app.services.xlsx_reader import read_xlsx_rows
+from app.services.cache_service import invalidate_prefix
 
 
 def _normalize_codes(values: Iterable[str] | None) -> list[str]:
@@ -91,6 +92,7 @@ def create_domain(db: Session, domain: DomainCreate):
     try:
         db.commit()
         db.refresh(db_domain)
+        invalidate_prefix("public_catalog:")
         return db_domain
     except IntegrityError:
         db.rollback()
@@ -112,6 +114,7 @@ def update_domain(db: Session, domain_id: int, domain_update: DomainUpdate):
     try:
         db.commit()
         db.refresh(db_domain)
+        invalidate_prefix("public_catalog:")
         return db_domain
     except IntegrityError:
         db.rollback()
@@ -124,6 +127,7 @@ def delete_domain(db: Session, domain_id: int):
         return None
     db.delete(db_domain)
     db.commit()
+    invalidate_prefix("public_catalog:")
     return True
 
 
@@ -156,6 +160,7 @@ def create_category(db: Session, category: CategoryCreate):
     try:
         db.commit()
         db.refresh(db_category)
+        invalidate_prefix("public_catalog:")
         return db_category
     except IntegrityError:
         db.rollback()
@@ -182,6 +187,7 @@ def update_category(db: Session, category_id: int, category_update: CategoryUpda
     try:
         db.commit()
         db.refresh(db_category)
+        invalidate_prefix("public_catalog:")
         return db_category
     except IntegrityError:
         db.rollback()
@@ -194,6 +200,7 @@ def delete_category(db: Session, category_id: int):
         return None
     db.delete(db_category)
     db.commit()
+    invalidate_prefix("public_catalog:")
     return True
 
 
@@ -228,6 +235,7 @@ def create_subcategory(db: Session, subcategory: SubcategoryCreate):
     try:
         db.commit()
         db.refresh(db_subcategory)
+        invalidate_prefix("public_catalog:")
         return db_subcategory
     except IntegrityError:
         db.rollback()
@@ -254,6 +262,7 @@ def update_subcategory(db: Session, subcategory_id: int, subcategory_update: Sub
     try:
         db.commit()
         db.refresh(db_subcategory)
+        invalidate_prefix("public_catalog:")
         return db_subcategory
     except IntegrityError:
         db.rollback()
@@ -266,6 +275,7 @@ def delete_subcategory(db: Session, subcategory_id: int):
         return None
     db.delete(db_subcategory)
     db.commit()
+    invalidate_prefix("public_catalog:")
     return True
 
 
@@ -325,6 +335,8 @@ def create_service(db: Session, service: ServiceCreate):
     try:
         db.commit()
         db.refresh(db_service)
+        invalidate_prefix("public_catalog:")
+        invalidate_prefix("service_taxonomy:")
         return db_service
     except IntegrityError:
         db.rollback()
@@ -355,6 +367,8 @@ def update_service(db: Session, service_id: int, service_update: ServiceUpdate):
     try:
         db.commit()
         db.refresh(db_service)
+        invalidate_prefix("public_catalog:")
+        invalidate_prefix("service_taxonomy:")
         return db_service
     except IntegrityError:
         db.rollback()
@@ -367,6 +381,8 @@ def delete_service(db: Session, service_id: int):
         return None
     db.delete(db_service)
     db.commit()
+    invalidate_prefix("public_catalog:")
+    invalidate_prefix("service_taxonomy:")
     return True
 
 

@@ -67,6 +67,8 @@ class PublicPriceBreakdownResponse(BaseModel):
     mentenanta_platforma: float
     venit_platforma: float
     garantie_buna_executie: float
+    insurance_premium: float = 0.0
+    darrin_management_fee: float = 0.0
     taxe_si_garantii: float
     tva: float
     total_facturabil: float

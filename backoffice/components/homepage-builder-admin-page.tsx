@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { useAuth } from "@/components/auth-provider";
 import { getSiteContentPage, listSiteContentPages, patchContentSync, updateSiteContentPage } from "@/lib/api";
+import { getPublicSiteBaseUrl } from "@/lib/public-site";
 
 type Tier = { tierKey: "silver" | "gold" | "platinum"; title: string; marginMultiplier?: number; benefitsMarkdown?: string };
 type BuilderContent = {
@@ -69,10 +70,11 @@ function parseLines(value: string) {
 }
 
 function previewHref(slug: string) {
-  if (slug === "homepage") return "http://127.0.0.1:3001/homepage-preview-v2";
-  if (slug === "catalog") return "http://127.0.0.1:3001/catalog";
-  if (slug === "service-detail") return "http://127.0.0.1:3001/services/montaj-centrala-termica";
-  return "http://127.0.0.1:3001/homepage-preview-v2";
+  const base = getPublicSiteBaseUrl();
+  if (slug === "homepage") return `${base}/homepage-preview-v2`;
+  if (slug === "catalog") return `${base}/catalog`;
+  if (slug === "service-detail") return `${base}/services/montaj-centrala-termica`;
+  return `${base}/homepage-preview-v2`;
 }
 
 function Section({
@@ -199,6 +201,17 @@ export function HomepageBuilderAdminPage() {
         <p className="mt-3 max-w-4xl text-sm leading-7 text-muted">
           Header, footer, homepage si pagina de serviciu folosesc acum un builder mai compact, cu `Edit`, autosave si preview live.
         </p>
+      </section>
+
+      <section className="panel px-6 py-6">
+        <div className="text-xs uppercase tracking-[0.24em] text-muted">Manual operare</div>
+        <h2 className="mt-3 text-2xl font-semibold text-ink">Ghid rapid Homepage Builder</h2>
+        <div className="mt-3 grid gap-2 text-sm text-muted">
+          <div>1. Selecteaza pagina publica pe care vrei sa o editezi din "Control pagina".</div>
+          <div>2. Foloseste butonul `Edit` pentru a deschide sectiunea dorita si salveaza automat.</div>
+          <div>3. Deschide `Preview live` pentru verificarea vizuala in stilul V3 aprobat.</div>
+          <div>4. Pentru modificari avansate, foloseste `Raw JSON override` si `Salveaza complet`.</div>
+        </div>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.62fr_0.38fr]">

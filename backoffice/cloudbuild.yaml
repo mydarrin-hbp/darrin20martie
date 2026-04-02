@@ -1,0 +1,19 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - Dockerfile
+      - -t
+      - ${_IMAGE}
+      - --build-arg
+      - NEXT_PUBLIC_API_BASE_URL=${_NEXT_PUBLIC_API_BASE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_GATE_USERNAME=${_NEXT_PUBLIC_GATE_USERNAME}
+      - --build-arg
+      - NEXT_PUBLIC_GATE_PASSWORD=${_NEXT_PUBLIC_GATE_PASSWORD}
+      - --build-arg
+      - NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION=${_NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION}
+      - .
+images:
+  - ${_IMAGE}

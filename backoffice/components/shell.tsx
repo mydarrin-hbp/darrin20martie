@@ -2,24 +2,46 @@
 
 import { useRouter } from "next/navigation";
 
+import { useAdminShell } from "@/components/admin-shell-provider";
 import { useAuth } from "@/components/auth-provider";
 import { Sidebar } from "@/components/sidebar";
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuth();
+  const { user, logout, editMode, canDesignEdit, toggleEditMode } = useAuth();
+  const { collapsed } = useAdminShell();
   const router = useRouter();
 
   return (
-    <div className="mx-auto flex max-w-[1560px] gap-6 px-6 py-6">
+    <div className="admin-shell">
       <Sidebar />
-      <div className="min-w-0 flex-1">
-        <header className="panel mb-6 flex items-center justify-between px-6 py-5">
+
+      <div className={`admin-main ${collapsed ? "admin-main-collapsed" : ""}`}>
+        <header className="admin-topbar">
           <div>
-            <div className="text-xs uppercase tracking-[0.24em] text-muted">Admin session</div>
-            <div className="mt-2 text-lg font-semibold text-ink">{user?.email}</div>
+            <div className="admin-topbar-kicker">{user?.role === "PARTNER" ? "Partner Operations" : "Hybrid Service-CMS"}</div>
+            <div className="admin-topbar-title">{user?.role === "PARTNER" ? "My Darrin Partner App" : "Executive Back Office"}</div>
+            {user?.admin_role_key ? (
+              <div className="admin-topbar-meta">
+                {user.admin_role_key}
+                {user.country_access?.length ? ` · ${user.country_access.join(", ")}` : ""}
+              </div>
+            ) : null}
           </div>
-          <div className="flex items-center gap-3">
-            <span className="tag">{user?.role}</span>
+
+          <div className="admin-topbar-actions">
+            {canDesignEdit ? (
+              <button
+                type="button"
+                className={`admin-live-toggle ${editMode ? "admin-live-toggle-active" : ""}`}
+                onClick={toggleEditMode}
+              >
+                {editMode ? "Live Edit Mode ON" : "Live Edit Mode OFF"}
+              </button>
+            ) : null}
+            <div className="admin-session-pill">
+              <span className="admin-session-dot" />
+              <span>{user?.email}</span>
+            </div>
             <button
               className="btn-secondary"
               onClick={() => {
@@ -31,7 +53,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </button>
           </div>
         </header>
-        {children}
+
+        <main className="admin-canvas">{children}</main>
       </div>
     </div>
   );

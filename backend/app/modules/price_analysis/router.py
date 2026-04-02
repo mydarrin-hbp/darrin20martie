@@ -421,6 +421,39 @@ async def upload_service_attachment(
     return result
 
 
+@router.get("/resources/attachments", response_model=EntityAttachmentListResponse)
+def list_resource_attachments(resource_id: int = Query(...), db: Session = Depends(get_db)):
+    return EntityAttachmentListResponse(items=list_entity_attachments(db, entity_type="resource", entity_id=resource_id))
+
+
+@router.post("/resources/attachments", response_model=EntityAttachmentResponse, status_code=status.HTTP_201_CREATED)
+async def upload_resource_attachment(
+    resource_id: int = Form(...),
+    attachment_type: str = Form(...),
+    level_name: str | None = Form(default=None),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    content = await file.read()
+    result = create_entity_attachment(
+        db,
+        entity_type="resource",
+        entity_id=resource_id,
+        attachment_type=attachment_type.upper(),
+        level_name=level_name,
+        file_name=file.filename or "attachment.bin",
+        content=content,
+        mime_type=file.content_type,
+    )
+    if result == "entity_not_found":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+    if result == "invalid_attachment_type":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid attachment type")
+    if result == "invalid_level_name":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid level name")
+    return result
+
+
 @public_router.get("/attachments/content/{attachment_id}")
 def download_attachment_content(attachment_id: int, token: str = Query(...), db: Session = Depends(get_db)):
     result = get_attachment_file(db, attachment_id, token)

@@ -8,16 +8,20 @@ type AuthContextValue = {
   token: string | null;
   user: AdminUser | null;
   gateUnlocked: boolean;
+  editMode: boolean;
+  canDesignEdit: boolean;
   loading: boolean;
   unlockGate: (username: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  toggleEditMode: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 const STORAGE_KEY = "mydarrin_backoffice_auth";
 const GATE_KEY = "mydarrin_backoffice_gate";
+const EDIT_MODE_KEY = "mydarrin_backoffice_edit_mode";
 const GATE_USERNAME = process.env.NEXT_PUBLIC_GATE_USERNAME ?? "ownergate";
 const GATE_PASSWORD = process.env.NEXT_PUBLIC_GATE_PASSWORD ?? "CHANGE_ME";
 
@@ -25,12 +29,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<AdminUser | null>(null);
   const [gateUnlocked, setGateUnlocked] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const gateStored = typeof window !== "undefined" ? window.localStorage.getItem(GATE_KEY) : null;
     if (gateStored === "unlocked") {
       setGateUnlocked(true);
+    }
+    const editModeStored = typeof window !== "undefined" ? window.localStorage.getItem(EDIT_MODE_KEY) : null;
+    if (editModeStored === "on") {
+      setEditMode(true);
     }
 
     const stored = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
@@ -56,6 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       token,
       user,
       gateUnlocked,
+      editMode,
+      canDesignEdit: Boolean(user?.design_edit || user?.permissions?.includes("design_edit:use") || user?.role === "SUPER_ADMIN"),
       loading,
       unlockGate: async (username, password) => {
         if (username !== GATE_USERNAME || password !== GATE_PASSWORD) {
@@ -66,10 +77,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
       login: async (email, password) => {
         const payload = await loginAdmin(email, password);
-        if (!payload.role || !["ADMIN", "SUPER_ADMIN"].includes(payload.role)) {
+        if (!payload.role || !["ADMIN", "SUPER_ADMIN", "PARTNER"].includes(payload.role)) {
           throw new Error("Acest cont nu are acces in back office.");
         }
-        if (!payload.permissions?.includes("backoffice:access")) {
+        const hasBackofficeAccess = payload.permissions?.includes("backoffice:access");
+        const hasPartnerAccess = payload.permissions?.includes("partner:dashboard");
+        if (!hasBackofficeAccess && !hasPartnerAccess) {
           throw new Error("Acest cont nu are acces in back office.");
         }
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: payload.access_token }));
@@ -80,9 +93,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logout: () => {
         window.localStorage.removeItem(STORAGE_KEY);
         window.localStorage.removeItem(GATE_KEY);
+        window.localStorage.removeItem(EDIT_MODE_KEY);
         setToken(null);
         setUser(null);
         setGateUnlocked(false);
+        setEditMode(false);
       },
       refreshUser: async () => {
         if (!token) {
@@ -91,8 +106,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const currentUser = await getCurrentUser(token);
         setUser(currentUser);
       },
+      toggleEditMode: () => {
+        const nextValue = !editMode;
+        window.localStorage.setItem(EDIT_MODE_KEY, nextValue ? "on" : "off");
+        setEditMode(nextValue);
+      },
     }),
-    [gateUnlocked, loading, token, user],
+    [editMode, gateUnlocked, loading, token, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import Script from "next/script";
+
 import { PublicCatalogPage } from "@/components/public-site-v3";
 import {
   getPublicCatalogPrice,
@@ -7,6 +10,46 @@ import {
   getSitePageContent,
 } from "@/lib/site-content";
 import { publicServiceCatalog } from "@/lib/public-site";
+
+function resolveBaseUrl() {
+  return process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "https://mydarrin.homebestpal.com";
+}
+
+function titleize(value: string) {
+  return value
+    .replace(/[-_]+/g, " ")
+    .split(" ")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: Promise<{
+    domain?: string;
+    category?: string;
+    subcategory?: string;
+  }>;
+}): Promise<Metadata> {
+  const params = (await searchParams) ?? {};
+  const label = params.subcategory ?? params.category ?? params.domain;
+  const suffix = label ? ` - ${titleize(label)}` : "";
+  const page = await getSitePageContent("catalog");
+  const description =
+    page.content.hero?.subheadline ?? "Catalog servicii My Darrin sincronizat cu backoffice.";
+  const title = `Catalog servicii${suffix} | My Darrin`;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${resolveBaseUrl()}/catalog`,
+      type: "website",
+    },
+  };
+}
 
 export default async function CatalogPage({
   searchParams,
@@ -57,24 +100,43 @@ export default async function CatalogPage({
     Promise.all(catalogSlugs.map(async (slug) => [slug, await getPublicCatalogPrice(slug, { targetAddress, placeId })] as const)),
   ]);
 
+  const baseUrl = resolveBaseUrl();
+  const itemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: catalogServices.map((service, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${baseUrl}/services/${service.slug}`,
+      name: service.name,
+    })),
+  };
+
   return (
-    <PublicCatalogPage
-      page={page}
-      catalogServices={catalogServices}
-      taxonomyBySlug={Object.fromEntries(taxonomyEntries)}
-      dynamicPriceBySlug={Object.fromEntries(priceEntries)}
-      syncManifest={syncManifest}
-      targetAddress={targetAddress}
-      placeId={placeId}
-      catalogMetaBySlug={Object.fromEntries(catalogServices.map((item) => [item.slug, item]))}
-      activeFilters={{
-        domain: params.domain ?? null,
-        category: params.category ?? null,
-        subcategory: params.subcategory ?? null,
-        resourceTypes,
-        equipmentTypes,
-        brands,
-      }}
-    />
+    <>
+      <Script
+        id="catalog-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+      />
+      <PublicCatalogPage
+        page={page}
+        catalogServices={catalogServices}
+        taxonomyBySlug={Object.fromEntries(taxonomyEntries)}
+        dynamicPriceBySlug={Object.fromEntries(priceEntries)}
+        syncManifest={syncManifest}
+        targetAddress={targetAddress}
+        placeId={placeId}
+        catalogMetaBySlug={Object.fromEntries(catalogServices.map((item) => [item.slug, item]))}
+        activeFilters={{
+          domain: params.domain ?? null,
+          category: params.category ?? null,
+          subcategory: params.subcategory ?? null,
+          resourceTypes,
+          equipmentTypes,
+          brands,
+        }}
+      />
+    </>
   );
 }

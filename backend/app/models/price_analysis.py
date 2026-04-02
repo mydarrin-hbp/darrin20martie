@@ -66,12 +66,22 @@ class Supplier(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    contact_email: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
     rating: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     location_geo: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    insurance_status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
+    insurance_policy_no: Mapped[str | None] = mapped_column(String(120), nullable=True, index=True)
+    insurance_valid_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    criminal_record_status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
+    criminal_record_valid_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    integrity_declaration_status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     resources: Mapped[list["CatalogResource"]] = relationship(back_populates="supplier")
+    capabilities = relationship("ProviderCapability", back_populates="supplier")
+    availability_slots = relationship("ProviderAvailabilitySlot")
 
 
 class TaxRule(Base):

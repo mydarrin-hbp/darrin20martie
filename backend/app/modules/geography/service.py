@@ -3,7 +3,17 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.modules.geography.models import Country, Locality, Zone
-from app.modules.geography.schemas import LocalityCreate, LocalityResponse, LocalityUpdate
+from app.modules.geography.schemas import (
+    CountryCreate,
+    CountryResponse,
+    CountryUpdate,
+    LocalityCreate,
+    LocalityResponse,
+    LocalityUpdate,
+    ZoneCreate,
+    ZoneResponse,
+    ZoneUpdate,
+)
 
 
 def get_countries(db: Session):
@@ -12,6 +22,86 @@ def get_countries(db: Session):
 
 def get_zones(db: Session):
     return db.execute(select(Zone).order_by(Zone.id)).scalars().all()
+
+
+def create_country(db: Session, data: CountryCreate):
+    country = Country(**data.model_dump())
+    db.add(country)
+    try:
+        db.commit()
+        db.refresh(country)
+        return country
+    except IntegrityError:
+        db.rollback()
+        return "duplicate_country"
+
+
+def update_country(db: Session, country_id: int, data: CountryUpdate):
+    country = db.get(Country, country_id)
+    if not country:
+        return None
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(country, field, value)
+    try:
+        db.commit()
+        db.refresh(country)
+        return country
+    except IntegrityError:
+        db.rollback()
+        return "duplicate_country"
+
+
+def delete_country(db: Session, country_id: int):
+    country = db.get(Country, country_id)
+    if not country:
+        return None
+    db.delete(country)
+    db.commit()
+    return True
+
+
+def create_zone(db: Session, data: ZoneCreate):
+    country = db.get(Country, data.country_id)
+    if not country:
+        return "country_not_found"
+    zone = Zone(**data.model_dump())
+    db.add(zone)
+    try:
+        db.commit()
+        db.refresh(zone)
+        return zone
+    except IntegrityError:
+        db.rollback()
+        return "duplicate_zone"
+
+
+def update_zone(db: Session, zone_id: int, data: ZoneUpdate):
+    zone = db.get(Zone, zone_id)
+    if not zone:
+        return None
+    update_data = data.model_dump(exclude_unset=True)
+    if "country_id" in update_data:
+        country = db.get(Country, update_data["country_id"])
+        if not country:
+            return "country_not_found"
+    for field, value in update_data.items():
+        setattr(zone, field, value)
+    try:
+        db.commit()
+        db.refresh(zone)
+        return zone
+    except IntegrityError:
+        db.rollback()
+        return "duplicate_zone"
+
+
+def delete_zone(db: Session, zone_id: int):
+    zone = db.get(Zone, zone_id)
+    if not zone:
+        return None
+    db.delete(zone)
+    db.commit()
+    return True
 
 
 def list_localities(db: Session, *, country_id: int | None = None, zone_id: int | None = None):
