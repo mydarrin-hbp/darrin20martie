@@ -40,7 +40,7 @@ def get_current_admin_user(
 ):
     if current_user.role not in (UserRole.ADMIN.value, UserRole.SUPER_ADMIN.value):
         raise HTTPException(status_code=403, detail="Not enough permissions")
-    if current_user.verification_status != "APPROVED":
+    if current_user.verification_status not in {"APPROVED", "VERIFIED"}:
         raise HTTPException(status_code=403, detail="Admin account is not approved")
     if "backoffice:access" not in get_role_permissions(current_user.role, admin_profile=getattr(current_user, "admin_profile", None)):
         raise HTTPException(status_code=403, detail="Backoffice access missing")
@@ -52,7 +52,7 @@ def get_current_partner_user(
 ):
     if current_user.role != UserRole.PARTNER.value:
         raise HTTPException(status_code=403, detail="Partner access required")
-    if current_user.verification_status != "APPROVED":
+    if current_user.verification_status not in {"APPROVED", "VERIFIED"}:
         raise HTTPException(status_code=403, detail="Partner account is not approved")
     if "partner:dashboard" not in get_role_permissions(current_user.role, admin_profile=getattr(current_user, "admin_profile", None)):
         raise HTTPException(status_code=403, detail="Partner dashboard access missing")

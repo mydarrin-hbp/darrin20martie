@@ -14,6 +14,9 @@ class UserRole(str, Enum):
 
 class VerificationStatus(str, Enum):
     PENDING = "PENDING"
+    PENDING_DOCS = "PENDING_DOCS"
+    UNDER_REVIEW = "UNDER_REVIEW"
+    VERIFIED = "VERIFIED"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
 

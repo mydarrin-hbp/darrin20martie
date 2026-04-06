@@ -33,6 +33,8 @@ class PublicCatalogServiceCard(BaseModel):
     equipment_types: list[str] = Field(default_factory=list)
     brands: list[str] = Field(default_factory=list)
     resource_types: list[str] = Field(default_factory=list)
+    object_kind: str | None = None
+    pivot_actions: list[str] = Field(default_factory=list)
 
 
 class PublicCatalogServiceListResponse(BaseModel):

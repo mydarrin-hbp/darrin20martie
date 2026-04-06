@@ -1,0 +1,2 @@
+﻿country_id,zone_id,locality_id,skill_code,skill_label,ro_skill_code,esco_code,uniclass_code,deviz_indicator_series,currency,base_rate,weekend_multiplier,holiday_multiplier,night_multiplier,is_active
+1,1,,741201,Dulgher montaj acoperis,741201,ESCO-SKILL-001,Ss_70,EB,RON,17.4,1.5,2.0,1.5,true

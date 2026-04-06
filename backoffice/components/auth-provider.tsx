@@ -12,7 +12,7 @@ type AuthContextValue = {
   canDesignEdit: boolean;
   loading: boolean;
   unlockGate: (username: string, password: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, remember?: boolean) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
   toggleEditMode: () => void;
@@ -20,6 +20,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 const STORAGE_KEY = "mydarrin_backoffice_auth";
+const SESSION_KEY = "mydarrin_backoffice_auth_session";
 const GATE_KEY = "mydarrin_backoffice_gate";
 const EDIT_MODE_KEY = "mydarrin_backoffice_edit_mode";
 const GATE_USERNAME = process.env.NEXT_PUBLIC_GATE_USERNAME ?? "ownergate";
@@ -42,7 +43,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setEditMode(true);
     }
 
-    const stored = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
+    const stored =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem(STORAGE_KEY) ?? window.sessionStorage.getItem(SESSION_KEY)
+        : null;
     if (!stored) {
       setLoading(false);
       return;
@@ -54,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .then(setUser)
       .catch(() => {
         window.localStorage.removeItem(STORAGE_KEY);
+        window.sessionStorage.removeItem(SESSION_KEY);
         setToken(null);
         setUser(null);
       })
@@ -75,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         window.localStorage.setItem(GATE_KEY, "unlocked");
         setGateUnlocked(true);
       },
-      login: async (email, password) => {
+      login: async (email, password, remember = true) => {
         const payload = await loginAdmin(email, password);
         if (!payload.role || !["ADMIN", "SUPER_ADMIN", "PARTNER"].includes(payload.role)) {
           throw new Error("Acest cont nu are acces in back office.");
@@ -85,13 +90,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!hasBackofficeAccess && !hasPartnerAccess) {
           throw new Error("Acest cont nu are acces in back office.");
         }
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: payload.access_token }));
+        if (remember) {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: payload.access_token }));
+          window.sessionStorage.removeItem(SESSION_KEY);
+        } else {
+          window.sessionStorage.setItem(SESSION_KEY, JSON.stringify({ token: payload.access_token }));
+          window.localStorage.removeItem(STORAGE_KEY);
+        }
         setToken(payload.access_token);
         const currentUser = await getCurrentUser(payload.access_token);
         setUser(currentUser);
       },
       logout: () => {
         window.localStorage.removeItem(STORAGE_KEY);
+        window.sessionStorage.removeItem(SESSION_KEY);
         window.localStorage.removeItem(GATE_KEY);
         window.localStorage.removeItem(EDIT_MODE_KEY);
         setToken(null);

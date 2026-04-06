@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import io
 
 from app.core.dependencies import get_db
 from app.core.security import ensure_country_access, ensure_module_access, get_current_admin_profile, get_current_admin_user
@@ -22,12 +24,14 @@ from app.modules.cost_engine.service import (
     delete_admin_price_config,
     delete_financial_config,
     delete_labor_rate,
+    export_labor_rates_csv,
     get_admin_price_config,
     get_admin_price_configs,
     get_financial_config,
     get_financial_configs,
     get_labor_rate,
     get_labor_rates,
+    import_labor_rates,
     update_admin_price_config,
     update_financial_config,
     update_labor_rate,
@@ -203,6 +207,34 @@ def list_labor_rates_route(
 ):
     ensure_module_access(current_admin, admin_profile, "financial")
     return get_labor_rates(db)
+
+
+@router.post("/labor-rates/import")
+def import_labor_rates_route(
+    file: UploadFile,
+    db: Session = Depends(get_db),
+    current_admin=Depends(get_current_admin_user),
+    admin_profile=Depends(get_current_admin_profile),
+):
+    ensure_module_access(current_admin, admin_profile, "financial")
+    content = file.file.read()
+    result = import_labor_rates(db, file.filename or "", content)
+    return result
+
+
+@router.get("/labor-rates/export")
+def export_labor_rates_route(
+    db: Session = Depends(get_db),
+    current_admin=Depends(get_current_admin_user),
+    admin_profile=Depends(get_current_admin_profile),
+):
+    ensure_module_access(current_admin, admin_profile, "financial")
+    csv_payload = export_labor_rates_csv(db)
+    return StreamingResponse(
+        io.StringIO(csv_payload),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=labor-rates.csv"},
+    )
 
 
 @router.get("/labor-rates/{rate_id}", response_model=LaborRateResponse)

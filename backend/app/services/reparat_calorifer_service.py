@@ -315,7 +315,20 @@ def _build_material_specs(variant: dict[str, Any]) -> dict[str, Any]:
 def _ensure_shared_resources(db: Session, *, country: Country, zone: Zone, locality: Locality) -> dict[str, CatalogResource]:
     labor = _ensure_resource(db, name_ro="Mecanic instalatii termice", name_en="Thermal installations mechanic", resource_type=ResourceType.LABOR, unit="ora", base_price=145.0, esco_code=THERMAL_LABOR_ESCO, technical_specs={"source": "ESCO", "trade": "thermal-mechanic"})
     material = _ensure_resource(db, name_ro="Calorifer otel", name_en="Steel radiator", resource_type=ResourceType.MATERIAL, unit="buc", base_price=420.0, technical_specs=_build_material_specs(REPARAT_CALORIFER_VARIANTS[3]))
-    equipment = _ensure_resource(db, name_ro="Scule + sudura", name_en="Tools + welding set", resource_type=ResourceType.EQUIPMENT, unit="ora", base_price=85.0, technical_specs={"bundle": "thermal-repair-tools"})
+    equipment = _ensure_resource(
+        db,
+        name_ro="Nacela / Transpalet",
+        name_en="Lift / pallet jack",
+        resource_type=ResourceType.EQUIPMENT,
+        unit="ora",
+        base_price=120.0,
+        technical_specs={
+            "object_kind": "RENTAL",
+            "equipment_type": "nacela",
+            "pivot_actions": ["Inchiriere utilaj"],
+            "bundle": "thermal-repair-rental",
+        },
+    )
     transport = _ensure_resource(db, name_ro="Van service", name_en="Service van", resource_type=ResourceType.TRANSPORT, unit="km", base_price=5.5, technical_specs={"vehicle_type": "service-van"})
     _upsert_resource_price(db, resource=labor, country_id=country.id, zone_id=None, locality_id=None, currency=country.currency, base_price=145.0)
     _upsert_resource_price(db, resource=labor, country_id=country.id, zone_id=zone.id, locality_id=locality.id, currency=country.currency, base_price=158.0)

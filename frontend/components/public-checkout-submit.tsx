@@ -7,6 +7,7 @@ import { publicServiceCatalog } from "@/lib/public-site";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 const BACKEND_GATE_AUTHORIZATION = process.env.NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION;
+const CHECKOUT_DRAFT_KEY = "mydarrin_checkout_draft";
 
 function parseEscrowPercent(note: string | null | undefined) {
   if (!note) {
@@ -49,6 +50,18 @@ export function PublicCheckoutSubmit() {
     };
   }, [searchParams]);
 
+  const checkoutDraft = useMemo(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    try {
+      const raw = window.localStorage.getItem(CHECKOUT_DRAFT_KEY);
+      return raw ? (JSON.parse(raw) as { contactName?: string; contactPhone?: string; accessWindow?: string; technicalNotes?: string }) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
   async function handleConfirmOrder() {
     setError("");
     setMessage("");
@@ -89,7 +102,12 @@ export function PublicCheckoutSubmit() {
             checkoutContext.selectedIntervention.label === "Inlocuire" || checkoutContext.selectedIntervention.label === "Montaj"
               ? ["GAS_AUTH", "ISCIR_AUTH"]
               : ["GAS_AUTH"],
-          standard_consumables: [],
+          standard_consumables: [
+            ...(checkoutDraft?.contactName ? [`META:contact_name=${checkoutDraft.contactName}`] : []),
+            ...(checkoutDraft?.contactPhone ? [`META:contact_phone=${checkoutDraft.contactPhone}`] : []),
+            ...(checkoutDraft?.accessWindow ? [`META:access_window=${checkoutDraft.accessWindow}`] : []),
+            ...(checkoutDraft?.technicalNotes ? [`META:technical_notes=${checkoutDraft.technicalNotes}`] : []),
+          ],
           escrow_retention: checkoutContext.escrowRetention,
         }),
       });
@@ -98,7 +116,7 @@ export function PublicCheckoutSubmit() {
         throw new Error(payload.detail ?? "Nu am putut crea comanda.");
       }
       setMessage(`Comanda ${payload.order_ref ?? ""} a fost creata.`);
-      router.push(`/payment-status?order_ref=${encodeURIComponent(payload.order_ref ?? "")}`);
+      router.push(`/confirmare-antrepriza?order_ref=${encodeURIComponent(payload.order_ref ?? "")}`);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Nu am putut crea comanda.");
     } finally {

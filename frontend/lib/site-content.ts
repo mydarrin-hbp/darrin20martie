@@ -65,6 +65,14 @@ export type HomepageContent = {
       secondaryCta?: string;
       mediaType?: string;
     };
+    heroSlides?: Array<{
+      id: string;
+      title: string;
+      description?: string;
+      mediaUrl?: string;
+      mediaType?: "IMAGE" | "VIDEO" | "BANNER";
+      accent?: "orange" | "navy" | "green";
+    }>;
     quickCategories?: Array<{ title: string; media?: string }>;
     dualEntry?: { aiCardTitle?: string; catalogCardTitle?: string };
     featuredServices?: Array<{
@@ -75,7 +83,7 @@ export type HomepageContent = {
       featured?: boolean;
     }>;
     serviceTiers?: Array<{
-      tierKey: "silver" | "gold" | "platinum";
+      tierKey: "bronze" | "silver" | "gold" | "platinum";
       title: string;
       marginMultiplier?: number;
       benefitsMarkdown?: string;
@@ -236,6 +244,7 @@ function createFallbackPage(slug: string): HomepageContent {
         secondaryCta: "Vorbeste cu Darrin",
         mediaType: "VIDEO",
       },
+      heroSlides: [],
       quickCategories: [
         { title: "Acasa", media: "IMAGINE" },
         { title: "Auto", media: "IMAGINE" },
@@ -266,22 +275,28 @@ function createFallbackPage(slug: string): HomepageContent {
       ],
       serviceTiers: [
         {
+          tierKey: "bronze",
+          title: "Bronz",
+          marginMultiplier: 0,
+          benefitsMarkdown: "- Configuratie standard\n- Manopera de baza\n- Pret optimizat",
+        },
+        {
           tierKey: "silver",
           title: "Argint",
-          marginMultiplier: 0,
-          benefitsMarkdown: "- Configuratie standard\n- Raspuns rapid\n- Pret optimizat",
+          marginMultiplier: 6,
+          benefitsMarkdown: "- Bronz + Transport\n- Manipulare inclusa\n- Coordonare standard",
         },
         {
           tierKey: "gold",
           title: "Aur",
           marginMultiplier: 12,
-          benefitsMarkdown: "- Prioritate in programare\n- Coordonare extinsa\n- Documentatie completa",
+          benefitsMarkdown: "- Argint + Utilaj rental\n- Programare prioritara\n- Echipa extinsa",
         },
         {
           tierKey: "platinum",
           title: "Platina",
           marginMultiplier: 20,
-          benefitsMarkdown: "- Management dedicat\n- SLA premium\n- Flux complet asistat de Darrin",
+          benefitsMarkdown: "- Aur + Garantie extinsa\n- Mentenanta 24 luni\n- Management dedicat",
         },
       ],
       serviceSectionsOrder: ["hero", "pricing", "specialCatalog", "tiers", "benefits"],
@@ -359,6 +374,23 @@ export type PublicCatalogPrice = {
   source: string;
 };
 
+export type PublicCatalogSubcategoryItem = {
+  name: string;
+  slug: string;
+};
+
+export type PublicCatalogCategoryItem = {
+  domain: string;
+  domain_slug: string;
+  category: string;
+  category_slug: string;
+  subcategories: PublicCatalogSubcategoryItem[];
+};
+
+export type PublicCatalogCategoryListResponse = {
+  items: PublicCatalogCategoryItem[];
+};
+
 export type PublicCatalogServiceCard = {
   id: number;
   slug: string;
@@ -385,6 +417,8 @@ export type PublicCatalogServiceCard = {
   equipment_types: string[];
   brands: string[];
   resource_types: string[];
+  object_kind?: string | null;
+  pivot_actions?: string[];
 };
 
 export type PublicCatalogServiceListResponse = {
@@ -511,6 +545,14 @@ export async function getPublicCatalogServices(params?: {
 export async function getPublicCatalogServiceBySlug(slug: string): Promise<PublicCatalogServiceCard | null> {
   try {
     return await fetchPublicJson<PublicCatalogServiceCard>(`${API_BASE}/api/v1/public/catalog/services/${slug}`);
+  } catch {
+    return null;
+  }
+}
+
+export async function getPublicCatalogCategories(): Promise<PublicCatalogCategoryListResponse | null> {
+  try {
+    return await fetchPublicJson<PublicCatalogCategoryListResponse>(`${API_BASE}/api/v1/public/catalog/categories`);
   } catch {
     return null;
   }

@@ -6,6 +6,7 @@ from app.api.v1.endpoints.admin import router as admin_router
 from app.api.v1.endpoints.auth import router as auth_router
 from app.modules.activities.router import router as activities_router
 from app.modules.ai_robot_darrin.router import router as ai_router
+from app.modules.ai_robot_darrin.public_router import router as ai_public_router
 from app.modules.backoffice_catalog.router import router as backoffice_catalog_router
 from app.modules.backoffice_contact.router import router as backoffice_contact_router
 from app.modules.cost_engine.admin_config import router as cost_admin_router
@@ -29,6 +30,9 @@ from app.modules.price_analysis.router import router as price_analysis_router
 from app.modules.public_catalog.router import public_router as public_catalog_router
 from app.modules.public_investors.router import public_router as public_investors_router
 from app.modules.public_partners.router import public_router as public_partners_router
+from app.modules.cart.router import router as public_cart_router
+from app.modules.providers.router import router as providers_router
+from app.modules.marketplace_commissions.router import router as marketplace_commissions_router
 from app.modules.site_content.router import admin_router as site_content_admin_router
 from app.modules.site_content.router import public_router as site_content_public_router
 from app.modules.sync.router import admin_router as sync_admin_router
@@ -110,6 +114,12 @@ api_router.include_router(
     public_partners_router,
     prefix="/api/v1",
     tags=["PublicPartners"],
+)
+
+api_router.include_router(
+    public_cart_router,
+    prefix="/api/v1",
+    tags=["PublicCart"],
 )
 
 api_router.include_router(
@@ -239,7 +249,25 @@ api_router.include_router(
 )
 
 api_router.include_router(
+    ai_public_router,
+    prefix="/api/v1",
+    tags=["AIRobotDarrinPublic"],
+)
+
+api_router.include_router(
     test_support_router,
     prefix="/api/v1",
     tags=["TestSupport"],
+)
+
+api_router.include_router(
+    providers_router,
+    prefix="/api/v1",
+    tags=["BackofficeProviders"],
+)
+
+api_router.include_router(
+    marketplace_commissions_router,
+    prefix="/api/v1",
+    tags=["BackofficeMarketplaceCommissions"],
 )

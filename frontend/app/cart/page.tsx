@@ -34,7 +34,7 @@ export default async function CartPage({
     ),
   ]);
 
-  const checkoutHref = `/checkout?slug=${encodeURIComponent(resolvedSlugs[0])}${
+  const checkoutHref = `/finalizare-proiect?slug=${encodeURIComponent(resolvedSlugs[0])}${
     targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""
   }${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}`;
 

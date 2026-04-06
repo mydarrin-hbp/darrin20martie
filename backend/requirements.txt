@@ -15,3 +15,4 @@ google-genai
 google-cloud-storage
 openpyxl
 Pillow
+pypdf

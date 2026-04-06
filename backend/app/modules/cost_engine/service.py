@@ -1,3 +1,9 @@
+import csv
+import io
+import os
+import re
+from typing import Any
+
 from sqlalchemy import and_, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
@@ -26,6 +32,7 @@ from app.modules.cost_engine.schemas import (
 )
 from app.modules.geography.models import Country, Locality, Zone
 from app.schemas.price_analysis import RecipeLevelName, ResourceType
+from app.services.xlsx_reader import read_xlsx_rows
 from app.services.price_analysis_service import (
     evaluate_recipe_geo_availability,
     get_recipe_coefficient,
@@ -387,6 +394,243 @@ def delete_labor_rate(db: Session, rate_id: int):
     db.delete(rate)
     db.commit()
     return True
+
+
+def calculate_labor_total(base_rate: float, zone_multiplier: float, holiday_multiplier: float) -> float:
+    return round((base_rate * zone_multiplier) * holiday_multiplier, 2)
+
+
+_LABOR_HEADER_MAP = {
+    "cod": "ro_skill_code",
+    "cod cor": "ro_skill_code",
+    "cod_ro": "ro_skill_code",
+    "nomenclator": "ro_skill_code",
+    "simbol": "ro_skill_code",
+    "skill_code": "skill_code",
+    "denumire": "skill_label",
+    "meserie": "skill_label",
+    "ocupatie": "skill_label",
+    "skill_label": "skill_label",
+    "esco": "esco_code",
+    "esco_code": "esco_code",
+    "uniclass": "uniclass_code",
+    "uniclass_code": "uniclass_code",
+    "serie deviz": "deviz_indicator_series",
+    "indicator": "deviz_indicator_series",
+    "deviz_indicator_series": "deviz_indicator_series",
+    "tarif": "base_rate",
+    "tarif ora": "base_rate",
+    "tarif baza": "base_rate",
+    "base_rate": "base_rate",
+    "country_id": "country_id",
+    "zone_id": "zone_id",
+    "locality_id": "locality_id",
+    "currency": "currency",
+    "weekend_multiplier": "weekend_multiplier",
+    "holiday_multiplier": "holiday_multiplier",
+    "night_multiplier": "night_multiplier",
+    "is_active": "is_active",
+}
+
+
+def _load_nomenclator_map(pdf_path: str) -> dict[str, str]:
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        return {}
+    if not pdf_path or not os.path.exists(pdf_path):
+        return {}
+    reader = PdfReader(pdf_path)
+    map_out: dict[str, str] = {}
+    for page in reader.pages:
+        text = page.extract_text() or ""
+        for line in text.splitlines():
+            line = line.strip()
+            match = re.match(r"^(\d{6})\s+(.+)$", line)
+            if not match:
+                continue
+            code = match.group(1).strip()
+            label = match.group(2).strip()
+            if code and label and code not in map_out:
+                map_out[code] = label
+    return map_out
+
+
+def parse_labor_rate_row(row: dict[str, Any]) -> dict[str, Any]:
+    normalized: dict[str, Any] = {}
+    for key, value in row.items():
+        if key is None:
+            continue
+        cleaned_key = str(key).strip().lower()
+        mapped = _LABOR_HEADER_MAP.get(cleaned_key)
+        if not mapped:
+            continue
+        normalized[mapped] = str(value).strip() if value is not None else ""
+
+    ro_skill_code = normalized.get("ro_skill_code") or ""
+    if ro_skill_code:
+        normalized["skill_code"] = ro_skill_code
+    if not normalized.get("skill_code") and normalized.get("esco_code"):
+        normalized["skill_code"] = normalized["esco_code"]
+    if "base_rate" in normalized:
+        normalized["base_rate"] = float(str(normalized["base_rate"] or "0").replace(",", ".") or 0)
+    for field in ("weekend_multiplier", "holiday_multiplier", "night_multiplier"):
+        if field in normalized:
+            normalized[field] = float(str(normalized[field] or "1").replace(",", ".") or 1)
+    for field in ("country_id", "zone_id", "locality_id"):
+        if field in normalized and str(normalized[field]).strip():
+            normalized[field] = int(float(str(normalized[field]).strip()))
+        elif field in normalized:
+            normalized[field] = None
+    if "is_active" in normalized:
+        normalized["is_active"] = str(normalized["is_active"]).strip().lower() not in {"0", "false", "no"}
+    return normalized
+
+
+def _read_labor_rows(filename: str, content: bytes) -> list[dict[str, Any]]:
+    suffix = (filename or "").lower().strip()
+    if suffix.endswith(".csv"):
+        decoded = content.decode("utf-8-sig", errors="ignore")
+        reader = csv.DictReader(io.StringIO(decoded))
+        return [row for row in reader if row]
+    if suffix.endswith(".xlsx") or suffix.endswith(".xlsm"):
+        return read_xlsx_rows(content, required_headers=set(_LABOR_HEADER_MAP.keys()))
+    raise ValueError("Unsupported file format. Please upload CSV or XLSX.")
+
+
+def import_labor_rates(db: Session, filename: str, content: bytes) -> dict[str, Any]:
+    rows = _read_labor_rows(filename, content)
+    validation_enabled = str(os.getenv("NOMENCLATOR_VALIDATE", "1")).lower() not in {"0", "false", "no"}
+    pdf_path = os.getenv(
+        "NOMENCLATOR_PDF_PATH",
+        "c:\\Users\\admin\\Downloads\\Nomenclatorul-CAEN-de-Meserii-Ordonat-Alfabetic.pdf",
+    )
+    nomenclator_map = _load_nomenclator_map(pdf_path) if validation_enabled else {}
+    created = 0
+    updated = 0
+    errors: list[dict[str, Any]] = []
+    for index, row in enumerate(rows, start=2):
+        parsed = parse_labor_rate_row(row)
+        skill_label = parsed.get("skill_label")
+        skill_code = parsed.get("skill_code")
+        if not skill_label or not skill_code:
+            errors.append({"row": index, "error": "skill_label_or_code_missing"})
+            continue
+        if nomenclator_map and parsed.get("ro_skill_code"):
+            expected_label = nomenclator_map.get(parsed.get("ro_skill_code"))
+            if expected_label and expected_label.lower() != skill_label.lower():
+                errors.append(
+                    {
+                        "row": index,
+                        "error": "nomenclator_mismatch",
+                        "expected": expected_label,
+                        "provided": skill_label,
+                    }
+                )
+                continue
+
+        country_id = parsed.get("country_id")
+        zone_id = parsed.get("zone_id")
+        if country_id:
+            if not db.get(Country, country_id):
+                errors.append({"row": index, "error": "country_not_found"})
+                continue
+        if zone_id:
+            zone = db.get(Zone, zone_id)
+            if not zone:
+                errors.append({"row": index, "error": "zone_not_found"})
+                continue
+            if country_id and zone.country_id != country_id:
+                errors.append({"row": index, "error": "zone_country_mismatch"})
+                continue
+
+        existing = db.execute(
+            select(LaborRate).where(
+                LaborRate.country_id == country_id,
+                LaborRate.zone_id == zone_id,
+                LaborRate.locality_id == parsed.get("locality_id"),
+                LaborRate.skill_code == skill_code,
+            )
+        ).scalar_one_or_none()
+        data = {
+            "country_id": country_id,
+            "zone_id": zone_id,
+            "locality_id": parsed.get("locality_id"),
+            "skill_code": skill_code,
+            "skill_label": skill_label,
+            "ro_skill_code": parsed.get("ro_skill_code"),
+            "esco_code": parsed.get("esco_code"),
+            "uniclass_code": parsed.get("uniclass_code"),
+            "deviz_indicator_series": parsed.get("deviz_indicator_series"),
+            "currency": parsed.get("currency") or "RON",
+            "base_rate": parsed.get("base_rate") or 0,
+            "weekend_multiplier": parsed.get("weekend_multiplier") or 1,
+            "holiday_multiplier": parsed.get("holiday_multiplier") or 1,
+            "night_multiplier": parsed.get("night_multiplier") or 1,
+            "is_active": parsed.get("is_active", True),
+        }
+        if existing:
+            for field, value in data.items():
+                setattr(existing, field, value)
+            updated += 1
+        else:
+            db.add(LaborRate(**data))
+            created += 1
+    db.commit()
+    return {"created": created, "updated": updated, "errors": errors}
+
+
+def export_labor_rates_csv(db: Session) -> str:
+    rows = db.execute(select(LaborRate).order_by(LaborRate.skill_label, LaborRate.id)).scalars().all()
+    zones = {zone.id: float(zone.multiplier) for zone in db.execute(select(Zone)).scalars().all()}
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(
+        [
+            "country_id",
+            "zone_id",
+            "locality_id",
+            "skill_code",
+            "skill_label",
+            "ro_skill_code",
+            "esco_code",
+            "uniclass_code",
+            "deviz_indicator_series",
+            "currency",
+            "base_rate",
+            "weekend_multiplier",
+            "holiday_multiplier",
+            "night_multiplier",
+            "zone_multiplier",
+            "estimated_total_holiday",
+            "is_active",
+        ]
+    )
+    for row in rows:
+        zone_multiplier = zones.get(row.zone_id, 1.0)
+        estimated_total_holiday = calculate_labor_total(row.base_rate, zone_multiplier, row.holiday_multiplier)
+        writer.writerow(
+            [
+                row.country_id,
+                row.zone_id,
+                row.locality_id,
+                row.skill_code,
+                row.skill_label,
+                row.ro_skill_code,
+                row.esco_code,
+                row.uniclass_code,
+                row.deviz_indicator_series,
+                row.currency,
+                row.base_rate,
+                row.weekend_multiplier,
+                row.holiday_multiplier,
+                row.night_multiplier,
+                zone_multiplier,
+                estimated_total_holiday,
+                row.is_active,
+            ]
+        )
+    return output.getvalue()
 
 
 def _build_concrete_extras(

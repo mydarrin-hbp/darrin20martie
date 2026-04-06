@@ -81,6 +81,64 @@ const sections: Array<{ title: string; items: SidebarItem[] }> = [
     ],
   },
   {
+    title: "Marketplace & Utilizatori",
+    items: [
+      {
+        href: "/backoffice/users",
+        label: "Utilizatori Platforma",
+        shortLabel: "USR",
+        icon: "US",
+        publicHref: "/",
+        children: [
+          { href: "/backoffice/users", label: "Toate Rolurile", shortLabel: "ALL", icon: "AL", publicHref: "/" },
+          { href: "/backoffice/onboarding-requests", label: "Onboarding Requests", shortLabel: "ONB", icon: "ON", publicHref: "/" },
+          { href: "/partners", label: "Parteneri & Onboarding", shortLabel: "PRT", icon: "PR", publicHref: "/partners" },
+          { href: "/clients", label: "Clienti & Profiluri", shortLabel: "CLI", icon: "CL", publicHref: "/account/create/client" },
+          { href: "/investors", label: "Investitori", shortLabel: "INV", icon: "IN", publicHref: "/investors" },
+        ],
+      },
+      {
+        href: "/backoffice/providers",
+        label: "Provideri Marketplace",
+        shortLabel: "PRO",
+        icon: "PR",
+        publicHref: "/materials",
+        children: [
+          { href: "/backoffice/providers", label: "Materiale & Bricolaj", shortLabel: "MAT", icon: "MT", publicHref: "/materials" },
+          { href: "/backoffice/providers", label: "Inchirieri & Rental", shortLabel: "REN", icon: "RN", publicHref: "/materials?type=RENTAL" },
+        ],
+      },
+      {
+        href: "/backoffice/marketplace-materials",
+        label: "Marketplace Materiale",
+        shortLabel: "MAT",
+        icon: "MM",
+        publicHref: "/materials",
+      },
+      {
+        href: "/backoffice/rental-center",
+        label: "Centru Rental",
+        shortLabel: "REN",
+        icon: "RC",
+        publicHref: "/materials?category=utilaje-rental",
+      },
+      {
+        href: "/backoffice/logistics",
+        label: "Logistica & Livrare",
+        shortLabel: "LOG",
+        icon: "LG",
+        publicHref: "/catalog",
+      },
+      {
+        href: "/backoffice/marketplace-commissions",
+        label: "Comisioane Marketplace",
+        shortLabel: "COM",
+        icon: "CM",
+        publicHref: "/materials",
+      },
+    ],
+  },
+  {
     title: "Operatiuni & Fluxuri",
     items: [
       {

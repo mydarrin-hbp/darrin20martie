@@ -107,6 +107,10 @@ def ensure_sqlite_runtime_schema(engine: Engine) -> None:
                         locality_id INTEGER,
                         skill_code VARCHAR(120) NOT NULL,
                         skill_label VARCHAR(255) NOT NULL,
+                        ro_skill_code VARCHAR(64),
+                        esco_code VARCHAR(64),
+                        uniclass_code VARCHAR(64),
+                        deviz_indicator_series VARCHAR(32),
                         currency VARCHAR(3) NOT NULL DEFAULT 'RON',
                         base_rate FLOAT NOT NULL DEFAULT 0,
                         weekend_multiplier FLOAT NOT NULL DEFAULT 1,
@@ -128,6 +132,16 @@ def ensure_sqlite_runtime_schema(engine: Engine) -> None:
                 )
             )
             existing_tables.add("labor_rates")
+        else:
+            labor_columns = {column["name"] for column in inspector.get_columns("labor_rates")}
+            if "ro_skill_code" not in labor_columns:
+                connection.execute(text("ALTER TABLE labor_rates ADD COLUMN ro_skill_code VARCHAR(64)"))
+            if "esco_code" not in labor_columns:
+                connection.execute(text("ALTER TABLE labor_rates ADD COLUMN esco_code VARCHAR(64)"))
+            if "uniclass_code" not in labor_columns:
+                connection.execute(text("ALTER TABLE labor_rates ADD COLUMN uniclass_code VARCHAR(64)"))
+            if "deviz_indicator_series" not in labor_columns:
+                connection.execute(text("ALTER TABLE labor_rates ADD COLUMN deviz_indicator_series VARCHAR(32)"))
 
         if "admins" not in existing_tables:
             connection.execute(

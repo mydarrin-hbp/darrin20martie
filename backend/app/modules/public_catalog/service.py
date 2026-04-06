@@ -41,6 +41,34 @@ def _extract_spec_values(resource: CatalogResource) -> tuple[str | None, str | N
     )
 
 
+def _extract_pivot_meta(resource: CatalogResource) -> tuple[str | None, list[str]]:
+    specs = resource.technical_specs or {}
+    object_kind = specs.get("object_kind")
+    actions = specs.get("pivot_actions") or []
+    if isinstance(actions, str):
+        actions = [actions]
+    weight_kg = specs.get("weight_kg") or specs.get("weightKg")
+    height_m = specs.get("height_m") or specs.get("heightM")
+    weight_category = (specs.get("weight_category") or "").lower()
+    try:
+        is_heavy = float(weight_kg) > 100
+    except (TypeError, ValueError):
+        is_heavy = False
+    try:
+        is_tall = float(height_m) > 3
+    except (TypeError, ValueError):
+        is_tall = False
+    if weight_category == "heavy" or is_heavy or is_tall:
+        actions = list(actions)
+        actions.append("Inchiriere utilaj")
+        if not object_kind:
+            object_kind = "TECH_OBJECT"
+    return (
+        str(object_kind).strip() if object_kind else None,
+        [str(item).strip() for item in actions if str(item).strip()],
+    )
+
+
 def _resource_matches(
     resource: CatalogResource,
     *,
@@ -87,15 +115,21 @@ def _build_public_catalog_card(
     equipment_types_collected: list[str] = []
     brands_collected: list[str] = []
     resource_types_collected: list[str] = []
+    object_kinds_collected: list[str] = []
+    pivot_actions_collected: list[str] = []
     availability_status = None
     for resource in resources:
         equipment_type, brand = _extract_spec_values(resource)
+        object_kind, pivot_actions = _extract_pivot_meta(resource)
         if equipment_type:
             equipment_types_collected.append(equipment_type)
         if brand:
             brands_collected.append(brand)
         if resource.resource_type:
             resource_types_collected.append(resource.resource_type)
+        if object_kind:
+            object_kinds_collected.append(object_kind)
+        pivot_actions_collected.extend(pivot_actions)
         if availability_status is None:
             availability_status = resource.availability_status
         elif resource.availability_status and resource.availability_status != "IN_STOCK":
@@ -130,6 +164,8 @@ def _build_public_catalog_card(
         equipment_types=_unique_sorted(equipment_types_collected),
         brands=_unique_sorted(brands_collected),
         resource_types=_unique_sorted(resource_types_collected),
+        object_kind=_unique_sorted(object_kinds_collected)[0] if object_kinds_collected else None,
+        pivot_actions=_unique_sorted(pivot_actions_collected),
     )
 
 

@@ -92,6 +92,17 @@ export type PublicRoleRecord = {
   ctaLabel: string;
 };
 
+export type PublicSignupRoleOption = {
+  id: string;
+  role: "CLIENT" | "PARTNER" | "INVESTOR" | "ADMIN";
+  subrole?: string;
+  label: string;
+  audience: string;
+  description: string;
+  permissions: string[];
+  ctaLabel: string;
+};
+
 export type PublicAssetIntervention = {
   label: string;
   serviceSlug: string;
@@ -111,7 +122,7 @@ export type PublicAssetRecord = {
 
 export const publicNavLinks: PublicNavLink[] = [
   { label: "Servicii", href: "/catalog" },
-  { label: "Industrii", href: "/catalog" },
+  { label: "Domenii", href: "/catalog" },
   { label: "Devino partener", href: "/partners/join" },
   { label: "Devino investitor", href: "/investors" },
   { label: "Contact", href: "/account" },
@@ -125,7 +136,7 @@ export const publicFooterColumns = [
       { label: "Catalog Servicii", href: "/catalog" },
       { label: "Reparat calorifer", href: "/services/reparat-calorifer" },
       { label: "Materiale si Betoane", href: "/services/materiale-betoane" },
-      { label: "Coșul meu", href: "/cart" },
+      { label: "Coșul meu", href: "/cos" },
     ],
   },
   {
@@ -158,9 +169,9 @@ export const publicQuickLinks: PublicQuickLink[] = [
   { title: "Catalog servicii", href: "/catalog", tone: "orange" },
   { title: "Pagina serviciu Reparat calorifer", href: "/services/reparat-calorifer", tone: "blue" },
   { title: "Serviciu special Materiale si Betoane", href: "/services/materiale-betoane", tone: "blue" },
-  { title: "Coșul meu", href: "/cart", tone: "green" },
-  { title: "Checkout", href: "/checkout", tone: "orange" },
-  { title: "Status plată", href: "/payment-status", tone: "blue" },
+  { title: "Coșul meu", href: "/cos", tone: "green" },
+  { title: "Finalizare proiect", href: "/finalizare-proiect", tone: "orange" },
+  { title: "Confirmare antrepriza", href: "/confirmare-antrepriza", tone: "blue" },
   { title: "Modul Devino Partener", href: "/partners/join", tone: "green" },
   { title: "Modul Devino Investitor", href: "/investors", tone: "blue" },
   { title: "Creare cont client", href: "/account/create", tone: "light" },
@@ -473,3 +484,238 @@ export const publicRoleCatalog: PublicRoleRecord[] = [
 export const publicSelfSignupRoles = publicRoleCatalog.filter((role) =>
   ["client", "partner", "investor"].includes(role.id),
 );
+
+export const publicSignupRoleOptions: PublicSignupRoleOption[] = [
+  {
+    id: "client",
+    role: "CLIENT",
+    label: "Client",
+    audience: "Servicii la cerere",
+    description: "Comanzi servicii, incarci media si vezi statusuri si plati in contul dedicat clientului.",
+    permissions: ["Cereri & comenzi", "Upload foto/video", "Plata securizata"],
+    ctaLabel: "Continua ca client",
+  },
+  {
+    id: "partner-services",
+    role: "PARTNER",
+    subrole: "services",
+    label: "Partener servicii",
+    audience: "Prestator manopera",
+    description: "Intri in fluxul de aprobare pentru executie servicii, montaj, mentenanta si reparatii.",
+    permissions: ["Executie servicii", "Disponibilitate echipa", "Documente conformitate"],
+    ctaLabel: "Continua ca partener servicii",
+  },
+  {
+    id: "provider-materials-marketplace",
+    role: "PARTNER",
+    subrole: "materials-marketplace",
+    label: "Provider materiale (Marketplace)",
+    audience: "Bricolaj / consumabile",
+    description: "Gestionezi catalogul de materiale in marketplace si primesti comenzi din My Darrin.",
+    permissions: ["Catalog materiale", "Stocuri & livrare", "SLA & comenzi"],
+    ctaLabel: "Continua ca provider materiale",
+  },
+  {
+    id: "provider-materials-ip",
+    role: "PARTNER",
+    subrole: "materials-ip",
+    label: "Provider materiale (Integrare IP)",
+    audience: "Integrare API/IP",
+    description: "Conectezi propriul sistem de stocuri prin integrare aprobata de Super Admin.",
+    permissions: ["Integrare API", "Sincronizare stocuri", "Aprobari Super Admin"],
+    ctaLabel: "Continua cu integrare IP",
+  },
+  {
+    id: "provider-rental",
+    role: "PARTNER",
+    subrole: "rental",
+    label: "Provider inchirieri utilaje",
+    audience: "Rental utilaje",
+    description: "Administrezi utilaje, tarife si disponibilitate pentru lucrari AUR/PLATINA.",
+    permissions: ["Flota utilaje", "Tarife orare", "Disponibilitate"],
+    ctaLabel: "Continua ca provider rental",
+  },
+  {
+    id: "provider-concrete",
+    role: "PARTNER",
+    subrole: "concrete",
+    label: "Provider betoane",
+    audience: "Livrare beton",
+    description: "Devii furnizor de betoane cu clase si livrare programata in sistem.",
+    permissions: ["Catalog betoane", "Logistica transport", "Optiune pompa"],
+    ctaLabel: "Continua ca furnizor betoane",
+  },
+  {
+    id: "investor",
+    role: "INVESTOR",
+    label: "Investitor",
+    audience: "Profil investitional",
+    description: "Intri in fluxul de aprobare investitional si accesezi rundele active.",
+    permissions: ["Profil investitional", "Documente suport", "Acces controlat"],
+    ctaLabel: "Continua ca investitor",
+  },
+  {
+    id: "admin",
+    role: "ADMIN",
+    label: "Admin",
+    audience: "Aprobare Super Admin",
+    description: "Soliciti acces de administrare. Permisiunile sunt alocate doar dupa aprobare.",
+    permissions: ["Acces Backoffice", "Audit & control", "Validare continut"],
+    ctaLabel: "Continua ca admin",
+  },
+];
+
+export type PublicDomainNode = {
+  id: string;
+  label: string;
+  children?: PublicDomainNode[];
+};
+
+export const publicDomainTree: PublicDomainNode[] = [
+  {
+    id: "constructii-instalatii",
+    label: "Constructii & Instalatii",
+    children: [
+      {
+        id: "hvac-instalatii-termice",
+        label: "HVAC / Instalatii termice",
+        children: [
+          { id: "radiatoare", label: "Radiatoare" },
+          { id: "calorifer-aluminiu", label: "Calorifer aluminiu" },
+          { id: "centrale-peletti", label: "Centrale lemne / peleti" },
+          { id: "aer-conditionat", label: "Aer conditionat" },
+          { id: "consumabile-termice", label: "Consumabile" },
+        ],
+      },
+      {
+        id: "usi-ferestre",
+        label: "Usi & Ferestre",
+        children: [
+          { id: "usi-interior", label: "Usi interior" },
+          { id: "usi-exterior", label: "Usi exterior" },
+          { id: "feronerie", label: "Feronerie" },
+        ],
+      },
+      {
+        id: "finisaje",
+        label: "Finisaje",
+        children: [
+          { id: "parchet-gresie", label: "Parchet / Gresie" },
+          { id: "vopsele", label: "Vopsele" },
+        ],
+      },
+      {
+        id: "sanitare",
+        label: "Obiecte sanitare",
+        children: [
+          { id: "obiecte-sanitare", label: "Obiecte sanitare" },
+          { id: "baterii", label: "Baterii" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "electrice-iluminat",
+    label: "Electrice & Iluminat",
+    children: [
+      {
+        id: "corpuri-iluminat",
+        label: "Corpuri iluminat",
+        children: [
+          { id: "obiecte-iluminat", label: "Obiecte iluminat" },
+          { id: "consumabile-lumina", label: "Consumabile" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "utilaje-rental",
+    label: "Utilaje Rental",
+    children: [
+      { id: "buldoexcavatoare", label: "Buldoexcavatoare" },
+      { id: "nacele", label: "Nacele" },
+      { id: "macarale", label: "Macarale" },
+    ],
+  },
+];
+
+export type PivotActionKind = "TECH_OBJECT" | "CONSUMABLE" | "RENTAL";
+export type PivotServiceLevel = "BRONZ" | "ARGINT" | "AUR" | "PLATINUM";
+
+export type PublicPivotConstraints = {
+  weightKg?: number;
+  heightM?: number;
+  minLevel?: PivotServiceLevel;
+  requiresRental?: boolean;
+};
+
+export const publicMaterialPivotMap: Record<
+  string,
+  {
+    label: string;
+    kind: PivotActionKind;
+    actions: string[];
+    notes?: string;
+    constraints?: PublicPivotConstraints;
+    purchaseOnly?: boolean;
+  }
+> = {
+  "calorifer-aluminiu": {
+    label: "Calorifer aluminiu",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"],
+    notes: "Greutate redusa, fara constrangeri speciale.",
+    constraints: { minLevel: "BRONZ" },
+  },
+  "radiatoare": {
+    label: "Calorifere otel / fonta",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj", "Inchiriere utilaj"],
+    notes: "Obiect tehnologic greu, necesita manipulare si inchiriere utilaj.",
+    constraints: { weightKg: 120, minLevel: "AUR", requiresRental: true },
+  },
+  "usi-interior": {
+    label: "Usi interioare",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"],
+  },
+  "obiecte-sanitare": {
+    label: "Obiecte sanitare",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"],
+  },
+  "centrale-peletti": {
+    label: "Centrale lemne / peleti",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"],
+    constraints: { minLevel: "ARGINT" },
+  },
+  "aer-conditionat": {
+    label: "Aer conditionat",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"],
+    constraints: { heightM: 3.2, minLevel: "AUR", requiresRental: true },
+  },
+  "parchet-gresie": {
+    label: "Parchet / Gresie",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"],
+  },
+  "obiecte-iluminat": {
+    label: "Obiecte iluminat",
+    kind: "TECH_OBJECT",
+    actions: ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"],
+  },
+  "consumabile-termice": {
+    label: "Ciment / Glet / Silicon",
+    kind: "CONSUMABLE",
+    actions: ["Cumpara"],
+    notes: "Consumabile incluse in devizul de montaj.",
+    purchaseOnly: true,
+  },
+  "nacele": {
+    label: "Nacela",
+    kind: "RENTAL",
+    actions: ["Utilaj necesar pentru nivel AUR/PLATINA"],
+  },
+};

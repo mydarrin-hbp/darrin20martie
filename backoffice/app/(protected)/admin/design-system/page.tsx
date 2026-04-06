@@ -8,7 +8,7 @@ export default function DesignSystemAdminPage() {
       badge="Design hub"
       metrics={[
         { label: "Fundatie", value: "Shared UI", hint: "Sidebar, shell, module header, cards" },
-        { label: "Preview", value: "Live bridge", hint: "Visual Builder + homepage publica actuala" },
+        { label: "Vizualizare LIVE", value: "Live bridge", hint: "Visual Builder + homepage publica actuala" },
         { label: "Tema", value: "My Darrin", hint: "Space Grotesk + token-uri existente" },
         { label: "Backoffice", value: "Unificat", hint: "Tailwind + utilitare comune" },
       ]}
@@ -34,7 +34,7 @@ export default function DesignSystemAdminPage() {
       ]}
       statusItems={[
         { label: "Componente shared", value: "READY" },
-        { label: "Preview iteratii", value: "ARCHIVED" },
+        { label: "Vizualizare iteratii", value: "ARCHIVED" },
         { label: "Token-uri dedicate", value: "PARTIAL" },
         { label: "Documentare UI", value: "IN PROGRES" },
       ]}

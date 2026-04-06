@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 import app.modules.geography.models  # noqa: F401
+import app.models.assets  # noqa: F401
 
 
 if TYPE_CHECKING:
@@ -77,6 +78,7 @@ class Supplier(Base):
     criminal_record_status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
     criminal_record_valid_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     integrity_declaration_status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
+    provider_type: Mapped[str] = mapped_column(String(32), nullable=False, default="MATERIAL")
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     resources: Mapped[list["CatalogResource"]] = relationship(back_populates="supplier")

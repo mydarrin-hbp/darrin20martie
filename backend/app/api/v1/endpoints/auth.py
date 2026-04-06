@@ -28,7 +28,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 AUTO_APPROVED_ROLES = {UserRole.CLIENT.value}
-PUBLIC_SIGNUP_ROLES = {UserRole.CLIENT.value, UserRole.PARTNER.value, UserRole.INVESTOR.value}
+PUBLIC_SIGNUP_ROLES = {UserRole.CLIENT.value, UserRole.PARTNER.value, UserRole.INVESTOR.value, UserRole.ADMIN.value}
 
 
 def _full_name(first_name: str, last_name: str) -> str:
@@ -157,6 +157,7 @@ def select_signup_role(request: Request, data: SignupLeadSelectRoleRequest, db: 
         UserRole.CLIENT.value: f"/account/create/client?lead={lead.id}",
         UserRole.PARTNER.value: f"/partners/join/create?lead={lead.id}",
         UserRole.INVESTOR.value: f"/investors/create?lead={lead.id}",
+        UserRole.ADMIN.value: f"/admin/access-request?lead={lead.id}",
     }[data.role.value]
     return _lead_to_response(lead, redirect_path=redirect_path)
 
@@ -186,7 +187,7 @@ def complete_register(request: Request, data: SignupLeadCompleteRequest, db: Ses
         city=lead.city,
         hashed_password=hash_password(data.password),
         role=data.role.value,
-        verification_status="APPROVED" if data.role.value in AUTO_APPROVED_ROLES else "PENDING",
+        verification_status="APPROVED" if data.role.value in AUTO_APPROVED_ROLES else "PENDING_DOCS",
     )
 
     lead.selected_role = data.role.value
@@ -223,7 +224,7 @@ def register(request: Request, data: RegisterRequest, db: Session = Depends(get_
         city=data.city,
         hashed_password=hash_password(data.password),
         role=data.role.value,
-        verification_status="APPROVED" if data.role.value in AUTO_APPROVED_ROLES else "PENDING",
+        verification_status="APPROVED" if data.role.value in AUTO_APPROVED_ROLES else "PENDING_DOCS",
     )
 
     db.add(new_user)
@@ -256,7 +257,7 @@ def login(request: Request, data: LoginRequest, db: Session = Depends(get_db)):
             detail="Account access has been rejected",
         )
 
-    if user.role in {UserRole.ADMIN.value, UserRole.SUPER_ADMIN.value, UserRole.PARTNER.value, UserRole.INVESTOR.value} and user.verification_status != "APPROVED":
+    if user.role in {UserRole.ADMIN.value, UserRole.SUPER_ADMIN.value, UserRole.PARTNER.value, UserRole.INVESTOR.value} and user.verification_status not in {"APPROVED", "VERIFIED"}:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account pending approval",

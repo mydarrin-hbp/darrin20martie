@@ -7,11 +7,20 @@ import { getSiteContentPage, listSiteContentPages, patchContentSync, updateSiteC
 import { getPublicSiteBaseUrl } from "@/lib/public-site";
 
 type Tier = { tierKey: "silver" | "gold" | "platinum"; title: string; marginMultiplier?: number; benefitsMarkdown?: string };
+type HeroSlide = {
+  id: string;
+  title: string;
+  description?: string;
+  mediaUrl?: string;
+  mediaType?: "IMAGE" | "VIDEO" | "BANNER";
+  accent?: "orange" | "navy" | "green";
+};
 type BuilderContent = {
   meta?: { goLiveDomain?: string };
   branding?: { logoText?: string; logoSubtext?: string; slogan?: string };
   header?: { locationLabel?: string; searchPlaceholder?: string; menu?: string[]; language?: string };
   hero?: { headline?: string; subheadline?: string; primaryCta?: string; secondaryCta?: string };
+  heroSlides?: HeroSlide[];
   benefits?: string[];
   quickCategories?: Array<{ title: string; media?: string }>;
   footer?: { columns?: Record<string, string[]>; apps?: string[]; copyright?: string };
@@ -34,6 +43,7 @@ const defaultContent: BuilderContent = {
     primaryCta: "Vezi servicii",
     secondaryCta: "Vorbeste cu Darrin",
   },
+  heroSlides: [],
   benefits: ["Pret standardizat", "Garantie", "Asigurare", "Profesionisti verificati"],
   quickCategories: [{ title: "Acasa", media: "IMAGINE" }, { title: "Auto", media: "IMAGINE" }, { title: "Industrial", media: "IMAGINE" }],
   footer: {
@@ -122,6 +132,20 @@ export function HomepageBuilderAdminPage() {
   const [autosaveLabel, setAutosaveLabel] = useState("Pregatit pentru autosave");
   const [open, setOpen] = useState({ header: true, footer: false, homepage: true, service: true, raw: false });
   const [draggedSectionKey, setDraggedSectionKey] = useState<string | null>(null);
+  const [slideTitle, setSlideTitle] = useState("");
+  const [slideDescription, setSlideDescription] = useState("");
+  const [slideMediaType, setSlideMediaType] = useState<HeroSlide["mediaType"]>("IMAGE");
+  const [slideAccent, setSlideAccent] = useState<HeroSlide["accent"]>("orange");
+  const [slideUrl, setSlideUrl] = useState("");
+  const [slideFile, setSlideFile] = useState<File | null>(null);
+  const [draggedSlideId, setDraggedSlideId] = useState<string | null>(null);
+  const [slideOrderDraft, setSlideOrderDraft] = useState<HeroSlide[] | null>(null);
+  const [showDeviceOverlay, setShowDeviceOverlay] = useState(true);
+  const [viewportLabel, setViewportLabel] = useState("Desktop");
+  const [viewportSize, setViewportSize] = useState({ w: 0, h: 0 });
+  const [overlayPosition, setOverlayPosition] = useState<"top-left" | "top-right" | "bottom-left" | "bottom-right">(
+    "bottom-right",
+  );
 
   useEffect(() => {
     if (!token) return;
@@ -141,11 +165,117 @@ export function HomepageBuilderAdminPage() {
   }, [selectedSlug, token]);
 
   useEffect(() => {
+    function updateViewport() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setViewportSize({ w: width, h: height });
+      if (width < 640) {
+        setViewportLabel("Mobile");
+      } else if (width < 1024) {
+        setViewportLabel("Tablet");
+      } else {
+        setViewportLabel("Desktop");
+      }
+    }
+
+    updateViewport();
+    window.addEventListener("resize", updateViewport);
+    return () => window.removeEventListener("resize", updateViewport);
+  }, []);
+
+  useEffect(() => {
     setContentJson(JSON.stringify(content, null, 2));
   }, [content]);
 
   function patchLocal<K extends keyof BuilderContent>(key: K, value: BuilderContent[K]) {
     setContent((current) => ({ ...current, [key]: value }));
+  }
+
+  function currentSlides() {
+    const base = Array.isArray(content.heroSlides) ? content.heroSlides : [];
+    return slideOrderDraft ?? base;
+  }
+
+  async function addSlide() {
+    const nextId = `slide-${Date.now()}`;
+    const trimmedTitle = slideTitle.trim();
+    if (!trimmedTitle) {
+      setError("Completeaza titlul slide-ului.");
+      return;
+    }
+    setError(null);
+
+    const finishAdd = async (mediaUrl?: string) => {
+      const nextSlides = [
+        ...currentSlides(),
+        {
+          id: nextId,
+          title: trimmedTitle,
+          description: slideDescription.trim(),
+          mediaType: slideMediaType ?? "IMAGE",
+          accent: slideAccent ?? "orange",
+          mediaUrl: (mediaUrl ?? slideUrl.trim()) || undefined,
+        },
+      ];
+      await autosave("heroSlides", nextSlides, () => patchLocal("heroSlides", nextSlides));
+      setSlideTitle("");
+      setSlideDescription("");
+      setSlideUrl("");
+      setSlideFile(null);
+    };
+
+    if (slideFile) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const result = typeof reader.result === "string" ? reader.result : "";
+        await finishAdd(result);
+      };
+      reader.onerror = () => setError("Nu am putut citi fisierul selectat.");
+      reader.readAsDataURL(slideFile);
+      return;
+    }
+
+    await finishAdd();
+  }
+
+  function updateSlide(id: string, patch: Partial<HeroSlide>) {
+    const nextSlides = currentSlides().map((slide) => (slide.id === id ? { ...slide, ...patch } : slide));
+    setSlideOrderDraft(null);
+    void autosave("heroSlides", nextSlides, () => patchLocal("heroSlides", nextSlides));
+  }
+
+  function reorderSlides(fromId: string, toId: string) {
+    if (fromId === toId) return;
+    const list = [...currentSlides()];
+    const fromIndex = list.findIndex((slide) => slide.id === fromId);
+    const toIndex = list.findIndex((slide) => slide.id === toId);
+    if (fromIndex < 0 || toIndex < 0) return;
+    const [moved] = list.splice(fromIndex, 1);
+    list.splice(toIndex, 0, moved);
+    setSlideOrderDraft(list);
+  }
+
+  function removeSlide(id: string) {
+    const nextSlides = currentSlides().filter((slide) => slide.id !== id);
+    setSlideOrderDraft(null);
+    void autosave("heroSlides", nextSlides, () => patchLocal("heroSlides", nextSlides));
+  }
+
+  function replaceSlideFile(id: string, file: File | null) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      updateSlide(id, { mediaUrl: result });
+    };
+    reader.onerror = () => setError("Nu am putut incarca fisierul.");
+    reader.readAsDataURL(file);
+  }
+
+  async function saveSlideOrder() {
+    if (!slideOrderDraft) return;
+    await autosave("heroSlides", slideOrderDraft, () => patchLocal("heroSlides", slideOrderDraft));
+    setSlideOrderDraft(null);
   }
 
   async function autosave(path: string, value: unknown, updater: () => void) {
@@ -209,7 +339,7 @@ export function HomepageBuilderAdminPage() {
         <div className="mt-3 grid gap-2 text-sm text-muted">
           <div>1. Selecteaza pagina publica pe care vrei sa o editezi din "Control pagina".</div>
           <div>2. Foloseste butonul `Edit` pentru a deschide sectiunea dorita si salveaza automat.</div>
-          <div>3. Deschide `Preview live` pentru verificarea vizuala in stilul V3 aprobat.</div>
+          <div>3. Deschide `Vizualizare LIVE` pentru verificarea vizuala in stilul V3 aprobat.</div>
           <div>4. Pentru modificari avansate, foloseste `Raw JSON override` si `Salveaza complet`.</div>
         </div>
       </section>
@@ -317,6 +447,177 @@ export function HomepageBuilderAdminPage() {
                 <textarea className="field min-h-24" value={splitLines(content.benefits)} onChange={(event) => patchLocal("benefits", parseLines(event.target.value))} onBlur={(event) => void autosave("benefits", parseLines(event.target.value), () => patchLocal("benefits", parseLines(event.target.value)))} />
               </label>
             </div>
+
+            <div className="mt-6 rounded-2xl border border-border bg-white/70 p-4">
+              <div className="text-sm font-semibold text-ink">Hero Slider - Upload & administrare</div>
+              <div className="mt-1 text-xs text-muted">
+                Accepta banner, imagine sau video. Recomandat 16:9 (1920x720). Fisierele mari sunt stocate local in JSON pentru test.
+              </div>
+
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <label className="grid gap-2 text-sm text-muted">
+                  Titlu slide
+                  <input className="field" value={slideTitle} onChange={(event) => setSlideTitle(event.target.value)} placeholder="Titlu slide" />
+                </label>
+                <label className="grid gap-2 text-sm text-muted">
+                  Descriere (optional)
+                  <input className="field" value={slideDescription} onChange={(event) => setSlideDescription(event.target.value)} placeholder="Descriere scurta" />
+                </label>
+                <label className="grid gap-2 text-sm text-muted">
+                  Tip media
+                  <select className="field" value={slideMediaType ?? "IMAGE"} onChange={(event) => setSlideMediaType(event.target.value as HeroSlide["mediaType"])}>
+                    <option value="IMAGE">Imagine</option>
+                    <option value="VIDEO">Video</option>
+                    <option value="BANNER">Banner</option>
+                  </select>
+                </label>
+                <label className="grid gap-2 text-sm text-muted">
+                  Accent
+                  <select className="field" value={slideAccent ?? "orange"} onChange={(event) => setSlideAccent(event.target.value as HeroSlide["accent"])}>
+                    <option value="orange">Orange</option>
+                    <option value="navy">Navy</option>
+                    <option value="green">Green</option>
+                  </select>
+                </label>
+                <label className="grid gap-2 text-sm text-muted">
+                  URL media extern (optional)
+                  <input className="field" value={slideUrl} onChange={(event) => setSlideUrl(event.target.value)} placeholder="https://..." />
+                </label>
+                <label className="grid gap-2 text-sm text-muted">
+                  Upload fisier (jpg/png/mp4)
+                  <input
+                    className="field"
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={(event) => setSlideFile(event.target.files?.[0] ?? null)}
+                  />
+                </label>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <button type="button" className="btn-primary" onClick={() => void addSlide()}>
+                  Adauga slide
+                </button>
+                <a className="btn-secondary" href={previewHref("homepage")} target="_blank" rel="noreferrer">
+                  Vizualizare LIVE
+                </a>
+              </div>
+
+              <div className="mt-4 grid gap-4">
+                {slideOrderDraft ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700">
+                    <span>Ordinea slide-urilor a fost modificata. Apasa “Salveaza ordinea”.</span>
+                    <button type="button" className="btn-primary" onClick={() => void saveSlideOrder()}>
+                      Salveaza ordinea
+                    </button>
+                  </div>
+                ) : null}
+
+                {currentSlides().length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-border px-4 py-6 text-sm text-muted">
+                    Nu exista slide-uri inca. Adauga primul slide mai sus.
+                  </div>
+                ) : null}
+                {currentSlides().map((slide) => (
+                  <div
+                    key={slide.id}
+                    className={`rounded-2xl border border-border bg-white p-4 ${
+                      currentSlides()[0]?.id === slide.id ? "border-emerald-300 bg-emerald-50/40" : ""
+                    } ${draggedSlideId === slide.id ? "ring-2 ring-orange-200" : ""}`}
+                    draggable
+                    onDragStart={() => setDraggedSlideId(slide.id)}
+                    onDragEnd={() => setDraggedSlideId(null)}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDrop={() => {
+                      if (draggedSlideId) {
+                        reorderSlides(draggedSlideId, slide.id);
+                      }
+                      setDraggedSlideId(null);
+                    }}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 text-sm font-semibold text-ink">
+                        <span
+                          className="cursor-grab rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs uppercase tracking-[0.2em]"
+                          title="Trage pentru reorder"
+                        >
+                          ⋮⋮
+                        </span>
+                        <span>Slide #{slide.id}</span>
+                        <span className="text-xs font-medium text-muted">Trage pentru reorder</span>
+                        {currentSlides()[0]?.id === slide.id ? (
+                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                            Slide activ
+                          </span>
+                        ) : null}
+                      </div>
+                      <button type="button" className="btn-secondary" onClick={() => removeSlide(slide.id)}>
+                        Sterge
+                      </button>
+                    </div>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <label className="grid gap-2 text-sm text-muted">
+                        Titlu
+                        <input
+                          className="field"
+                          value={slide.title}
+                          onChange={(event) => updateSlide(slide.id, { title: event.target.value })}
+                        />
+                      </label>
+                      <label className="grid gap-2 text-sm text-muted">
+                        Descriere
+                        <input
+                          className="field"
+                          value={slide.description ?? ""}
+                          onChange={(event) => updateSlide(slide.id, { description: event.target.value })}
+                        />
+                      </label>
+                      <label className="grid gap-2 text-sm text-muted">
+                        Tip media
+                        <select
+                          className="field"
+                          value={slide.mediaType ?? "IMAGE"}
+                          onChange={(event) => updateSlide(slide.id, { mediaType: event.target.value as HeroSlide["mediaType"] })}
+                        >
+                          <option value="IMAGE">Imagine</option>
+                          <option value="VIDEO">Video</option>
+                          <option value="BANNER">Banner</option>
+                        </select>
+                      </label>
+                      <label className="grid gap-2 text-sm text-muted">
+                        Accent
+                        <select
+                          className="field"
+                          value={slide.accent ?? "orange"}
+                          onChange={(event) => updateSlide(slide.id, { accent: event.target.value as HeroSlide["accent"] })}
+                        >
+                          <option value="orange">Orange</option>
+                          <option value="navy">Navy</option>
+                          <option value="green">Green</option>
+                        </select>
+                      </label>
+                      <label className="grid gap-2 text-sm text-muted md:col-span-2">
+                        URL media
+                        <input
+                          className="field"
+                          value={slide.mediaUrl ?? ""}
+                          onChange={(event) => updateSlide(slide.id, { mediaUrl: event.target.value })}
+                          placeholder="https://..."
+                        />
+                      </label>
+                      <label className="grid gap-2 text-sm text-muted md:col-span-2">
+                        Inlocuieste media (upload)
+                        <input
+                          className="field"
+                          type="file"
+                          accept="image/*,video/*"
+                          onChange={(event) => replaceSlideFile(slide.id, event.target.files?.[0] ?? null)}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </Section>
 
           {selectedSlug === "service-detail" ? (
@@ -375,15 +676,83 @@ export function HomepageBuilderAdminPage() {
           <article className="panel px-6 py-6">
             <div className="builder-section-head">
               <div>
-                <div className="builder-section-title">Preview & sync</div>
+                <div className="builder-section-title">Vizualizare LIVE & sync</div>
                 <div className="builder-section-copy">Verifici imediat in site-ul public.</div>
               </div>
               <span className="tag">{loading ? "Loading" : "Ready"}</span>
             </div>
             <div className="builder-preview-actions">
               <a className="btn-primary" href={previewHref(selectedSlug)} target="_blank" rel="noreferrer">Deschide live</a>
-              <a className="btn-secondary" href={`${previewHref(selectedSlug)}${previewHref(selectedSlug).includes("?") ? "&" : "?"}edit_mode=1`} target="_blank" rel="noreferrer">Preview Edit Mode</a>
+              <a className="btn-secondary" href={`${previewHref(selectedSlug)}${previewHref(selectedSlug).includes("?") ? "&" : "?"}edit_mode=1`} target="_blank" rel="noreferrer">Vizualizare LIVE (Edit Mode)</a>
             </div>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white/70 px-4 py-3 text-sm text-muted">
+              <span>Indicator live device pentru testare (inainte de salvare).</span>
+              <label className="flex items-center gap-2 text-sm font-medium text-ink">
+                <input
+                  type="checkbox"
+                  checked={showDeviceOverlay}
+                  onChange={(event) => setShowDeviceOverlay(event.target.checked)}
+                />
+                Afiseaza overlay
+              </label>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted">
+              <span>Pin overlay:</span>
+              {(["top-left", "top-right", "bottom-left", "bottom-right"] as const).map((pos) => (
+                <button
+                  key={pos}
+                  type="button"
+                  className={`rounded-full border px-3 py-1 ${overlayPosition === pos ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-border bg-white"}`}
+                  onClick={() => setOverlayPosition(pos)}
+                >
+                  {pos.replace("-", " ")}
+                </button>
+              ))}
+            </div>
+            {showDeviceOverlay ? (
+              <div
+                className={`fixed z-50 rounded-2xl border border-border bg-white/90 px-4 py-3 text-xs shadow-xl ${
+                  overlayPosition === "top-left"
+                    ? "top-6 left-6"
+                    : overlayPosition === "top-right"
+                      ? "top-6 right-6"
+                      : overlayPosition === "bottom-left"
+                        ? "bottom-6 left-6"
+                        : "bottom-6 right-6"
+                }`}
+              >
+                <button
+                  type="button"
+                  className="absolute right-2 top-2 rounded-full border border-border bg-white px-2 py-0.5 text-[10px] text-muted"
+                  onClick={() => setShowDeviceOverlay(false)}
+                >
+                  ×
+                </button>
+                <div
+                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${
+                    viewportLabel === "Mobile"
+                      ? "bg-rose-100 text-rose-700"
+                      : viewportLabel === "Tablet"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-emerald-100 text-emerald-700"
+                  }`}
+                >
+                  {viewportLabel}
+                </div>
+                <div className="mt-2 text-[11px] text-muted">
+                  {viewportSize.w}×{viewportSize.h} · BP Tailwind:
+                  {viewportSize.w < 640
+                    ? " <sm"
+                    : viewportSize.w < 768
+                      ? " sm"
+                      : viewportSize.w < 1024
+                        ? " md"
+                        : viewportSize.w < 1280
+                          ? " lg"
+                          : " xl"}
+                </div>
+              </div>
+            ) : null}
             {message ? <div className="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{message}</div> : null}
             {error ? <div className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div> : null}
           </article>

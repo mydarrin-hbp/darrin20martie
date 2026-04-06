@@ -4,9 +4,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { publicSelfSignupRoles } from "@/lib/public-site";
+import { publicSignupRoleOptions } from "@/lib/public-site";
 
-type SignupRole = "CLIENT" | "PARTNER" | "INVESTOR";
+type SignupRole = "CLIENT" | "PARTNER" | "INVESTOR" | "ADMIN";
+type SignupSubrole =
+  | "services"
+  | "materials-marketplace"
+  | "materials-ip"
+  | "rental"
+  | "concrete"
+  | null
+  | undefined;
 
 type SignupLeadResponse = {
   id: number;
@@ -17,6 +25,7 @@ type SignupLeadResponse = {
   city?: string | null;
   status: string;
   selected_role?: SignupRole | null;
+  selected_subrole?: string | null;
   phone_verified: boolean;
   sms_debug_code?: string | null;
   redirect_path?: string | null;
@@ -57,7 +66,96 @@ function roleLabel(role: SignupRole) {
     CLIENT: "Client",
     PARTNER: "Partener",
     INVESTOR: "Investitor",
+    ADMIN: "Admin",
   }[role];
+}
+
+function roleContextLabel(role: SignupRole, subrole?: SignupSubrole) {
+  if (role !== "PARTNER") {
+    return roleLabel(role);
+  }
+  return (
+    {
+      services: "Partener servicii",
+      "materials-marketplace": "Provider materiale (Marketplace)",
+      "materials-ip": "Provider materiale (Integrare IP)",
+      rental: "Provider inchirieri utilaje",
+      concrete: "Provider betoane",
+    }[subrole ?? "services"] ?? roleLabel(role)
+  );
+}
+
+function normalizeSubrole(value?: string | null): SignupSubrole {
+  if (!value) return undefined;
+  const allowed = new Set<Exclude<SignupSubrole, null | undefined>>([
+    "services",
+    "materials-marketplace",
+    "materials-ip",
+    "rental",
+    "concrete",
+  ]);
+  return allowed.has(value as Exclude<SignupSubrole, null | undefined>)
+    ? (value as SignupSubrole)
+    : undefined;
+}
+
+function resolveRoleRedirect(role: SignupRole, subrole: SignupSubrole, leadId: number) {
+  if (role === "CLIENT") {
+    return `/account/create/client?lead=${leadId}`;
+  }
+  if (role === "INVESTOR") {
+    return `/investors/create?lead=${leadId}`;
+  }
+  if (role === "ADMIN") {
+    return `/admin/access-request?lead=${leadId}`;
+  }
+  if (role === "PARTNER") {
+    const context = subrole ?? "services";
+    if (context === "materials-marketplace") {
+      return `/marketplace/providers/materials/create?lead=${leadId}&subrole=${context}`;
+    }
+    if (context === "materials-ip") {
+      return `/marketplace/providers/materials/ip-integration?lead=${leadId}&subrole=${context}`;
+    }
+    if (context === "rental") {
+      return `/marketplace/providers/rental/create?lead=${leadId}&subrole=${context}`;
+    }
+    if (context === "concrete") {
+      return `/marketplace/providers/concrete/create?lead=${leadId}&subrole=${context}`;
+    }
+    return `/partners/join/create?lead=${leadId}&subrole=services`;
+  }
+  return `/account/create`;
+}
+
+function resolvePostSignupRedirect(role: SignupRole, subrole: SignupSubrole, pending: boolean) {
+  const pendingParam = pending ? "pending=1" : "";
+  if (role === "CLIENT") {
+    return `/my-account${pendingParam ? `?${pendingParam}` : ""}`;
+  }
+  if (role === "INVESTOR") {
+    return `/investors/account${pendingParam ? `?${pendingParam}` : ""}`;
+  }
+  if (role === "ADMIN") {
+    return `/admin/access-request${pendingParam ? `?${pendingParam}` : ""}`;
+  }
+  if (role === "PARTNER") {
+    const context = subrole ?? "services";
+    if (context === "materials-marketplace") {
+      return `/marketplace/providers/materials${pendingParam ? `?${pendingParam}` : ""}`;
+    }
+    if (context === "materials-ip") {
+      return `/marketplace/providers/materials/ip${pendingParam ? `?${pendingParam}` : ""}`;
+    }
+    if (context === "rental") {
+      return `/marketplace/providers/rental${pendingParam ? `?${pendingParam}` : ""}`;
+    }
+    if (context === "concrete") {
+      return `/marketplace/providers/concrete${pendingParam ? `?${pendingParam}` : ""}`;
+    }
+    return `/partners/account${pendingParam ? `?${pendingParam}` : ""}`;
+  }
+  return "/my-account";
 }
 
 export function PublicAccountRegisterForm() {
@@ -67,6 +165,8 @@ export function PublicAccountRegisterForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showFinalizePassword, setShowFinalizePassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [smsCode, setSmsCode] = useState("");
@@ -219,7 +319,23 @@ export function PublicAccountRegisterForm() {
             </label>
             <label className="v3-form-field v3-form-field-full">
               <span>Parola</span>
-              <input className="v3-form-control" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Minim 8 caractere" required />
+              <div className="relative">
+                <input
+                  className="v3-form-control pr-12"
+                  type={showSignupPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Minim 8 caractere"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold uppercase tracking-wide text-orange-600"
+                  onClick={() => setShowSignupPassword((value) => !value)}
+                >
+                  {showSignupPassword ? "Ascunde" : "Afiseaza"}
+                </button>
+              </div>
             </label>
             <div className="v3-final-actions">
               <button type="submit" className="v3-primary-button">
@@ -282,7 +398,7 @@ export function PublicRoleSelectionForm({ leadId }: { leadId: number }) {
   const [lead, setLead] = useState<SignupLeadResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedRole, setSelectedRole] = useState<SignupRole | null>(null);
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -297,7 +413,8 @@ export function PublicRoleSelectionForm({ leadId }: { leadId: number }) {
           return;
         }
         setLead(payload);
-        setSelectedRole(payload.selected_role ?? null);
+        const match = publicSignupRoleOptions.find((option) => option.role === payload.selected_role);
+        setSelectedOptionId(match?.id ?? null);
       } catch (loadError) {
         if (active) {
           setError(loadError instanceof Error ? loadError.message : "Nu am putut incarca fluxul de rol.");
@@ -315,18 +432,25 @@ export function PublicRoleSelectionForm({ leadId }: { leadId: number }) {
     };
   }, [leadId]);
 
-  async function continueWithRole(role: SignupRole) {
+  async function continueWithRole(role: SignupRole, subrole?: SignupSubrole) {
     setLoading(true);
     setError(null);
 
     try {
+      if (typeof window !== "undefined") {
+        if (role === "PARTNER" && subrole) {
+          window.localStorage.setItem("mydarrin_provider_type", subrole);
+        } else if (role !== "PARTNER") {
+          window.localStorage.removeItem("mydarrin_provider_type");
+        }
+      }
       const response = await fetch(`${API_BASE}/api/v1/auth/signup-leads/select-role`, {
         method: "POST",
         headers: apiHeaders(),
         body: JSON.stringify({ lead_id: leadId, role }),
       });
-      const payload = await parseApiResponse<SignupLeadResponse>(response);
-      router.push(payload.redirect_path ?? "/account/create");
+      await parseApiResponse<SignupLeadResponse>(response);
+      router.push(resolveRoleRedirect(role, subrole ?? null, leadId));
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Nu am putut salva rolul.");
       setLoading(false);
@@ -352,24 +476,33 @@ export function PublicRoleSelectionForm({ leadId }: { leadId: number }) {
       </div>
 
       <div className="v3-role-grid">
-        {publicSelfSignupRoles.map((role) => {
-          const resolvedRole = role.id.toUpperCase() as SignupRole;
+        {publicSignupRoleOptions.map((option) => {
+          const resolvedRole = option.role;
           return (
-            <article key={role.id} className={`v3-role-card ${selectedRole === resolvedRole ? "v3-role-card-active" : ""}`}>
+            <article key={option.id} className={`v3-role-card ${selectedOptionId === option.id ? "v3-role-card-active" : ""}`}>
               <div className="v3-role-header">
-                <span className="v3-role-audience">{role.label}</span>
-                <div className="v3-card-kicker">{role.audience}</div>
+                <span className="v3-role-audience">{option.label}</span>
+                <div className="v3-card-kicker">{option.audience}</div>
               </div>
-              <p className="v3-role-description">{role.description}</p>
+              <p className="v3-role-description">{option.description}</p>
               <div className="v3-role-permissions">
-                {role.permissions.map((permission) => (
+                {option.permissions.map((permission) => (
                   <div key={permission} className="v3-role-permission">
                     {permission}
                   </div>
                 ))}
               </div>
-              <button type="button" className="v3-primary-button" disabled={loading} onClick={() => continueWithRole(resolvedRole)}>
-                Continua ca {role.label}
+              <button
+                type="button"
+                className="v3-primary-button"
+                disabled={loading}
+                onClick={() => {
+                  setSelectedOptionId(option.id);
+                  const subrole = option.subrole as SignupSubrole | undefined;
+                  void continueWithRole(resolvedRole, subrole);
+                }}
+              >
+                {option.ctaLabel}
               </button>
             </article>
           );
@@ -377,7 +510,7 @@ export function PublicRoleSelectionForm({ leadId }: { leadId: number }) {
       </div>
 
       <div className="v3-inline-note">
-        Accesul in Backoffice pentru `Admin` si `Super Admin` nu se cere din acest flux public. El se aproba doar de `SUPER_ADMIN`.
+        Rolurile operationale (Admin, Provider) intra automat in verificare si necesita aprobare de `SUPER_ADMIN`.
       </div>
 
       {error ? <div className="v3-feedback-card v3-feedback-error">{error}</div> : null}
@@ -385,7 +518,16 @@ export function PublicRoleSelectionForm({ leadId }: { leadId: number }) {
   );
 }
 
-export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; role: SignupRole }) {
+export function PublicRoleCompletionForm({
+  leadId,
+  role,
+  subrole,
+}: {
+  leadId: number;
+  role: SignupRole;
+  subrole?: string;
+}) {
+  const normalizedSubrole = normalizeSubrole(subrole);
   const [lead, setLead] = useState<SignupLeadResponse | null>(null);
   const [password, setPassword] = useState("");
   const [accepted, setAccepted] = useState(false);
@@ -466,22 +608,12 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
         }
         setPartnerDocStatus("Documentele au fost incarcate. Status: PENDING.");
       }
-      const statusCopy =
-        payload.verification_status === "APPROVED"
-          ? "Contul este activ imediat."
-          : "Contul a intrat in aprobarea operationala.";
-      if (payload.verification_status === "APPROVED") {
-        const roleParam =
-          payload.role === "PARTNER"
-            ? "partner"
-            : payload.role === "INVESTOR"
-              ? "investor"
-              : "client";
-        window.localStorage.removeItem("mydarrin_signup_password");
-        window.location.href = `/my-account?role=${roleParam}`;
-        return;
-      }
-      setMessage(`${statusCopy} Rol finalizat: ${roleLabel(payload.role)}.`);
+      const isApproved = payload.verification_status === "APPROVED";
+      const statusCopy = isApproved ? "Contul este activ imediat." : "Contul a intrat in aprobarea operationala.";
+      const redirectPath = resolvePostSignupRedirect(payload.role, normalizedSubrole ?? null, !isApproved);
+      window.localStorage.removeItem("mydarrin_signup_password");
+      window.location.href = redirectPath;
+      return;
       setPassword("");
       setAccepted(false);
     } catch (submitError) {
@@ -499,22 +631,31 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
     <div className="v3-signup-flow">
       {lead ? (
         <div className="v3-feedback-card">
-          Flux dedicat pentru {roleLabel(role)}. Profilul preliminar exista deja pentru {lead.first_name} {lead.last_name} ({lead.email}).
+          Flux dedicat pentru {roleContextLabel(role, normalizedSubrole)}. Profilul preliminar exista deja pentru {lead.first_name} {lead.last_name} ({lead.email}).
         </div>
       ) : null}
 
       <form className="v3-register-form" onSubmit={finalizeAccount}>
         <div className="v3-form-grid">
           <label className="v3-form-field v3-form-field-full">
-            <span>Parola contului {roleLabel(role)}</span>
-            <input
-              className="v3-form-control"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Parola sigura"
-              required
-            />
+            <span>Parola contului {roleContextLabel(role, normalizedSubrole)}</span>
+            <div className="relative">
+              <input
+                className="v3-form-control pr-12"
+                type={showFinalizePassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Parola sigura"
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold uppercase tracking-wide text-orange-600"
+                onClick={() => setShowFinalizePassword((value) => !value)}
+              >
+                {showFinalizePassword ? "Ascunde" : "Afiseaza"}
+              </button>
+            </div>
           </label>
           {role === "PARTNER" ? (
             <label className="v3-form-field v3-form-field-full">
@@ -543,11 +684,11 @@ export function PublicRoleCompletionForm({ leadId, role }: { leadId: number; rol
       </form>
 
       <div className="v3-mini-grid">
-        <div className="v3-mini-card">
-          <div className="v3-card-kicker">Profil curent</div>
-          <strong>{roleLabel(role)}</strong>
-          <p>Pagina este dedicata exclusiv traseului selectat si ramane curata, fara campuri din alte roluri.</p>
-        </div>
+      <div className="v3-mini-card">
+        <div className="v3-card-kicker">Profil curent</div>
+        <strong>{roleContextLabel(role, normalizedSubrole)}</strong>
+        <p>Pagina este dedicata exclusiv traseului selectat si ramane curata, fara campuri din alte roluri.</p>
+      </div>
         <div className="v3-mini-card">
           <div className="v3-card-kicker">Aprobari</div>
           <strong>Regula de acces</strong>

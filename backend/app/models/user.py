@@ -4,6 +4,7 @@ from sqlalchemy import Enum, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+import app.models.admin_rbac  # noqa: F401
 
 
 class UserRole(str, enum.Enum):

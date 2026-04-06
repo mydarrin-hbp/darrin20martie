@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import io
 
 from app.core.security import ensure_country_access, ensure_module_access, get_current_admin_profile, get_current_admin_user
 from app.db.session import get_db
@@ -21,9 +23,11 @@ from app.modules.geography.service import (
     delete_country,
     delete_locality,
     delete_zone,
+    export_zones_csv,
     get_countries,
     get_locality,
     get_zones,
+    import_zones,
     list_localities,
     update_country,
     update_locality,
@@ -93,6 +97,33 @@ def list_backoffice_zones(
 ):
     ensure_module_access(current_admin, admin_profile, "geo")
     return get_zones(db)
+
+
+@router.post("/zones/import")
+def import_backoffice_zones(
+    file: UploadFile,
+    db: Session = Depends(get_db),
+    current_admin=Depends(get_current_admin_user),
+    admin_profile=Depends(get_current_admin_profile),
+):
+    ensure_module_access(current_admin, admin_profile, "geo")
+    content = file.file.read()
+    return import_zones(db, file.filename or "", content)
+
+
+@router.get("/zones/export")
+def export_backoffice_zones(
+    db: Session = Depends(get_db),
+    current_admin=Depends(get_current_admin_user),
+    admin_profile=Depends(get_current_admin_profile),
+):
+    ensure_module_access(current_admin, admin_profile, "geo")
+    csv_payload = export_zones_csv(db)
+    return StreamingResponse(
+        io.StringIO(csv_payload),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=zones.csv"},
+    )
 
 
 @router.post("/zones", response_model=ZoneResponse, status_code=status.HTTP_201_CREATED)

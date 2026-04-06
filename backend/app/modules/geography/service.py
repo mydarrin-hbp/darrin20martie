@@ -1,8 +1,13 @@
+import csv
+import io
+from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.modules.geography.models import Country, Locality, Zone
+from app.services.xlsx_reader import read_xlsx_rows
 from app.modules.geography.schemas import (
     CountryCreate,
     CountryResponse,
@@ -199,3 +204,82 @@ def delete_locality(db: Session, locality_id: int):
     db.delete(locality)
     db.commit()
     return True
+
+
+def _read_zone_rows(filename: str, content: bytes) -> list[dict[str, Any]]:
+    suffix = (filename or "").lower().strip()
+    if suffix.endswith(".csv"):
+        decoded = content.decode("utf-8-sig", errors="ignore")
+        reader = csv.DictReader(io.StringIO(decoded))
+        return [row for row in reader if row]
+    if suffix.endswith(".xlsx") or suffix.endswith(".xlsm"):
+        return read_xlsx_rows(content, required_headers={"country_id", "name", "slug"})
+    raise ValueError("Unsupported file format. Please upload CSV or XLSX.")
+
+
+def import_zones(db: Session, filename: str, content: bytes) -> dict[str, Any]:
+    rows = _read_zone_rows(filename, content)
+    created = 0
+    updated = 0
+    errors: list[dict[str, Any]] = []
+    for index, row in enumerate(rows, start=2):
+        try:
+            country_id = int(float(str(row.get("country_id") or row.get("Country ID") or "").strip()))
+        except ValueError:
+            errors.append({"row": index, "error": "country_id_missing"})
+            continue
+        country = db.get(Country, country_id)
+        if not country:
+            errors.append({"row": index, "error": "country_not_found"})
+            continue
+        name = str(row.get("name") or row.get("Name") or "").strip()
+        slug = str(row.get("slug") or row.get("Slug") or "").strip()
+        if not name or not slug:
+            errors.append({"row": index, "error": "name_or_slug_missing"})
+            continue
+        multiplier_raw = str(row.get("multiplier") or row.get("Multiplier") or "1").strip()
+        try:
+            multiplier = float(multiplier_raw.replace(",", ".")) if multiplier_raw else 1.0
+        except ValueError:
+            multiplier = 1.0
+        existing = db.execute(
+            select(Zone).where(Zone.country_id == country_id, Zone.slug == slug)
+        ).scalar_one_or_none()
+        data = {
+            "country_id": country_id,
+            "name": name,
+            "name_ro": str(row.get("name_ro") or row.get("Name RO") or "").strip(),
+            "name_en": str(row.get("name_en") or row.get("Name EN") or "").strip(),
+            "slug": slug,
+            "multiplier": multiplier,
+            "is_active": str(row.get("is_active") or "1").strip().lower() not in {"0", "false", "no"},
+        }
+        if existing:
+            for field, value in data.items():
+                setattr(existing, field, value)
+            updated += 1
+        else:
+            db.add(Zone(**data))
+            created += 1
+    db.commit()
+    return {"created": created, "updated": updated, "errors": errors}
+
+
+def export_zones_csv(db: Session) -> str:
+    rows = db.execute(select(Zone).order_by(Zone.country_id, Zone.id)).scalars().all()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["country_id", "name", "name_ro", "name_en", "slug", "multiplier", "is_active"])
+    for row in rows:
+        writer.writerow(
+            [
+                row.country_id,
+                row.name,
+                row.name_ro,
+                row.name_en,
+                row.slug,
+                float(row.multiplier),
+                row.is_active,
+            ]
+        )
+    return output.getvalue()

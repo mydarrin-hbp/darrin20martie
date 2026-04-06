@@ -23,6 +23,7 @@ import {
   getSubcategories,
   SubcategoryRecord,
 } from "@/lib/api";
+import { getPublicSiteBaseUrl } from "@/lib/public-site";
 
 type UiResourceType = "MANOPERA" | "MATERIAL" | "UTILAJ" | "TRANSPORT" | "CONSUMABIL" | "ALTELE";
 
@@ -79,6 +80,7 @@ function buildServiceCode(subcategoryId: string, name: string) {
 export default function NewCatalogServicePage() {
   const { token } = useAuth();
   const router = useRouter();
+  const publicBase = getPublicSiteBaseUrl();
   const [domains, setDomains] = useState<DomainRecord[]>([]);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
   const [subcategories, setSubcategories] = useState<SubcategoryRecord[]>([]);
@@ -376,7 +378,7 @@ export default function NewCatalogServicePage() {
       <div className="mb-6 flex flex-wrap gap-3">
         <Link href="/backoffice/admin/catalog-services" className="btn-secondary">Inapoi la hub</Link>
         <Link href="/backoffice/services" className="btn-secondary">Vezi servicii existente</Link>
-        <Link href="/mockup-v1/public" className="btn-secondary">Previzualizare Publica</Link>
+        <a href={publicBase} className="btn-secondary" target="_blank" rel="noreferrer">Vizualizare LIVE</a>
       </div>
 
       {message ? <div className="mb-6 rounded-2xl border border-border bg-white/75 px-4 py-3 text-sm text-muted">{message}</div> : null}

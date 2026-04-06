@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.dependencies import get_db
 from app.core.security import get_current_admin_user
 from app.modules.ai_robot_darrin.learning_loop import get_learning_snapshot, save_feedback
-from app.modules.ai_robot_darrin.service import interpret_request
+from app.modules.ai_robot_darrin.models import AIRobotDarrinDocument
+from app.modules.ai_robot_darrin.service import interpret_request, sync_backoffice_documents
 from app.modules.cost_engine.schemas import ResourceCreate, ServiceLevel
 from app.modules.deviz_engine.schemas import DevizResponse
 
@@ -67,6 +70,30 @@ router = APIRouter(
     tags=["ai-robot-darrin"],
     dependencies=[Depends(get_current_admin_user)],
 )
+
+
+@router.get("/status")
+def status(db: Session = Depends(get_db)):
+    total_docs = db.execute(select(func.count(AIRobotDarrinDocument.id))).scalar_one() or 0
+    has_api_key = bool(
+        settings.GOOGLE_API_KEY
+        or settings.GEMINI_API_KEY
+    )
+    return {
+        "documents_total": total_docs,
+        "learning_snapshot": get_learning_snapshot(db),
+        "provider": "google-genai" if has_api_key else "local-fallback",
+        "api_key_configured": has_api_key,
+    }
+
+
+@router.post("/sync")
+def sync(db: Session = Depends(get_db)):
+    total_docs = sync_backoffice_documents(db)
+    return {
+        "documents_total": total_docs,
+        "learning_snapshot": get_learning_snapshot(db),
+    }
 
 
 @router.post("/interpret", response_model=AIRobotDarrinInterpretResponse)

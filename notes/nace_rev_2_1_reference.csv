@@ -1,0 +1,1048 @@
+code,level,name_ro,name_en,uri,broader_uri
+01.11,class,"Cultivarea cerealelor, altele decât orezul, a leguminoaselor și a semințelor oleaginoase","Growing of cereals, other than rice, leguminous crops and oil seeds",http://data.europa.eu/ux2/nace2.1/0111,http://data.europa.eu/ux2/nace2.1/011
+01.12,class,Cultivarea orezului,Growing of rice,http://data.europa.eu/ux2/nace2.1/0112,http://data.europa.eu/ux2/nace2.1/011
+01.13,class,"Cultivarea legumelor și a pepenilor, a rădăcinoaselor și a tuberculilor","Growing of vegetables and melons, roots and tubers",http://data.europa.eu/ux2/nace2.1/0113,http://data.europa.eu/ux2/nace2.1/011
+01.14,class,Cultivarea trestiei de zahăr,Growing of sugar cane,http://data.europa.eu/ux2/nace2.1/0114,http://data.europa.eu/ux2/nace2.1/011
+01.15,class,Cultivarea tutunului,Growing of tobacco,http://data.europa.eu/ux2/nace2.1/0115,http://data.europa.eu/ux2/nace2.1/011
+01.16,class,Cultivarea plantelor pentru fibre,Growing of fibre crops,http://data.europa.eu/ux2/nace2.1/0116,http://data.europa.eu/ux2/nace2.1/011
+01.19,class,Cultivarea altor plante nepermanente,Growing of other non-perennial crops,http://data.europa.eu/ux2/nace2.1/0119,http://data.europa.eu/ux2/nace2.1/011
+01.21,class,Cultivarea strugurilor,Growing of grapes,http://data.europa.eu/ux2/nace2.1/0121,http://data.europa.eu/ux2/nace2.1/012
+01.22,class,Cultivarea fructelor tropicale și subtropicale,Growing of tropical and subtropical fruits,http://data.europa.eu/ux2/nace2.1/0122,http://data.europa.eu/ux2/nace2.1/012
+01.23,class,Cultivarea citricelor,Growing of citrus fruits,http://data.europa.eu/ux2/nace2.1/0123,http://data.europa.eu/ux2/nace2.1/012
+01.24,class,Cultivarea fructelor semințoase și a fructelor sâmburoase,Growing of pome fruits and stone fruits,http://data.europa.eu/ux2/nace2.1/0124,http://data.europa.eu/ux2/nace2.1/012
+01.25,class,Cultivarea altor pomi și arbuști fructiferi și a nuciferelor,Growing of other tree and bush fruits and nuts,http://data.europa.eu/ux2/nace2.1/0125,http://data.europa.eu/ux2/nace2.1/012
+01.26,class,Cultivarea fructelor oleaginoase,Growing of oleaginous fruits,http://data.europa.eu/ux2/nace2.1/0126,http://data.europa.eu/ux2/nace2.1/012
+01.27,class,Cultivarea plantelor pentru prepararea băuturilor,Growing of beverage crops,http://data.europa.eu/ux2/nace2.1/0127,http://data.europa.eu/ux2/nace2.1/012
+01.28,class,"Cultivarea plantelor pentru mirodenii, a plantelor aromatice, medicinale și de uz farmaceutic","Growing of spices, aromatic, drug and pharmaceutical crops",http://data.europa.eu/ux2/nace2.1/0128,http://data.europa.eu/ux2/nace2.1/012
+01.29,class,Cultivarea altor plante permanente,Growing of other perennial crops,http://data.europa.eu/ux2/nace2.1/0129,http://data.europa.eu/ux2/nace2.1/012
+01.30,class,Înmulțirea plantelor,Plant propagation,http://data.europa.eu/ux2/nace2.1/0130,http://data.europa.eu/ux2/nace2.1/013
+01.41,class,Creșterea bovinelor de lapte,Raising of dairy cattle,http://data.europa.eu/ux2/nace2.1/0141,http://data.europa.eu/ux2/nace2.1/014
+01.42,class,Creșterea altor bovine și bivoli,Raising of other cattle and buffaloes,http://data.europa.eu/ux2/nace2.1/0142,http://data.europa.eu/ux2/nace2.1/014
+01.43,class,Creșterea cailor și a altor cabaline,Raising of horses and other equines,http://data.europa.eu/ux2/nace2.1/0143,http://data.europa.eu/ux2/nace2.1/014
+01.44,class,Creșterea cămilelor și a camelidelor,Raising of camels and camelids,http://data.europa.eu/ux2/nace2.1/0144,http://data.europa.eu/ux2/nace2.1/014
+01.45,class,Creșterea ovinelor și caprinelor,Raising of sheep and goats,http://data.europa.eu/ux2/nace2.1/0145,http://data.europa.eu/ux2/nace2.1/014
+01.46,class,Creșterea porcinelor,Raising of swine and pigs,http://data.europa.eu/ux2/nace2.1/0146,http://data.europa.eu/ux2/nace2.1/014
+01.47,class,Creșterea păsărilor de curte,Raising of poultry,http://data.europa.eu/ux2/nace2.1/0147,http://data.europa.eu/ux2/nace2.1/014
+01.48,class,Creșterea altor animale,Raising of other animals,http://data.europa.eu/ux2/nace2.1/0148,http://data.europa.eu/ux2/nace2.1/014
+01.50,class,Agricultură mixtă,Mixed farming,http://data.europa.eu/ux2/nace2.1/0150,http://data.europa.eu/ux2/nace2.1/015
+01.61,class,Activități auxiliare producției vegetale,Support activities for crop production,http://data.europa.eu/ux2/nace2.1/0161,http://data.europa.eu/ux2/nace2.1/016
+01.62,class,Activități auxiliare producției animale,Support activities for animal production,http://data.europa.eu/ux2/nace2.1/0162,http://data.europa.eu/ux2/nace2.1/016
+01.63,class,Activități de pregătire a produsului recoltat și pregătirea semințelor pentru înmulțire,Post-harvest crop activities and seed processing for propagation,http://data.europa.eu/ux2/nace2.1/0163,http://data.europa.eu/ux2/nace2.1/016
+01.70,class,"Vânătoare, capturarea cu capcane a vânatului și activități de servicii anexe vânătorii","Hunting, trapping and related service activities",http://data.europa.eu/ux2/nace2.1/0170,http://data.europa.eu/ux2/nace2.1/017
+02.10,class,Silvicultură și alte activități forestiere,Silviculture and other forestry activities,http://data.europa.eu/ux2/nace2.1/0210,http://data.europa.eu/ux2/nace2.1/021
+02.20,class,Exploatare forestieră,Logging,http://data.europa.eu/ux2/nace2.1/0220,http://data.europa.eu/ux2/nace2.1/022
+02.30,class,Colectarea produselor nelemnoase din flora spontană,Gathering of wild growing non-wood products,http://data.europa.eu/ux2/nace2.1/0230,http://data.europa.eu/ux2/nace2.1/023
+02.40,class,Activități de servicii anexe silviculturii,Support services to forestry,http://data.europa.eu/ux2/nace2.1/0240,http://data.europa.eu/ux2/nace2.1/024
+03.11,class,Pescuitul maritim,Marine fishing,http://data.europa.eu/ux2/nace2.1/0311,http://data.europa.eu/ux2/nace2.1/031
+03.12,class,Pescuitul în apă dulce,Freshwater fishing,http://data.europa.eu/ux2/nace2.1/0312,http://data.europa.eu/ux2/nace2.1/031
+03.21,class,Acvacultura maritimă,Marine aquaculture,http://data.europa.eu/ux2/nace2.1/0321,http://data.europa.eu/ux2/nace2.1/032
+03.22,class,Acvacultura în apă dulce,Freshwater aquaculture,http://data.europa.eu/ux2/nace2.1/0322,http://data.europa.eu/ux2/nace2.1/032
+03.30,class,Activități anexe pescuitului și acvaculturii,Support activities for fishing and aquaculture,http://data.europa.eu/ux2/nace2.1/0330,http://data.europa.eu/ux2/nace2.1/033
+05.10,class,Extracția huilei,Mining of hard coal,http://data.europa.eu/ux2/nace2.1/0510,http://data.europa.eu/ux2/nace2.1/051
+05.20,class,Extracția lignitului,Mining of lignite,http://data.europa.eu/ux2/nace2.1/0520,http://data.europa.eu/ux2/nace2.1/052
+06.10,class,Extracția țițeiului,Extraction of crude petroleum,http://data.europa.eu/ux2/nace2.1/0610,http://data.europa.eu/ux2/nace2.1/061
+06.20,class,Extracția gazelor naturale,Extraction of natural gas,http://data.europa.eu/ux2/nace2.1/0620,http://data.europa.eu/ux2/nace2.1/062
+07.10,class,Extracția minereurilor feroase,Mining of iron ores,http://data.europa.eu/ux2/nace2.1/0710,http://data.europa.eu/ux2/nace2.1/071
+07.21,class,Extracția minereurilor de uraniu și toriu,Mining of uranium and thorium ores,http://data.europa.eu/ux2/nace2.1/0721,http://data.europa.eu/ux2/nace2.1/072
+07.29,class,Extracția altor minereuri metalifere neferoase,Mining of other non-ferrous metal ores,http://data.europa.eu/ux2/nace2.1/0729,http://data.europa.eu/ux2/nace2.1/072
+08.11,class,"Exploatarea în carieră a pietrei ornamentale, a calcarului, a ghipsului, a ardeziei și a altor pietre","Quarrying of ornamental stone, limestone, gypsum, slate and other stone",http://data.europa.eu/ux2/nace2.1/0811,http://data.europa.eu/ux2/nace2.1/081
+08.12,class,Extracția pietrișului și nisipului și extracția argilei și caolinului,Operation of gravel and sand pits and mining of clay and kaolin,http://data.europa.eu/ux2/nace2.1/0812,http://data.europa.eu/ux2/nace2.1/081
+08.91,class,Extracția mineralelor chimice și a îngrășămintelor minerale,Mining of chemical and fertiliser minerals,http://data.europa.eu/ux2/nace2.1/0891,http://data.europa.eu/ux2/nace2.1/089
+08.92,class,Extracția turbei,Extraction of peat,http://data.europa.eu/ux2/nace2.1/0892,http://data.europa.eu/ux2/nace2.1/089
+08.93,class,Extracția sării,Extraction of salt,http://data.europa.eu/ux2/nace2.1/0893,http://data.europa.eu/ux2/nace2.1/089
+08.99,class,Alte activități extractive și de exploatare n.c.a.,Other mining and quarrying n.e.c.,http://data.europa.eu/ux2/nace2.1/0899,http://data.europa.eu/ux2/nace2.1/089
+09.10,class,Activități de servicii anexe extracției de țiței și gaze naturale,Support activities for petroleum and natural gas extraction,http://data.europa.eu/ux2/nace2.1/0910,http://data.europa.eu/ux2/nace2.1/091
+09.90,class,Activități de servicii anexe altor industrii extractive și de exploatare,Support activities for other mining and quarrying,http://data.europa.eu/ux2/nace2.1/0990,http://data.europa.eu/ux2/nace2.1/099
+10.11,class,"Prelucrarea și conservarea cărnii, cu excepția cărnii de pasăre","Processing and preserving of meat, except of poultry meat",http://data.europa.eu/ux2/nace2.1/1011,http://data.europa.eu/ux2/nace2.1/101
+10.12,class,Prelucrarea și conservarea cărnii de pasăre,Processing and preserving of poultry meat,http://data.europa.eu/ux2/nace2.1/1012,http://data.europa.eu/ux2/nace2.1/101
+10.13,class,Fabricarea produselor din carne (inclusiv din carne de pasăre),Production of meat and poultry meat products,http://data.europa.eu/ux2/nace2.1/1013,http://data.europa.eu/ux2/nace2.1/101
+10.20,class,"Prelucrarea și conservarea peștelui, crustaceelor și moluștelor","Processing and preserving of fish, crustaceans and molluscs",http://data.europa.eu/ux2/nace2.1/1020,http://data.europa.eu/ux2/nace2.1/102
+10.31,class,Prelucrarea și conservarea cartofilor,Processing and preserving of potatoes,http://data.europa.eu/ux2/nace2.1/1031,http://data.europa.eu/ux2/nace2.1/103
+10.32,class,Fabricarea sucurilor de fructe și legume,Manufacture of fruit and vegetable juice,http://data.europa.eu/ux2/nace2.1/1032,http://data.europa.eu/ux2/nace2.1/103
+10.39,class,Altă prelucrare și conservare a fructelor și legumelor,Other processing and preserving of fruit and vegetables,http://data.europa.eu/ux2/nace2.1/1039,http://data.europa.eu/ux2/nace2.1/103
+10.41,class,Fabricarea uleiurilor și a grăsimilor,Manufacture of oils and fats,http://data.europa.eu/ux2/nace2.1/1041,http://data.europa.eu/ux2/nace2.1/104
+10.42,class,Fabricarea margarinei și a altor produse comestibile similare,Manufacture of margarine and similar edible fats,http://data.europa.eu/ux2/nace2.1/1042,http://data.europa.eu/ux2/nace2.1/104
+10.51,class,Fabricarea produselor lactate,Manufacture of dairy products,http://data.europa.eu/ux2/nace2.1/1051,http://data.europa.eu/ux2/nace2.1/105
+10.52,class,Fabricarea înghețatei și a altor tipuri de gheață comestibilă,Manufacture of ice cream and other edible ice,http://data.europa.eu/ux2/nace2.1/1052,http://data.europa.eu/ux2/nace2.1/105
+10.61,class,Fabricarea produselor de morărit,Manufacture of grain mill products,http://data.europa.eu/ux2/nace2.1/1061,http://data.europa.eu/ux2/nace2.1/106
+10.62,class,Fabricarea amidonului și a produselor din amidon,Manufacture of starches and starch products,http://data.europa.eu/ux2/nace2.1/1062,http://data.europa.eu/ux2/nace2.1/106
+10.71,class,Fabricarea pâinii; fabricarea prăjiturilor și a produselor proaspete de patiserie,Manufacture of bread; manufacture of fresh pastry goods and cakes,http://data.europa.eu/ux2/nace2.1/1071,http://data.europa.eu/ux2/nace2.1/107
+10.72,class,"Fabricarea pesmeților, biscuiților, a produselor de patiserie și a prăjiturilor conservate","Manufacture of rusks, biscuits, preserved pastries and cakes",http://data.europa.eu/ux2/nace2.1/1072,http://data.europa.eu/ux2/nace2.1/107
+10.73,class,Fabricarea produselor făinoase,Manufacture of farinaceous products,http://data.europa.eu/ux2/nace2.1/1073,http://data.europa.eu/ux2/nace2.1/107
+10.81,class,Fabricarea zahărului,Manufacture of sugar,http://data.europa.eu/ux2/nace2.1/1081,http://data.europa.eu/ux2/nace2.1/108
+10.82,class,"Fabricarea produselor din cacao, a ciocolatei și a produselor zaharoase","Manufacture of cocoa, chocolate and sugar confectionery",http://data.europa.eu/ux2/nace2.1/1082,http://data.europa.eu/ux2/nace2.1/108
+10.83,class,Prelucrarea ceaiului și cafelei,Processing of tea and coffee,http://data.europa.eu/ux2/nace2.1/1083,http://data.europa.eu/ux2/nace2.1/108
+10.84,class,Fabricarea condimentelor și ingredientelor,Manufacture of condiments and seasonings,http://data.europa.eu/ux2/nace2.1/1084,http://data.europa.eu/ux2/nace2.1/108
+10.85,class,Fabricarea produselor alimentare preparate,Manufacture of prepared meals and dishes,http://data.europa.eu/ux2/nace2.1/1085,http://data.europa.eu/ux2/nace2.1/108
+10.86,class,Fabricarea preparatelor alimentare omogenizate și alimentelor dietetice,Manufacture of homogenised food preparations and dietetic food,http://data.europa.eu/ux2/nace2.1/1086,http://data.europa.eu/ux2/nace2.1/108
+10.89,class,Fabricarea altor produse alimentare n.c.a.,Manufacture of other food products n.e.c.,http://data.europa.eu/ux2/nace2.1/1089,http://data.europa.eu/ux2/nace2.1/108
+10.91,class,Fabricarea preparatelor pentru hrana animalelor de fermă,Manufacture of prepared feeds for farm animals,http://data.europa.eu/ux2/nace2.1/1091,http://data.europa.eu/ux2/nace2.1/109
+10.92,class,Fabricarea preparatelor pentru hrana animalelor de companie,Manufacture of prepared pet foods,http://data.europa.eu/ux2/nace2.1/1092,http://data.europa.eu/ux2/nace2.1/109
+11.01,class,"Distilarea, rafinarea și mixarea băuturilor alcoolice","Distilling, rectifying and blending of spirits",http://data.europa.eu/ux2/nace2.1/1101,http://data.europa.eu/ux2/nace2.1/110
+11.02,class,Fabricarea vinurilor din struguri,Manufacture of wine from grape,http://data.europa.eu/ux2/nace2.1/1102,http://data.europa.eu/ux2/nace2.1/110
+11.03,class,Fabricarea cidrului și a altor băuturi obținute prin fermentare din fructe,Manufacture of cider and other fruit fermented beverages,http://data.europa.eu/ux2/nace2.1/1103,http://data.europa.eu/ux2/nace2.1/110
+11.04,class,"Fabricarea altor băuturi nedistilate, obținute prin fermentare",Manufacture of other non-distilled fermented beverages,http://data.europa.eu/ux2/nace2.1/1104,http://data.europa.eu/ux2/nace2.1/110
+11.05,class,Fabricarea berii,Manufacture of beer,http://data.europa.eu/ux2/nace2.1/1105,http://data.europa.eu/ux2/nace2.1/110
+11.06,class,Fabricarea malțului,Manufacture of malt,http://data.europa.eu/ux2/nace2.1/1106,http://data.europa.eu/ux2/nace2.1/110
+11.07,class,Fabricarea băuturilor răcoritoare și a apelor îmbuteliate,Manufacture of soft drinks and bottled waters,http://data.europa.eu/ux2/nace2.1/1107,http://data.europa.eu/ux2/nace2.1/110
+12.00,class,Fabricarea produselor din tutun,Manufacture of tobacco products,http://data.europa.eu/ux2/nace2.1/1200,http://data.europa.eu/ux2/nace2.1/120
+13.10,class,Pregătirea și filarea fibrelor textile,Preparation and spinning of textile fibres,http://data.europa.eu/ux2/nace2.1/1310,http://data.europa.eu/ux2/nace2.1/131
+13.20,class,Producția de țesături,Weaving of textiles,http://data.europa.eu/ux2/nace2.1/1320,http://data.europa.eu/ux2/nace2.1/132
+13.30,class,Finisarea materialelor textile,Finishing of textiles,http://data.europa.eu/ux2/nace2.1/1330,http://data.europa.eu/ux2/nace2.1/133
+13.91,class,Fabricarea de metraje prin tricotare sau croșetare,Manufacture of knitted and crocheted fabrics,http://data.europa.eu/ux2/nace2.1/1391,http://data.europa.eu/ux2/nace2.1/139
+13.92,class,Fabricarea materialelor textile de uz casnic și a articolelor confecționate pentru mobilier,Manufacture of household textiles and made-up furnishing articles,http://data.europa.eu/ux2/nace2.1/1392,http://data.europa.eu/ux2/nace2.1/139
+13.93,class,Fabricarea de covoare și mochete,Manufacture of carpets and rugs,http://data.europa.eu/ux2/nace2.1/1393,http://data.europa.eu/ux2/nace2.1/139
+13.94,class,"Fabricarea de odgoane, frânghii, sfori și plase","Manufacture of cordage, rope, twine and netting",http://data.europa.eu/ux2/nace2.1/1394,http://data.europa.eu/ux2/nace2.1/139
+13.95,class,Fabricarea de textile nețesute și de articole nețesute,Manufacture of non-wovens and non-woven articles,http://data.europa.eu/ux2/nace2.1/1395,http://data.europa.eu/ux2/nace2.1/139
+13.96,class,Fabricarea de articole tehnice și industriale din textile,Manufacture of other technical and industrial textiles,http://data.europa.eu/ux2/nace2.1/1396,http://data.europa.eu/ux2/nace2.1/139
+13.99,class,Fabricarea altor articole textile n.c.a.,Manufacture of other textiles n.e.c.,http://data.europa.eu/ux2/nace2.1/1399,http://data.europa.eu/ux2/nace2.1/139
+14.10,class,Fabricarea de articole de îmbrăcăminte tricotate și croșetate,Manufacture of knitted and crocheted apparel,http://data.europa.eu/ux2/nace2.1/1410,http://data.europa.eu/ux2/nace2.1/141
+14.21,class,Fabricarea articolelor de îmbrăcăminte pentru exterior,Manufacture of outerwear,http://data.europa.eu/ux2/nace2.1/1421,http://data.europa.eu/ux2/nace2.1/142
+14.22,class,Fabricarea de articole de lenjerie de corp,Manufacture of underwear,http://data.europa.eu/ux2/nace2.1/1422,http://data.europa.eu/ux2/nace2.1/142
+14.23,class,Fabricarea de articole de îmbrăcăminte pentru lucru,Manufacture of workwear,http://data.europa.eu/ux2/nace2.1/1423,http://data.europa.eu/ux2/nace2.1/142
+14.24,class,Fabricarea articolelor de îmbrăcăminte din piele și blană,Manufacture of leather clothes and fur apparel,http://data.europa.eu/ux2/nace2.1/1424,http://data.europa.eu/ux2/nace2.1/142
+14.29,class,Fabricarea altor articole de îmbrăcăminte și accesorii n.c.a.,Manufacture of other wearing apparel and accessories n.e.c.,http://data.europa.eu/ux2/nace2.1/1429,http://data.europa.eu/ux2/nace2.1/142
+15.11,class,"Tăbăcirea, finisarea, vopsirea pieilor și a blănurilor","Tanning, dressing, dyeing of leather and fur",http://data.europa.eu/ux2/nace2.1/1511,http://data.europa.eu/ux2/nace2.1/151
+15.12,class,Fabricarea articolelor de voiaj și marochinărie și a harnașamentelor din orice material,"Manufacture of luggage, handbags, saddlery and harness of any material",http://data.europa.eu/ux2/nace2.1/1512,http://data.europa.eu/ux2/nace2.1/151
+15.20,class,Fabricarea încălțămintei,Manufacture of footwear,http://data.europa.eu/ux2/nace2.1/1520,http://data.europa.eu/ux2/nace2.1/152
+16.11,class,Tăierea și rindeluirea lemnului,Sawmilling and planing of wood,http://data.europa.eu/ux2/nace2.1/1611,http://data.europa.eu/ux2/nace2.1/161
+16.12,class,Prelucrarea și finisarea lemnului,Processing and finishing of wood,http://data.europa.eu/ux2/nace2.1/1612,http://data.europa.eu/ux2/nace2.1/161
+16.21,class,Fabricarea plăcilor de furnir și a panourilor din lemn,Manufacture of veneer sheets and wood-based panels,http://data.europa.eu/ux2/nace2.1/1621,http://data.europa.eu/ux2/nace2.1/162
+16.22,class,Fabricarea parchetului asamblat în panouri,Manufacture of assembled parquet floors,http://data.europa.eu/ux2/nace2.1/1622,http://data.europa.eu/ux2/nace2.1/162
+16.23,class,"Fabricarea altor elemente de dulgherie și tâmplărie, pentru construcții",Manufacture of other builders' carpentry and joinery,http://data.europa.eu/ux2/nace2.1/1623,http://data.europa.eu/ux2/nace2.1/162
+16.24,class,Fabricarea ambalajelor din lemn,Manufacture of wooden containers,http://data.europa.eu/ux2/nace2.1/1624,http://data.europa.eu/ux2/nace2.1/162
+16.25,class,Fabricarea de uși și ferestre din lemn,Manufacture of doors and windows of wood,http://data.europa.eu/ux2/nace2.1/1625,http://data.europa.eu/ux2/nace2.1/162
+16.26,class,Fabricarea combustibililor solizi din biomasă vegetală,Manufacture of solid fuels from vegetable biomass,http://data.europa.eu/ux2/nace2.1/1626,http://data.europa.eu/ux2/nace2.1/162
+16.27,class,Finisarea produselor din lemn,Finishing of wooden products,http://data.europa.eu/ux2/nace2.1/1627,http://data.europa.eu/ux2/nace2.1/162
+16.28,class,"Fabricarea altor produse din lemn și a articolelor din plută, paie și din alte materiale vegetale împletite","Manufacture of other products of wood and articles of cork, straw and plaiting materials",http://data.europa.eu/ux2/nace2.1/1628,http://data.europa.eu/ux2/nace2.1/162
+17.11,class,Fabricarea celulozei,Manufacture of pulp,http://data.europa.eu/ux2/nace2.1/1711,http://data.europa.eu/ux2/nace2.1/171
+17.12,class,Fabricarea hârtiei și cartonului,Manufacture of paper and paperboard,http://data.europa.eu/ux2/nace2.1/1712,http://data.europa.eu/ux2/nace2.1/171
+17.21,class,"Fabricarea hârtiei și cartonului ondulat, a ambalajelor din hârtie și carton","Manufacture of corrugated paper, paperboard and containers of paper and paperboard",http://data.europa.eu/ux2/nace2.1/1721,http://data.europa.eu/ux2/nace2.1/172
+17.22,class,"Fabricarea produselor de uz gospodăresc și sanitar, din hârtie sau carton",Manufacture of household and sanitary goods and of toilet requisites,http://data.europa.eu/ux2/nace2.1/1722,http://data.europa.eu/ux2/nace2.1/172
+17.23,class,Fabricarea articolelor de papetărie,Manufacture of paper stationery,http://data.europa.eu/ux2/nace2.1/1723,http://data.europa.eu/ux2/nace2.1/172
+17.24,class,Fabricarea tapetului,Manufacture of wallpaper,http://data.europa.eu/ux2/nace2.1/1724,http://data.europa.eu/ux2/nace2.1/172
+17.25,class,Fabricarea altor articole din hârtie și carton,Manufacture of other articles of paper and paperboard,http://data.europa.eu/ux2/nace2.1/1725,http://data.europa.eu/ux2/nace2.1/172
+18.11,class,Tipărirea ziarelor,Printing of newspapers,http://data.europa.eu/ux2/nace2.1/1811,http://data.europa.eu/ux2/nace2.1/181
+18.12,class,Alte activități de tipărire,Other printing,http://data.europa.eu/ux2/nace2.1/1812,http://data.europa.eu/ux2/nace2.1/181
+18.13,class,Servicii pregătitoare pentru pretipărire,Pre-press and pre-media services,http://data.europa.eu/ux2/nace2.1/1813,http://data.europa.eu/ux2/nace2.1/181
+18.14,class,Servicii de legătorie și servicii conexe,Binding and related services,http://data.europa.eu/ux2/nace2.1/1814,http://data.europa.eu/ux2/nace2.1/181
+18.20,class,Reproducerea înregistrărilor,Reproduction of recorded media,http://data.europa.eu/ux2/nace2.1/1820,http://data.europa.eu/ux2/nace2.1/182
+19.10,class,Fabricarea produselor de cocserie,Manufacture of coke oven products,http://data.europa.eu/ux2/nace2.1/1910,http://data.europa.eu/ux2/nace2.1/191
+19.20,class,Fabricarea produselor petroliere rafinate și a produselor pe bază de combustibili fosili,Manufacture of refined petroleum products and fossil fuel products,http://data.europa.eu/ux2/nace2.1/1920,http://data.europa.eu/ux2/nace2.1/192
+20.11,class,Fabricarea gazelor industriale,Manufacture of industrial gases,http://data.europa.eu/ux2/nace2.1/2011,http://data.europa.eu/ux2/nace2.1/201
+20.12,class,Fabricarea coloranților și a pigmenților,Manufacture of dyes and pigments,http://data.europa.eu/ux2/nace2.1/2012,http://data.europa.eu/ux2/nace2.1/201
+20.13,class,"Fabricarea altor produse chimice anorganice, de bază",Manufacture of other inorganic basic chemicals,http://data.europa.eu/ux2/nace2.1/2013,http://data.europa.eu/ux2/nace2.1/201
+20.14,class,"Fabricarea altor produse chimice organice, de bază",Manufacture of other organic basic chemicals,http://data.europa.eu/ux2/nace2.1/2014,http://data.europa.eu/ux2/nace2.1/201
+20.15,class,Fabricarea îngrășămintelor și produselor azotoase,Manufacture of fertilisers and nitrogen compounds,http://data.europa.eu/ux2/nace2.1/2015,http://data.europa.eu/ux2/nace2.1/201
+20.16,class,Fabricarea materialelor plastice în forme primare,Manufacture of plastics in primary forms,http://data.europa.eu/ux2/nace2.1/2016,http://data.europa.eu/ux2/nace2.1/201
+20.17,class,Fabricarea cauciucului sintetic în forme primare,Manufacture of synthetic rubber in primary forms,http://data.europa.eu/ux2/nace2.1/2017,http://data.europa.eu/ux2/nace2.1/201
+20.20,class,"Fabricarea pesticidelor, dezinfectanților și a altor produse agrochimice","Manufacture of pesticides, disinfectants and other agrochemical products",http://data.europa.eu/ux2/nace2.1/2020,http://data.europa.eu/ux2/nace2.1/202
+20.30,class,"Fabricarea vopselelor, lacurilor și produselor similare, cernelii tipografice și masticului","Manufacture of paints, varnishes and similar coatings, printing ink and mastics",http://data.europa.eu/ux2/nace2.1/2030,http://data.europa.eu/ux2/nace2.1/203
+20.41,class,"Fabricarea săpunurilor, detergenților și a produselor de întreținere","Manufacture of soap and detergents, cleaning and polishing preparations",http://data.europa.eu/ux2/nace2.1/2041,http://data.europa.eu/ux2/nace2.1/204
+20.42,class,Fabricarea parfumurilor și a produselor cosmetice (de toaletă),Manufacture of perfumes and toilet preparations,http://data.europa.eu/ux2/nace2.1/2042,http://data.europa.eu/ux2/nace2.1/204
+20.51,class,Fabricarea de biocombustibili lichizi,Manufacture of liquid biofuels,http://data.europa.eu/ux2/nace2.1/2051,http://data.europa.eu/ux2/nace2.1/205
+20.59,class,Fabricarea altor produse chimice n.c.a.,Manufacture of other chemical products n.e.c.,http://data.europa.eu/ux2/nace2.1/2059,http://data.europa.eu/ux2/nace2.1/205
+20.60,class,Fabricarea fibrelor artificiale sau sintetice,Manufacture of man-made fibres,http://data.europa.eu/ux2/nace2.1/2060,http://data.europa.eu/ux2/nace2.1/206
+21.10,class,Fabricarea produselor farmaceutice de bază,Manufacture of basic pharmaceutical products,http://data.europa.eu/ux2/nace2.1/2110,http://data.europa.eu/ux2/nace2.1/211
+21.20,class,Fabricarea preparatelor farmaceutice,Manufacture of pharmaceutical preparations,http://data.europa.eu/ux2/nace2.1/2120,http://data.europa.eu/ux2/nace2.1/212
+22.11,class,"Fabricarea, reșaparea și refacerea anvelopelor și fabricarea camerelor de aer","Manufacture, retreading and rebuilding of rubber tyres and manufacture of tubes",http://data.europa.eu/ux2/nace2.1/2211,http://data.europa.eu/ux2/nace2.1/221
+22.12,class,Fabricarea altor produse din cauciuc,Manufacture of other rubber products,http://data.europa.eu/ux2/nace2.1/2212,http://data.europa.eu/ux2/nace2.1/221
+22.21,class,"Fabricarea plăcilor, foliilor, tuburilor și profilelor din material plastic","Manufacture of plastic plates, sheets, tubes and profiles",http://data.europa.eu/ux2/nace2.1/2221,http://data.europa.eu/ux2/nace2.1/222
+22.22,class,Fabricarea articolelor de ambalaj din material plastic,Manufacture of plastic packing goods,http://data.europa.eu/ux2/nace2.1/2222,http://data.europa.eu/ux2/nace2.1/222
+22.23,class,Fabricarea de uși și ferestre din material plastic,Manufacture of doors and windows of plastic,http://data.europa.eu/ux2/nace2.1/2223,http://data.europa.eu/ux2/nace2.1/222
+22.24,class,Fabricarea articolelor din material plastic pentru construcții,Manufacture of builders’ ware of plastic,http://data.europa.eu/ux2/nace2.1/2224,http://data.europa.eu/ux2/nace2.1/222
+22.25,class,Prelucrarea și finisarea produselor din material plastic,Processing and finishing of plastic products,http://data.europa.eu/ux2/nace2.1/2225,http://data.europa.eu/ux2/nace2.1/222
+22.26,class,Fabricarea altor produse din material plastic,Manufacture of other plastic products,http://data.europa.eu/ux2/nace2.1/2226,http://data.europa.eu/ux2/nace2.1/222
+23.11,class,Fabricarea sticlei plate,Manufacture of flat glass,http://data.europa.eu/ux2/nace2.1/2311,http://data.europa.eu/ux2/nace2.1/231
+23.12,class,Prelucrarea și fasonarea sticlei plate,Shaping and processing of flat glass,http://data.europa.eu/ux2/nace2.1/2312,http://data.europa.eu/ux2/nace2.1/231
+23.13,class,Fabricarea articolelor din sticlă,Manufacture of hollow glass,http://data.europa.eu/ux2/nace2.1/2313,http://data.europa.eu/ux2/nace2.1/231
+23.14,class,Fabricarea fibrelor din sticlă,Manufacture of glass fibres,http://data.europa.eu/ux2/nace2.1/2314,http://data.europa.eu/ux2/nace2.1/231
+23.15,class,Fabricarea de sticlărie tehnică,"Manufacture and processing of other glass, including technical glassware",http://data.europa.eu/ux2/nace2.1/2315,http://data.europa.eu/ux2/nace2.1/231
+23.20,class,Fabricarea de produse refractare,Manufacture of refractory products,http://data.europa.eu/ux2/nace2.1/2320,http://data.europa.eu/ux2/nace2.1/232
+23.31,class,Fabricarea plăcilor și dalelor din ceramică,Manufacture of ceramic tiles and flags,http://data.europa.eu/ux2/nace2.1/2331,http://data.europa.eu/ux2/nace2.1/233
+23.32,class,"Fabricarea cărămizilor, țiglelor și altor produse pentru construcții, din argilă arsă","Manufacture of bricks, tiles and construction products, in baked clay",http://data.europa.eu/ux2/nace2.1/2332,http://data.europa.eu/ux2/nace2.1/233
+23.41,class,Fabricarea articolelor ceramice pentru uz gospodăresc și ornamental,Manufacture of ceramic household and ornamental articles,http://data.europa.eu/ux2/nace2.1/2341,http://data.europa.eu/ux2/nace2.1/234
+23.42,class,Fabricarea de obiecte sanitare din ceramică,Manufacture of ceramic sanitary fixtures,http://data.europa.eu/ux2/nace2.1/2342,http://data.europa.eu/ux2/nace2.1/234
+23.43,class,Fabricarea izolatorilor și pieselor izolante din ceramică,Manufacture of ceramic insulators and insulating fittings,http://data.europa.eu/ux2/nace2.1/2343,http://data.europa.eu/ux2/nace2.1/234
+23.44,class,Fabricarea altor produse tehnice din ceramică,Manufacture of other technical ceramic products,http://data.europa.eu/ux2/nace2.1/2344,http://data.europa.eu/ux2/nace2.1/234
+23.45,class,Fabricarea altor produse ceramice,Manufacture of other ceramic products,http://data.europa.eu/ux2/nace2.1/2345,http://data.europa.eu/ux2/nace2.1/234
+23.51,class,Fabricarea cimentului,Manufacture of cement,http://data.europa.eu/ux2/nace2.1/2351,http://data.europa.eu/ux2/nace2.1/235
+23.52,class,Fabricarea varului și ipsosului,Manufacture of lime and plaster,http://data.europa.eu/ux2/nace2.1/2352,http://data.europa.eu/ux2/nace2.1/235
+23.61,class,Fabricarea produselor din beton pentru construcții,Manufacture of concrete products for construction purposes,http://data.europa.eu/ux2/nace2.1/2361,http://data.europa.eu/ux2/nace2.1/236
+23.62,class,Fabricarea produselor din ipsos pentru construcții,Manufacture of plaster products for construction purposes,http://data.europa.eu/ux2/nace2.1/2362,http://data.europa.eu/ux2/nace2.1/236
+23.63,class,Fabricarea prefabricatelor din beton,Manufacture of ready-mixed concrete,http://data.europa.eu/ux2/nace2.1/2363,http://data.europa.eu/ux2/nace2.1/236
+23.64,class,Fabricarea mortarului și betonului uscat,Manufacture of mortars,http://data.europa.eu/ux2/nace2.1/2364,http://data.europa.eu/ux2/nace2.1/236
+23.65,class,Fabricarea produselor din azbociment,Manufacture of fibre cement,http://data.europa.eu/ux2/nace2.1/2365,http://data.europa.eu/ux2/nace2.1/236
+23.66,class,"Fabricarea altor articole din beton, ciment și ipsos","Manufacture of other articles of concrete, cement and plaster",http://data.europa.eu/ux2/nace2.1/2366,http://data.europa.eu/ux2/nace2.1/236
+23.70,class,"Tăierea, fasonarea și finisarea pietrei","Cutting, shaping and finishing of stone",http://data.europa.eu/ux2/nace2.1/2370,http://data.europa.eu/ux2/nace2.1/237
+23.91,class,Fabricarea de produse abrazive,Manufacture of abrasive products,http://data.europa.eu/ux2/nace2.1/2391,http://data.europa.eu/ux2/nace2.1/239
+23.99,class,"Fabricarea altor produse din minerale nemetalice, n.c.a.",Manufacture of other non-metallic mineral products n.e.c.,http://data.europa.eu/ux2/nace2.1/2399,http://data.europa.eu/ux2/nace2.1/239
+24.10,class,Producția de metale feroase sub forme primare și de feroaliaje,Manufacture of basic iron and steel and of ferro-alloys,http://data.europa.eu/ux2/nace2.1/2410,http://data.europa.eu/ux2/nace2.1/241
+24.20,class,"Producția de tuburi, țevi, profile tubulare și accesorii pentru acestea, din oțel","Manufacture of tubes, pipes, hollow profiles and related fittings, of steel",http://data.europa.eu/ux2/nace2.1/2420,http://data.europa.eu/ux2/nace2.1/242
+24.31,class,Tragere la rece a barelor,Cold drawing of bars,http://data.europa.eu/ux2/nace2.1/2431,http://data.europa.eu/ux2/nace2.1/243
+24.32,class,Laminare la rece a benzilor înguste,Cold rolling of narrow strip,http://data.europa.eu/ux2/nace2.1/2432,http://data.europa.eu/ux2/nace2.1/243
+24.33,class,Producția de profile obținute la rece,Cold forming or folding,http://data.europa.eu/ux2/nace2.1/2433,http://data.europa.eu/ux2/nace2.1/243
+24.34,class,Trefilarea firelor la rece,Cold drawing of wire,http://data.europa.eu/ux2/nace2.1/2434,http://data.europa.eu/ux2/nace2.1/243
+24.41,class,Producția metalelor prețioase,Precious metals production,http://data.europa.eu/ux2/nace2.1/2441,http://data.europa.eu/ux2/nace2.1/244
+24.42,class,Metalurgia aluminiului,Aluminium production,http://data.europa.eu/ux2/nace2.1/2442,http://data.europa.eu/ux2/nace2.1/244
+24.43,class,"Producția plumbului, zincului și cositorului","Lead, zinc and tin production",http://data.europa.eu/ux2/nace2.1/2443,http://data.europa.eu/ux2/nace2.1/244
+24.44,class,Metalurgia cuprului,Copper production,http://data.europa.eu/ux2/nace2.1/2444,http://data.europa.eu/ux2/nace2.1/244
+24.45,class,Producția altor metale neferoase,Other non-ferrous metal production,http://data.europa.eu/ux2/nace2.1/2445,http://data.europa.eu/ux2/nace2.1/244
+24.46,class,Prelucrarea combustibililor nucleari,Processing of nuclear fuel,http://data.europa.eu/ux2/nace2.1/2446,http://data.europa.eu/ux2/nace2.1/244
+24.51,class,Turnarea fontei,Casting of iron,http://data.europa.eu/ux2/nace2.1/2451,http://data.europa.eu/ux2/nace2.1/245
+24.52,class,Turnarea oțelului,Casting of steel,http://data.europa.eu/ux2/nace2.1/2452,http://data.europa.eu/ux2/nace2.1/245
+24.53,class,Turnarea metalelor neferoase ușoare,Casting of light metals,http://data.europa.eu/ux2/nace2.1/2453,http://data.europa.eu/ux2/nace2.1/245
+24.54,class,Turnarea altor metale neferoase,Casting of other non-ferrous metals,http://data.europa.eu/ux2/nace2.1/2454,http://data.europa.eu/ux2/nace2.1/245
+25.11,class,Fabricarea de construcții metalice și părți componente ale structurilor metalice,Manufacture of metal structures and parts of structures,http://data.europa.eu/ux2/nace2.1/2511,http://data.europa.eu/ux2/nace2.1/251
+25.12,class,Fabricarea de uși și ferestre din metal,Manufacture of doors and windows of metal,http://data.europa.eu/ux2/nace2.1/2512,http://data.europa.eu/ux2/nace2.1/251
+25.21,class,"Producția de radiatoare, generatoare de aburi și cazane pentru încălzire centrală","Manufacture of central heating radiators, steam generators and boilers",http://data.europa.eu/ux2/nace2.1/2521,http://data.europa.eu/ux2/nace2.1/252
+25.22,class,"Producția de alte rezervoare, cisterne și containere metalice","Manufacture of other tanks, reservoirs and containers of metal",http://data.europa.eu/ux2/nace2.1/2522,http://data.europa.eu/ux2/nace2.1/252
+25.30,class,Fabricarea armamentului și munițiilor,Manufacture of weapons and ammunition,http://data.europa.eu/ux2/nace2.1/2530,http://data.europa.eu/ux2/nace2.1/253
+25.40,class,Forjarea și modelarea metalului și metalurgiei pulberilor,Forging and shaping metal and powder metallurgy,http://data.europa.eu/ux2/nace2.1/2540,http://data.europa.eu/ux2/nace2.1/254
+25.51,class,Acoperirea metalelor,Coating of metals,http://data.europa.eu/ux2/nace2.1/2551,http://data.europa.eu/ux2/nace2.1/255
+25.52,class,Tratamentul termic al metalelor,Heat treatment of metals,http://data.europa.eu/ux2/nace2.1/2552,http://data.europa.eu/ux2/nace2.1/255
+25.53,class,Prelucrarea metalelor,Machining of metals,http://data.europa.eu/ux2/nace2.1/2553,http://data.europa.eu/ux2/nace2.1/255
+25.61,class,Fabricarea produselor de tăiat,Manufacture of cutlery,http://data.europa.eu/ux2/nace2.1/2561,http://data.europa.eu/ux2/nace2.1/256
+25.62,class,Fabricarea articolelor de feronerie,Manufacture of locks and hinges,http://data.europa.eu/ux2/nace2.1/2562,http://data.europa.eu/ux2/nace2.1/256
+25.63,class,Fabricarea uneltelor,Manufacture of tools,http://data.europa.eu/ux2/nace2.1/2563,http://data.europa.eu/ux2/nace2.1/256
+25.91,class,"Fabricarea de recipienți, containere și alte produse similare din oțel",Manufacture of steel drums and similar containers,http://data.europa.eu/ux2/nace2.1/2591,http://data.europa.eu/ux2/nace2.1/259
+25.92,class,Fabricarea ambalajelor ușoare din metal,Manufacture of light metal packaging,http://data.europa.eu/ux2/nace2.1/2592,http://data.europa.eu/ux2/nace2.1/259
+25.93,class,Fabricarea articolelor din fire metalice; fabricarea de lanțuri și arcuri,"Manufacture of wire products, chain and springs",http://data.europa.eu/ux2/nace2.1/2593,http://data.europa.eu/ux2/nace2.1/259
+25.94,class,"Fabricarea de șuruburi, buloane și alte articole filetate; fabricarea de nituri și șaibe",Manufacture of fasteners and screw machine products,http://data.europa.eu/ux2/nace2.1/2594,http://data.europa.eu/ux2/nace2.1/259
+25.99,class,Fabricarea altor articole din metal n.c.a.,Manufacture of other fabricated metal products n.e.c.,http://data.europa.eu/ux2/nace2.1/2599,http://data.europa.eu/ux2/nace2.1/259
+26.11,class,Fabricarea componentelor electronice,Manufacture of electronic components,http://data.europa.eu/ux2/nace2.1/2611,http://data.europa.eu/ux2/nace2.1/261
+26.12,class,Fabricarea subansamblurilor electronice,Manufacture of loaded electronic boards,http://data.europa.eu/ux2/nace2.1/2612,http://data.europa.eu/ux2/nace2.1/261
+26.20,class,Fabricarea calculatoarelor și a echipamentelor periferice,Manufacture of computers and peripheral equipment,http://data.europa.eu/ux2/nace2.1/2620,http://data.europa.eu/ux2/nace2.1/262
+26.30,class,Fabricarea echipamentelor de comunicație,Manufacture of communication equipment,http://data.europa.eu/ux2/nace2.1/2630,http://data.europa.eu/ux2/nace2.1/263
+26.40,class,Fabricarea produselor electronice de larg consum,Manufacture of consumer electronics,http://data.europa.eu/ux2/nace2.1/2640,http://data.europa.eu/ux2/nace2.1/264
+26.51,class,"Fabricarea de instrumente și dispozitive pentru măsură, verificare, control, navigație","Manufacture of instruments and appliances for measuring, testing and navigation",http://data.europa.eu/ux2/nace2.1/2651,http://data.europa.eu/ux2/nace2.1/265
+26.52,class,Producția de ceasuri,Manufacture of watches and clocks,http://data.europa.eu/ux2/nace2.1/2652,http://data.europa.eu/ux2/nace2.1/265
+26.60,class,"Fabricarea de echipamente pentru radiologie, electrodiagnostic și electroterapie","Manufacture of irradiation, electromedical and electrotherapeutic equipment",http://data.europa.eu/ux2/nace2.1/2660,http://data.europa.eu/ux2/nace2.1/266
+26.70,class,"Fabricarea instrumentelor optice, a suporturilor magnetice și optice și a echipamentelor fotografice","Manufacture of optical instruments, magnetic and optical media and photographic equipment",http://data.europa.eu/ux2/nace2.1/2670,http://data.europa.eu/ux2/nace2.1/267
+27.11,class,"Fabricarea motoarelor, generatoarelor și transformatoarelor electrice","Manufacture of electric motors, generators and transformers",http://data.europa.eu/ux2/nace2.1/2711,http://data.europa.eu/ux2/nace2.1/271
+27.12,class,Fabricarea aparatelor de distribuție și control a electricității,Manufacture of electricity distribution and control apparatus,http://data.europa.eu/ux2/nace2.1/2712,http://data.europa.eu/ux2/nace2.1/271
+27.20,class,Fabricarea bateriilor și acumulatorilor,Manufacture of batteries and accumulators,http://data.europa.eu/ux2/nace2.1/2720,http://data.europa.eu/ux2/nace2.1/272
+27.31,class,Fabricarea cablurilor de fibre optice,Manufacture of fibre optic cables,http://data.europa.eu/ux2/nace2.1/2731,http://data.europa.eu/ux2/nace2.1/273
+27.32,class,Fabricarea altor fire și cabluri electrice și electronice,Manufacture of other electronic and electric wires and cables,http://data.europa.eu/ux2/nace2.1/2732,http://data.europa.eu/ux2/nace2.1/273
+27.33,class,Fabricarea dispozitivelor de conexiune pentru fire și cabluri electrice și electronice,Manufacture of wiring devices,http://data.europa.eu/ux2/nace2.1/2733,http://data.europa.eu/ux2/nace2.1/273
+27.40,class,Fabricarea de echipamente electrice de iluminat,Manufacture of lighting equipment,http://data.europa.eu/ux2/nace2.1/2740,http://data.europa.eu/ux2/nace2.1/274
+27.51,class,Fabricarea de aparate electrocasnice,Manufacture of electric domestic appliances,http://data.europa.eu/ux2/nace2.1/2751,http://data.europa.eu/ux2/nace2.1/275
+27.52,class,Fabricarea de echipamente casnice neelectrice,Manufacture of non-electric domestic appliances,http://data.europa.eu/ux2/nace2.1/2752,http://data.europa.eu/ux2/nace2.1/275
+27.90,class,Fabricarea altor echipamente electrice,Manufacture of other electrical equipment,http://data.europa.eu/ux2/nace2.1/2790,http://data.europa.eu/ux2/nace2.1/279
+28.11,class,"Fabricarea de motoare și turbine (cu excepția celor pentru avioane, autovehicule și motociclete.)","Manufacture of engines and turbines, except aircraft, vehicle and cycle engines",http://data.europa.eu/ux2/nace2.1/2811,http://data.europa.eu/ux2/nace2.1/281
+28.12,class,Fabricarea de motoare hidraulice,Manufacture of fluid power equipment,http://data.europa.eu/ux2/nace2.1/2812,http://data.europa.eu/ux2/nace2.1/281
+28.13,class,Fabricarea de pompe și compresoare,Manufacture of other pumps and compressors,http://data.europa.eu/ux2/nace2.1/2813,http://data.europa.eu/ux2/nace2.1/281
+28.14,class,Fabricarea de articole de robinetărie,Manufacture of other taps and valves,http://data.europa.eu/ux2/nace2.1/2814,http://data.europa.eu/ux2/nace2.1/281
+28.15,class,"Fabricarea lagărelor, angrenajelor, cutiilor de viteză și a elementelor mecanice de transmisie","Manufacture of bearings, gears, gearing and driving elements",http://data.europa.eu/ux2/nace2.1/2815,http://data.europa.eu/ux2/nace2.1/281
+28.21,class,"Fabricarea cuptoarelor, a furnalelor și a echipamentelor permanente de încălzire a gospodăriilor","Manufacture of ovens, furnaces and permanent household heating equipment",http://data.europa.eu/ux2/nace2.1/2821,http://data.europa.eu/ux2/nace2.1/282
+28.22,class,Fabricarea echipamentelor de ridicat și manipulat,Manufacture of lifting and handling equipment,http://data.europa.eu/ux2/nace2.1/2822,http://data.europa.eu/ux2/nace2.1/282
+28.23,class,Fabricarea mașinilor și echipamentelor de birou (exclusiv fabricarea calculatoarelor și a echipamentelor periferice),"Manufacture of office machinery and equipment, except computers and peripheral equipment",http://data.europa.eu/ux2/nace2.1/2823,http://data.europa.eu/ux2/nace2.1/282
+28.24,class,Fabricarea mașinilor-unelte portabile acționate electric,Manufacture of power-driven hand tools,http://data.europa.eu/ux2/nace2.1/2824,http://data.europa.eu/ux2/nace2.1/282
+28.25,class,"Fabricarea echipamentelor de aer condiționat, altele decât cele de uz casnic",Manufacture of non-domestic air conditioning equipment,http://data.europa.eu/ux2/nace2.1/2825,http://data.europa.eu/ux2/nace2.1/282
+28.29,class,Fabricarea altor mașini și utilaje de utilizare generală n.c.a.,Manufacture of other general-purpose machinery n.e.c.,http://data.europa.eu/ux2/nace2.1/2829,http://data.europa.eu/ux2/nace2.1/282
+28.30,class,Fabricarea mașinilor și utilajelor pentru agricultură și exploatări forestiere,Manufacture of agricultural and forestry machinery,http://data.europa.eu/ux2/nace2.1/2830,http://data.europa.eu/ux2/nace2.1/283
+28.41,class,Fabricarea utilajelor și a mașinilor-unelte pentru prelucrarea metalului,Manufacture of metal forming machinery and machine tools for metal work,http://data.europa.eu/ux2/nace2.1/2841,http://data.europa.eu/ux2/nace2.1/284
+28.42,class,Fabricarea altor mașini-unelte,Manufacture of other machine tools,http://data.europa.eu/ux2/nace2.1/2842,http://data.europa.eu/ux2/nace2.1/284
+28.91,class,Fabricarea utilajelor pentru metalurgie,Manufacture of machinery for metallurgy,http://data.europa.eu/ux2/nace2.1/2891,http://data.europa.eu/ux2/nace2.1/289
+28.92,class,Fabricarea utilajelor pentru extracție și construcții,"Manufacture of machinery for mining, quarrying and construction",http://data.europa.eu/ux2/nace2.1/2892,http://data.europa.eu/ux2/nace2.1/289
+28.93,class,"Fabricarea utilajelor pentru prelucrarea produselor alimentare, băuturilor și tutunului","Manufacture of machinery for food, beverage and tobacco processing",http://data.europa.eu/ux2/nace2.1/2893,http://data.europa.eu/ux2/nace2.1/289
+28.94,class,"Fabricarea utilajelor pentru industria textilă, a îmbrăcămintei și a pielăriei","Manufacture of machinery for textile, apparel and leather production",http://data.europa.eu/ux2/nace2.1/2894,http://data.europa.eu/ux2/nace2.1/289
+28.95,class,Fabricarea utilajelor pentru industria hârtiei și cartonului,Manufacture of machinery for paper and paperboard production,http://data.europa.eu/ux2/nace2.1/2895,http://data.europa.eu/ux2/nace2.1/289
+28.96,class,Fabricarea utilajelor pentru prelucrarea maselor plastice și a cauciucului,Manufacture of plastics and rubber machinery,http://data.europa.eu/ux2/nace2.1/2896,http://data.europa.eu/ux2/nace2.1/289
+28.97,class,Fabricarea mașinilor și utilajelor pentru fabricația aditivă,Manufacture of additive manufacturing machinery,http://data.europa.eu/ux2/nace2.1/2897,http://data.europa.eu/ux2/nace2.1/289
+28.99,class,Fabricarea altor mașini și utilaje specifice n.c.a.,Manufacture of other special-purpose machinery n.e.c.,http://data.europa.eu/ux2/nace2.1/2899,http://data.europa.eu/ux2/nace2.1/289
+29.10,class,Fabricarea autovehiculelor,Manufacture of motor vehicles,http://data.europa.eu/ux2/nace2.1/2910,http://data.europa.eu/ux2/nace2.1/291
+29.20,class,Fabricarea de caroserii pentru autovehicule; fabricarea de remorci și semiremorci,Manufacture of bodies and coachwork for motor vehicles; manufacture of trailers and semi-trailers,http://data.europa.eu/ux2/nace2.1/2920,http://data.europa.eu/ux2/nace2.1/292
+29.31,class,Fabricarea de echipamente electrice și electronice pentru autovehicule,Manufacture of electrical and electronic equipment for motor vehicles,http://data.europa.eu/ux2/nace2.1/2931,http://data.europa.eu/ux2/nace2.1/293
+29.32,class,Fabricarea altor piese și accesorii pentru autovehicule,Manufacture of other parts and accessories for motor vehicles,http://data.europa.eu/ux2/nace2.1/2932,http://data.europa.eu/ux2/nace2.1/293
+30.11,class,Construcția de nave și structuri plutitoare civile,Building of civilian ships and floating structures,http://data.europa.eu/ux2/nace2.1/3011,http://data.europa.eu/ux2/nace2.1/301
+30.12,class,Construcția de ambarcațiuni sportive și de agrement,Building of pleasure and sporting boats,http://data.europa.eu/ux2/nace2.1/3012,http://data.europa.eu/ux2/nace2.1/301
+30.13,class,Construcția de vase și nave militare,Building of military ships and vessels,http://data.europa.eu/ux2/nace2.1/3013,http://data.europa.eu/ux2/nace2.1/301
+30.20,class,Fabricarea locomotivelor pentru trenuri și a materialului rulant,Manufacture of railway locomotives and rolling stock,http://data.europa.eu/ux2/nace2.1/3020,http://data.europa.eu/ux2/nace2.1/302
+30.31,class,Fabricarea aeronavelor și navelor spațiale civile și a mașinilor asociate,Manufacture of civilian air and spacecraft and related machinery,http://data.europa.eu/ux2/nace2.1/3031,http://data.europa.eu/ux2/nace2.1/303
+30.32,class,Fabricarea aeronavelor și navelor spațiale militare și a mașinilor asociate,Manufacture of military air and spacecraft and related machinery,http://data.europa.eu/ux2/nace2.1/3032,http://data.europa.eu/ux2/nace2.1/303
+30.40,class,Fabricarea vehiculelor militare de luptă,Manufacture of military fighting vehicles,http://data.europa.eu/ux2/nace2.1/3040,http://data.europa.eu/ux2/nace2.1/304
+30.91,class,Fabricarea de motociclete,Manufacture of motorcycles,http://data.europa.eu/ux2/nace2.1/3091,http://data.europa.eu/ux2/nace2.1/309
+30.92,class,Fabricarea de biciclete și de vehicule pentru invalizi,Manufacture of bicycles and invalid carriages,http://data.europa.eu/ux2/nace2.1/3092,http://data.europa.eu/ux2/nace2.1/309
+30.99,class,Fabricarea altor mijloace de transport n.c.a.,Manufacture of other transport equipment n.e.c.,http://data.europa.eu/ux2/nace2.1/3099,http://data.europa.eu/ux2/nace2.1/309
+31.00,class,Fabricarea de mobilă,Manufacture of furniture,http://data.europa.eu/ux2/nace2.1/3100,http://data.europa.eu/ux2/nace2.1/310
+32.11,class,Baterea monedelor,Striking of coins,http://data.europa.eu/ux2/nace2.1/3211,http://data.europa.eu/ux2/nace2.1/321
+32.12,class,Fabricarea bijuteriilor și a articolelor similare,Manufacture of jewellery and related articles,http://data.europa.eu/ux2/nace2.1/3212,http://data.europa.eu/ux2/nace2.1/321
+32.13,class,Fabricarea imitațiilor de bijuterii și a articolelor similare,Manufacture of imitation jewellery and related articles,http://data.europa.eu/ux2/nace2.1/3213,http://data.europa.eu/ux2/nace2.1/321
+32.20,class,Fabricarea instrumentelor muzicale,Manufacture of musical instruments,http://data.europa.eu/ux2/nace2.1/3220,http://data.europa.eu/ux2/nace2.1/322
+32.30,class,Fabricarea articolelor pentru sport,Manufacture of sports goods,http://data.europa.eu/ux2/nace2.1/3230,http://data.europa.eu/ux2/nace2.1/323
+32.40,class,Fabricarea jocurilor și jucăriilor,Manufacture of games and toys,http://data.europa.eu/ux2/nace2.1/3240,http://data.europa.eu/ux2/nace2.1/324
+32.50,class,"Fabricarea de dispozitive, aparate și instrumente medicale și stomatologice",Manufacture of medical and dental instruments and supplies,http://data.europa.eu/ux2/nace2.1/3250,http://data.europa.eu/ux2/nace2.1/325
+32.91,class,Fabricarea măturilor și periilor,Manufacture of brooms and brushes,http://data.europa.eu/ux2/nace2.1/3291,http://data.europa.eu/ux2/nace2.1/329
+32.99,class,Fabricarea altor produse manufacturiere n.c.a.,Other manufacturing n.e.c.,http://data.europa.eu/ux2/nace2.1/3299,http://data.europa.eu/ux2/nace2.1/329
+33.11,class,Repararea și întreținere a produselor metalice industriale,Repair and maintenance of fabricated metal products,http://data.europa.eu/ux2/nace2.1/3311,http://data.europa.eu/ux2/nace2.1/331
+33.12,class,Repararea și întreținerea mașinilor,Repair and maintenance of machinery,http://data.europa.eu/ux2/nace2.1/3312,http://data.europa.eu/ux2/nace2.1/331
+33.13,class,Repararea și întreținerea echipamentelor electronice și optice,Repair and maintenance of electronic and optical equipment,http://data.europa.eu/ux2/nace2.1/3313,http://data.europa.eu/ux2/nace2.1/331
+33.14,class,Repararea și întreținerea echipamentelor electrice,Repair and maintenance of electrical equipment,http://data.europa.eu/ux2/nace2.1/3314,http://data.europa.eu/ux2/nace2.1/331
+33.15,class,Repararea și întreținerea navelor și ambarcațiunilor civile,Repair and maintenance of civilian ships and boats,http://data.europa.eu/ux2/nace2.1/3315,http://data.europa.eu/ux2/nace2.1/331
+33.16,class,Repararea și întreținerea aeronavelor și navelor spațiale civile,Repair and maintenance of civilian air and spacecraft,http://data.europa.eu/ux2/nace2.1/3316,http://data.europa.eu/ux2/nace2.1/331
+33.17,class,Repararea și întreținerea altor echipamente civile de transport,Repair and maintenance of other civilian transport equipment,http://data.europa.eu/ux2/nace2.1/3317,http://data.europa.eu/ux2/nace2.1/331
+33.18,class,"Repararea și întreținerea vehiculelor militare de luptă, a navelor, a ambarcațiunilor, a aeronavelor și a navelor spațiale militare","Repair and maintenance of military fighting vehicles, ships, boats, air and spacecraft",http://data.europa.eu/ux2/nace2.1/3318,http://data.europa.eu/ux2/nace2.1/331
+33.19,class,Repararea și întreținerea altor echipamente,Repair and maintenance of other equipment,http://data.europa.eu/ux2/nace2.1/3319,http://data.europa.eu/ux2/nace2.1/331
+33.20,class,Instalarea mașinilor și echipamentelor industriale,Installation of industrial machinery and equipment,http://data.europa.eu/ux2/nace2.1/3320,http://data.europa.eu/ux2/nace2.1/332
+35.11,class,Producția de energie electrică din surse neregenerabile,Production of electricity from non-renewable sources,http://data.europa.eu/ux2/nace2.1/3511,http://data.europa.eu/ux2/nace2.1/351
+35.12,class,Producția de energie electrică din surse regenerabile,Production of electricity from renewable sources,http://data.europa.eu/ux2/nace2.1/3512,http://data.europa.eu/ux2/nace2.1/351
+35.13,class,Transport de energie electrică,Transmission of electricity,http://data.europa.eu/ux2/nace2.1/3513,http://data.europa.eu/ux2/nace2.1/351
+35.14,class,Distribuție de energie electrică,Distribution of electricity,http://data.europa.eu/ux2/nace2.1/3514,http://data.europa.eu/ux2/nace2.1/351
+35.15,class,Comercializarea energiei electrice,Trade of electricity,http://data.europa.eu/ux2/nace2.1/3515,http://data.europa.eu/ux2/nace2.1/351
+35.16,class,Stocarea energiei electrice,Storage of electricity,http://data.europa.eu/ux2/nace2.1/3516,http://data.europa.eu/ux2/nace2.1/351
+35.21,class,Producția gazelor,Manufacture of gas,http://data.europa.eu/ux2/nace2.1/3521,http://data.europa.eu/ux2/nace2.1/352
+35.22,class,Distribuția combustibililor gazoși prin conducte,Distribution of gaseous fuels through mains,http://data.europa.eu/ux2/nace2.1/3522,http://data.europa.eu/ux2/nace2.1/352
+35.23,class,Comercializarea combustibililor gazoși prin conducte,Trade of gas through mains,http://data.europa.eu/ux2/nace2.1/3523,http://data.europa.eu/ux2/nace2.1/352
+35.24,class,Depozitarea gazelor ca parte a serviciilor de alimentare a rețelei,Storage of gas as part of network supply services,http://data.europa.eu/ux2/nace2.1/3524,http://data.europa.eu/ux2/nace2.1/352
+35.30,class,Furnizarea aburului și aerului condiționat,Steam and air conditioning supply,http://data.europa.eu/ux2/nace2.1/3530,http://data.europa.eu/ux2/nace2.1/353
+35.40,class,Activități ale brokerilor și agenților din domeniul energiei electrice și al gazelor naturale,Activities of brokers and agents for electric power and natural gas,http://data.europa.eu/ux2/nace2.1/3540,http://data.europa.eu/ux2/nace2.1/354
+36.00,class,"Captarea, tratarea și distribuția apei","Water collection, treatment and supply",http://data.europa.eu/ux2/nace2.1/3600,http://data.europa.eu/ux2/nace2.1/360
+37.00,class,Colectarea și epurarea apelor uzate,Sewerage,http://data.europa.eu/ux2/nace2.1/3700,http://data.europa.eu/ux2/nace2.1/370
+38.11,class,Colectarea deșeurilor nepericuloase,Collection of non-hazardous waste,http://data.europa.eu/ux2/nace2.1/3811,http://data.europa.eu/ux2/nace2.1/381
+38.12,class,Colectarea deșeurilor periculoase,Collection of hazardous waste,http://data.europa.eu/ux2/nace2.1/3812,http://data.europa.eu/ux2/nace2.1/381
+38.21,class,Recuperarea materialelor,Materials recovery,http://data.europa.eu/ux2/nace2.1/3821,http://data.europa.eu/ux2/nace2.1/382
+38.22,class,Recuperare de energie,Energy recovery,http://data.europa.eu/ux2/nace2.1/3822,http://data.europa.eu/ux2/nace2.1/382
+38.23,class,Alte tipuri de recuperare a deșeurilor,Other waste recovery,http://data.europa.eu/ux2/nace2.1/3823,http://data.europa.eu/ux2/nace2.1/382
+38.31,class,Incinerare fără valorificare energetică,Incineration without energy recovery,http://data.europa.eu/ux2/nace2.1/3831,http://data.europa.eu/ux2/nace2.1/383
+38.32,class,Depozitarea sau depozitarea permanentă a deșeurilor,Landfilling or permanent storage,http://data.europa.eu/ux2/nace2.1/3832,http://data.europa.eu/ux2/nace2.1/383
+38.33,class,Alte tipuri de eliminare a deșeurilor,Other waste disposal,http://data.europa.eu/ux2/nace2.1/3833,http://data.europa.eu/ux2/nace2.1/383
+39.00,class,Activități de decontaminare și alte activități de servicii de gestionare a deșeurilor,Remediation activities and other waste management service activities,http://data.europa.eu/ux2/nace2.1/3900,http://data.europa.eu/ux2/nace2.1/390
+41.00,class,Construcția de clădiri rezidențiale și nerezidențiale,Construction of residential and non-residential buildings,http://data.europa.eu/ux2/nace2.1/4100,http://data.europa.eu/ux2/nace2.1/410
+42.11,class,Construcția de drumuri și de autostrăzi,Construction of roads and motorways,http://data.europa.eu/ux2/nace2.1/4211,http://data.europa.eu/ux2/nace2.1/421
+42.12,class,Construcția de căi ferate de suprafață și subterane,Construction of railways and underground railways,http://data.europa.eu/ux2/nace2.1/4212,http://data.europa.eu/ux2/nace2.1/421
+42.13,class,Construcția de poduri și tuneluri,Construction of bridges and tunnels,http://data.europa.eu/ux2/nace2.1/4213,http://data.europa.eu/ux2/nace2.1/421
+42.21,class,Construcția proiectelor utilitare pentru fluide,Construction of utility projects for fluids,http://data.europa.eu/ux2/nace2.1/4221,http://data.europa.eu/ux2/nace2.1/422
+42.22,class,Construcția proiectelor utilitare pentru electricitate și telecomunicații,Construction of utility projects for electricity and telecommunications,http://data.europa.eu/ux2/nace2.1/4222,http://data.europa.eu/ux2/nace2.1/422
+42.91,class,Construcții hidrotehnice,Construction of water projects,http://data.europa.eu/ux2/nace2.1/4291,http://data.europa.eu/ux2/nace2.1/429
+42.99,class,Construcții de alte proiecte de construcții civile n.c.a.,Construction of other civil engineering projects n.e.c.,http://data.europa.eu/ux2/nace2.1/4299,http://data.europa.eu/ux2/nace2.1/429
+43.11,class,Lucrări de demolare,Demolition,http://data.europa.eu/ux2/nace2.1/4311,http://data.europa.eu/ux2/nace2.1/431
+43.12,class,Pregătirea șantierelor,Site preparation,http://data.europa.eu/ux2/nace2.1/4312,http://data.europa.eu/ux2/nace2.1/431
+43.13,class,Lucrări de foraj și sondaj,Test drilling and boring,http://data.europa.eu/ux2/nace2.1/4313,http://data.europa.eu/ux2/nace2.1/431
+43.21,class,Lucrări de instalații electrice,Electrical installation,http://data.europa.eu/ux2/nace2.1/4321,http://data.europa.eu/ux2/nace2.1/432
+43.22,class,"Lucrări de instalații sanitare, instalații de încălzire și de aer condiționat","Plumbing, heat and air-conditioning installation",http://data.europa.eu/ux2/nace2.1/4322,http://data.europa.eu/ux2/nace2.1/432
+43.23,class,Instalarea de sisteme de izolare,Installation of insulation,http://data.europa.eu/ux2/nace2.1/4323,http://data.europa.eu/ux2/nace2.1/432
+43.24,class,Alte lucrări de instalații pentru construcții,Other construction installation,http://data.europa.eu/ux2/nace2.1/4324,http://data.europa.eu/ux2/nace2.1/432
+43.31,class,Tencuire,Plastering,http://data.europa.eu/ux2/nace2.1/4331,http://data.europa.eu/ux2/nace2.1/433
+43.32,class,Lucrări de tâmplărie și dulgherie,Joinery installation,http://data.europa.eu/ux2/nace2.1/4332,http://data.europa.eu/ux2/nace2.1/433
+43.33,class,Lucrări de pardosire și placare a pereților,Floor and wall covering,http://data.europa.eu/ux2/nace2.1/4333,http://data.europa.eu/ux2/nace2.1/433
+43.34,class,Lucrări de vopsitorie și montare de geamuri,Painting and glazing,http://data.europa.eu/ux2/nace2.1/4334,http://data.europa.eu/ux2/nace2.1/433
+43.35,class,Alte lucrări de finisare a clădirilor,Other building completion and finishing,http://data.europa.eu/ux2/nace2.1/4335,http://data.europa.eu/ux2/nace2.1/433
+43.41,class,"Lucrări de învelitori, șarpante și terase la construcții",Roofing activities,http://data.europa.eu/ux2/nace2.1/4341,http://data.europa.eu/ux2/nace2.1/434
+43.42,class,Alte lucrări specializate de construcții de clădiri,Other specialised construction activities in construction of buildings,http://data.europa.eu/ux2/nace2.1/4342,http://data.europa.eu/ux2/nace2.1/434
+43.50,class,Lucrări specializate de activități de construcție în construcții civile,Specialised construction activities in civil engineering,http://data.europa.eu/ux2/nace2.1/4350,http://data.europa.eu/ux2/nace2.1/435
+43.60,class,Activități de servicii de intermediere pentru servicii specializate de construcții,Intermediation service activities for specialised construction services,http://data.europa.eu/ux2/nace2.1/4360,http://data.europa.eu/ux2/nace2.1/436
+43.91,class,Activități de zidărie,Masonry and bricklaying activities,http://data.europa.eu/ux2/nace2.1/4391,http://data.europa.eu/ux2/nace2.1/439
+43.99,class,Alte lucrări de construcții specializate n.c.a.,Other specialised construction activities n.e.c.,http://data.europa.eu/ux2/nace2.1/4399,http://data.europa.eu/ux2/nace2.1/439
+46.11,class,"Activități de intermediere în vânzarea cu ridicata a materiilor prime agricole, a animalelor vii, a materiilor prime textile și a produselor semifabricate","Activities of agents involved in the wholesale of agricultural raw materials, live animals, textile raw materials and semi-finished goods",http://data.europa.eu/ux2/nace2.1/4611,http://data.europa.eu/ux2/nace2.1/461
+46.12,class,"Activități de intermediere în vânzarea cu ridicata a combustibililor, minereurilor, metalelor și produselor chimice industriale","Activities of agents involved in the wholesale of fuels, ores, metals and industrial chemicals",http://data.europa.eu/ux2/nace2.1/4612,http://data.europa.eu/ux2/nace2.1/461
+46.13,class,Activități de intermediere în vânzarea cu ridicata a cherestelei și materialelor de construcții,Activities of agents involved in the wholesale of timber and building materials,http://data.europa.eu/ux2/nace2.1/4613,http://data.europa.eu/ux2/nace2.1/461
+46.14,class,"Activități de intermediere în vânzarea cu ridicata de mașini, echipamente industriale, nave și aeronave","Activities of agents involved in the wholesale of machinery, industrial equipment, ships and aircraft",http://data.europa.eu/ux2/nace2.1/4614,http://data.europa.eu/ux2/nace2.1/461
+46.15,class,"Activități de intermediere în vânzarea cu ridicata a mobilierului, articolelor de uz gospodăresc și articolelor de fierărie","Activities of agents involved in the wholesale of furniture, household goods, hardware and ironmongery",http://data.europa.eu/ux2/nace2.1/4615,http://data.europa.eu/ux2/nace2.1/461
+46.16,class,"Activități de intermediere în vânzarea cu ridicata a articolelor textile, de îmbrăcăminte, blănuri, încălțăminte și pielărie","Activities of agents involved in the wholesale of textiles, clothing, fur, footwear and leather goods",http://data.europa.eu/ux2/nace2.1/4616,http://data.europa.eu/ux2/nace2.1/461
+46.17,class,"Activități de intermediere în vânzarea cu ridicata a produselor alimentare, băuturilor și tutunului","Activities of agents involved in the wholesale of food, beverages and tobacco",http://data.europa.eu/ux2/nace2.1/4617,http://data.europa.eu/ux2/nace2.1/461
+46.18,class,Activități de intermediere în vânzarea cu ridicata a altor produse specifice,Activities of agents involved in the wholesale of other particular products,http://data.europa.eu/ux2/nace2.1/4618,http://data.europa.eu/ux2/nace2.1/461
+46.19,class,Activități de intermediere în comerțul cu ridicata nespecializat,Activities of agents involved in non-specialised wholesale,http://data.europa.eu/ux2/nace2.1/4619,http://data.europa.eu/ux2/nace2.1/461
+46.21,class,"Vânzări cu ridicata de cereale, tutun neprelucrat, semințe și hrană pentru animale","Wholesale of grain, unmanufactured tobacco, seeds and animal feeds",http://data.europa.eu/ux2/nace2.1/4621,http://data.europa.eu/ux2/nace2.1/462
+46.22,class,Vânzări cu ridicata de flori și plante,Wholesale of flowers and plants,http://data.europa.eu/ux2/nace2.1/4622,http://data.europa.eu/ux2/nace2.1/462
+46.23,class,Vânzări cu ridicata de animale vii,Wholesale of live animals,http://data.europa.eu/ux2/nace2.1/4623,http://data.europa.eu/ux2/nace2.1/462
+46.24,class,Vânzări cu ridicata de piei brute și prelucrate,"Wholesale of hides, skins and leather",http://data.europa.eu/ux2/nace2.1/4624,http://data.europa.eu/ux2/nace2.1/462
+46.31,class,Vânzări cu ridicata de fructe și legume,Wholesale of fruit and vegetables,http://data.europa.eu/ux2/nace2.1/4631,http://data.europa.eu/ux2/nace2.1/463
+46.32,class,"Vânzări cu ridicata de carne, produse din carne, pește și produse din pește","Wholesale of meat, meat products, fish and fish products",http://data.europa.eu/ux2/nace2.1/4632,http://data.europa.eu/ux2/nace2.1/463
+46.33,class,"Vânzări cu ridicata de produse lactate, ouă, uleiuri și grăsimi comestibile","Wholesale of dairy products, eggs and edible oils and fats",http://data.europa.eu/ux2/nace2.1/4633,http://data.europa.eu/ux2/nace2.1/463
+46.34,class,Vânzări cu ridicata de băuturi,Wholesale of beverages,http://data.europa.eu/ux2/nace2.1/4634,http://data.europa.eu/ux2/nace2.1/463
+46.35,class,Vânzări cu ridicata de produse din tutun,Wholesale of tobacco products,http://data.europa.eu/ux2/nace2.1/4635,http://data.europa.eu/ux2/nace2.1/463
+46.36,class,"Vânzări cu ridicata de zahăr, ciocolată și produse zaharoase","Wholesale of sugar, chocolate and sugar confectionery",http://data.europa.eu/ux2/nace2.1/4636,http://data.europa.eu/ux2/nace2.1/463
+46.37,class,"Vânzări cu ridicata de cafea, ceai, cacao și mirodenii","Wholesale of coffee, tea, cocoa and spices",http://data.europa.eu/ux2/nace2.1/4637,http://data.europa.eu/ux2/nace2.1/463
+46.38,class,Vânzări cu ridicata de alte produse alimentare,Wholesale of other food,http://data.europa.eu/ux2/nace2.1/4638,http://data.europa.eu/ux2/nace2.1/463
+46.39,class,"Vânzări cu ridicata nespecializate de produse alimentare, băuturi și tutun","Non-specialised wholesale of food, beverages and tobacco",http://data.europa.eu/ux2/nace2.1/4639,http://data.europa.eu/ux2/nace2.1/463
+46.41,class,Vânzări cu ridicata de produse textile,Wholesale of textiles,http://data.europa.eu/ux2/nace2.1/4641,http://data.europa.eu/ux2/nace2.1/464
+46.42,class,Vânzări cu ridicata de îmbrăcăminte și încălțăminte,Wholesale of clothing and footwear,http://data.europa.eu/ux2/nace2.1/4642,http://data.europa.eu/ux2/nace2.1/464
+46.43,class,Vânzări cu ridicata de aparate electrocasnice,Wholesale of electrical household appliances,http://data.europa.eu/ux2/nace2.1/4643,http://data.europa.eu/ux2/nace2.1/464
+46.44,class,Vânzări cu ridicata de porțelanuri și sticlărie și produse de curățat,Wholesale of china and glassware and cleaning materials,http://data.europa.eu/ux2/nace2.1/4644,http://data.europa.eu/ux2/nace2.1/464
+46.45,class,Vânzări cu ridicata de produse de parfumerie și produse cosmetice,Wholesale of perfume and cosmetics,http://data.europa.eu/ux2/nace2.1/4645,http://data.europa.eu/ux2/nace2.1/464
+46.46,class,Vânzări cu ridicata de produse farmaceutice și medicale,Wholesale of pharmaceutical and medical goods,http://data.europa.eu/ux2/nace2.1/4646,http://data.europa.eu/ux2/nace2.1/464
+46.47,class,"Vânzări cu ridicata de mobilier de uz casnic, de birou și pentru magazine, covoare și echipamente de iluminat","Wholesale of household, office and shop furniture, carpets and lighting equipment",http://data.europa.eu/ux2/nace2.1/4647,http://data.europa.eu/ux2/nace2.1/464
+46.48,class,Vânzări cu ridicata de ceasuri și bijuterii,Wholesale of watches and jewellery,http://data.europa.eu/ux2/nace2.1/4648,http://data.europa.eu/ux2/nace2.1/464
+46.49,class,Vânzări cu ridicata de alte bunuri de uz gospodăresc,Wholesale of other household goods,http://data.europa.eu/ux2/nace2.1/4649,http://data.europa.eu/ux2/nace2.1/464
+46.50,class,Vânzări cu ridicata de echipamente informatice și de comunicații,Wholesale of information and communication equipment,http://data.europa.eu/ux2/nace2.1/4650,http://data.europa.eu/ux2/nace2.1/465
+46.61,class,"Vânzări cu ridicata de mașini agricole, echipamente și accesorii","Wholesale of agricultural machinery, equipment and supplies",http://data.europa.eu/ux2/nace2.1/4661,http://data.europa.eu/ux2/nace2.1/466
+46.62,class,Vânzări cu ridicata de mașini-unelte,Wholesale of machine tools,http://data.europa.eu/ux2/nace2.1/4662,http://data.europa.eu/ux2/nace2.1/466
+46.63,class,Vânzări cu ridicata de mașini pentru industria extractivă și pentru construcții industriale și civile,"Wholesale of mining, construction and civil engineering machinery",http://data.europa.eu/ux2/nace2.1/4663,http://data.europa.eu/ux2/nace2.1/466
+46.64,class,Vânzări cu ridicata de alte mașini și echipamente,Wholesale of other machinery and equipment,http://data.europa.eu/ux2/nace2.1/4664,http://data.europa.eu/ux2/nace2.1/466
+46.71,class,Vânzări cu ridicata de autovehicule,Wholesale of motor vehicles,http://data.europa.eu/ux2/nace2.1/4671,http://data.europa.eu/ux2/nace2.1/467
+46.72,class,Vânzări cu ridicata de piese și accesorii pentru autovehicule,Wholesale of motor vehicle parts and accessories,http://data.europa.eu/ux2/nace2.1/4672,http://data.europa.eu/ux2/nace2.1/467
+46.73,class,"Vânzări cu ridicata de motociclete, piese și accesorii pentru motociclete","Wholesale of motorcycles, motorcycle parts and accessories",http://data.europa.eu/ux2/nace2.1/4673,http://data.europa.eu/ux2/nace2.1/467
+46.81,class,"Vânzări cu ridicata de combustibili solizi, lichizi și gazoși și cu produse derivate","Wholesale of solid, liquid and gaseous fuels and related products",http://data.europa.eu/ux2/nace2.1/4681,http://data.europa.eu/ux2/nace2.1/468
+46.82,class,Vânzări cu ridicata de metale și minereuri metalice,Wholesale of metals and metal ores,http://data.europa.eu/ux2/nace2.1/4682,http://data.europa.eu/ux2/nace2.1/468
+46.83,class,"Vânzări cu ridicata de lemn, materiale de construcție și echipamente sanitare","Wholesale of wood, construction materials and sanitary equipment",http://data.europa.eu/ux2/nace2.1/4683,http://data.europa.eu/ux2/nace2.1/468
+46.84,class,"Vânzări cu ridicata de articole de fierărie, instalații sanitare și echipamente de încălzire","Wholesale of hardware, plumbing and heating equipment and supplies",http://data.europa.eu/ux2/nace2.1/4684,http://data.europa.eu/ux2/nace2.1/468
+46.85,class,Vânzări cu ridicata de produse chimice,Wholesale of chemical products,http://data.europa.eu/ux2/nace2.1/4685,http://data.europa.eu/ux2/nace2.1/468
+46.86,class,Vânzări cu ridicata de alte produse intermediare,Wholesale of other intermediate products,http://data.europa.eu/ux2/nace2.1/4686,http://data.europa.eu/ux2/nace2.1/468
+46.87,class,Vânzări cu ridicata de deșeuri și resturi,Wholesale of waste and scrap,http://data.europa.eu/ux2/nace2.1/4687,http://data.europa.eu/ux2/nace2.1/468
+46.89,class,Alte vânzări cu ridicata specializate n.c.a.,Other specialised wholesale n.e.c.,http://data.europa.eu/ux2/nace2.1/4689,http://data.europa.eu/ux2/nace2.1/468
+46.90,class,Servicii de comerț cu ridicata nespecializat,Non-specialised wholesale trade,http://data.europa.eu/ux2/nace2.1/4690,http://data.europa.eu/ux2/nace2.1/469
+47.11,class,"Vânzări cu amănuntul nespecializate, predominant de produse alimentare, băuturi și tutun","Non-specialised retail sale of predominately food, beverages or tobacco",http://data.europa.eu/ux2/nace2.1/4711,http://data.europa.eu/ux2/nace2.1/471
+47.12,class,Alte vânzări cu amănuntul nespecializate,Other non-specialised retail sale,http://data.europa.eu/ux2/nace2.1/4712,http://data.europa.eu/ux2/nace2.1/471
+47.21,class,Vânzări cu amănuntul de fructe și legume,Retail sale of fruit and vegetables,http://data.europa.eu/ux2/nace2.1/4721,http://data.europa.eu/ux2/nace2.1/472
+47.22,class,Vânzări cu amănuntul de carne și produse din carne,Retail sale of meat and meat products,http://data.europa.eu/ux2/nace2.1/4722,http://data.europa.eu/ux2/nace2.1/472
+47.23,class,"Vânzări cu amănuntul de pește, crustacee și moluște","Retail sale of fish, crustaceans and molluscs",http://data.europa.eu/ux2/nace2.1/4723,http://data.europa.eu/ux2/nace2.1/472
+47.24,class,"Vânzări cu amănuntul de pâine, prăjituri și produse zaharoase","Retail sale of bread, cake and confectionery",http://data.europa.eu/ux2/nace2.1/4724,http://data.europa.eu/ux2/nace2.1/472
+47.25,class,Vânzări cu amănuntul de băuturi,Retail sale of beverages,http://data.europa.eu/ux2/nace2.1/4725,http://data.europa.eu/ux2/nace2.1/472
+47.26,class,Vânzări cu amănuntul de produse din tutun,Retail sale of tobacco products,http://data.europa.eu/ux2/nace2.1/4726,http://data.europa.eu/ux2/nace2.1/472
+47.27,class,Vânzări cu amănuntul de alte produse alimentare,Retail sale of other food,http://data.europa.eu/ux2/nace2.1/4727,http://data.europa.eu/ux2/nace2.1/472
+47.30,class,Vânzări cu amănuntul de carburanți pentru autovehicule,Retail sale of automotive fuel,http://data.europa.eu/ux2/nace2.1/4730,http://data.europa.eu/ux2/nace2.1/473
+47.40,class,Vânzări cu amănuntul de echipamente informatice și de comunicații,Retail sale of information and communication equipment,http://data.europa.eu/ux2/nace2.1/4740,http://data.europa.eu/ux2/nace2.1/474
+47.51,class,Vânzări cu amănuntul de articole textile,Retail sale of textiles,http://data.europa.eu/ux2/nace2.1/4751,http://data.europa.eu/ux2/nace2.1/475
+47.52,class,"Vânzări cu amănuntul de articole de fierărie, materiale de construcții, vopsele și sticlă","Retail sale of hardware, building materials, paints and glass",http://data.europa.eu/ux2/nace2.1/4752,http://data.europa.eu/ux2/nace2.1/475
+47.53,class,"Vânzări cu amănuntul de covoare, mochete, pardoseală și tencuială","Retail sale of carpets, rugs, wall and floor coverings",http://data.europa.eu/ux2/nace2.1/4753,http://data.europa.eu/ux2/nace2.1/475
+47.54,class,Vânzări cu amănuntul de aparate electrocasnice,Retail sale of electrical household appliances,http://data.europa.eu/ux2/nace2.1/4754,http://data.europa.eu/ux2/nace2.1/475
+47.55,class,"Vânzarea cu amănuntul de mobilier, echipamente de iluminat, veselă și alte bunuri de uz casnic","Retail sale of furniture, lighting equipment, tableware and other household goods",http://data.europa.eu/ux2/nace2.1/4755,http://data.europa.eu/ux2/nace2.1/475
+47.61,class,Vânzări cu amănuntul de cărți,Retail sale of books,http://data.europa.eu/ux2/nace2.1/4761,http://data.europa.eu/ux2/nace2.1/476
+47.62,class,Vânzări cu amănuntul de ziare și alte publicații periodice și articole de papetărie,"Retail sale of newspapers, and other periodical publications and stationery",http://data.europa.eu/ux2/nace2.1/4762,http://data.europa.eu/ux2/nace2.1/476
+47.63,class,Vânzări cu amănuntul de echipamente sportive,Retail sale of sporting equipment,http://data.europa.eu/ux2/nace2.1/4763,http://data.europa.eu/ux2/nace2.1/476
+47.64,class,Vânzări cu amănuntul de jocuri și jucării,Retail sale of games and toys,http://data.europa.eu/ux2/nace2.1/4764,http://data.europa.eu/ux2/nace2.1/476
+47.69,class,Vânzări cu amănuntul de bunuri culturale și recreative n.c.a.,Retail sale of cultural and recreational goods n.e.c.,http://data.europa.eu/ux2/nace2.1/4769,http://data.europa.eu/ux2/nace2.1/476
+47.71,class,Vânzări cu amănuntul de îmbrăcăminte,Retail sale of clothing,http://data.europa.eu/ux2/nace2.1/4771,http://data.europa.eu/ux2/nace2.1/477
+47.72,class,Vânzări cu amănuntul de încălțăminte și articole din piele,Retail sale of footwear and leather goods,http://data.europa.eu/ux2/nace2.1/4772,http://data.europa.eu/ux2/nace2.1/477
+47.73,class,Vânzări cu amănuntul de produse farmaceutice,Retail sale of pharmaceutical products,http://data.europa.eu/ux2/nace2.1/4773,http://data.europa.eu/ux2/nace2.1/477
+47.74,class,Vânzări cu amănuntul de articole medicale și ortopedice,Retail sale of medical and orthopaedic goods,http://data.europa.eu/ux2/nace2.1/4774,http://data.europa.eu/ux2/nace2.1/477
+47.75,class,Vânzări cu amănuntul de produse de toaletă și produse cosmetice,Retail sale of cosmetic and toilet articles,http://data.europa.eu/ux2/nace2.1/4775,http://data.europa.eu/ux2/nace2.1/477
+47.76,class,"Vânzări cu amănuntul de flori, plante, îngrășăminte, animale de companie și hrană pentru animale de companie","Retail sale of flowers, plants, fertilisers, pets and pet food",http://data.europa.eu/ux2/nace2.1/4776,http://data.europa.eu/ux2/nace2.1/477
+47.77,class,Vânzări cu amănuntul de ceasuri și bijuterii,Retail sale of watches and jewellery,http://data.europa.eu/ux2/nace2.1/4777,http://data.europa.eu/ux2/nace2.1/477
+47.78,class,Vânzări cu amănuntul de alte bunuri noi,Retail sale of other new goods,http://data.europa.eu/ux2/nace2.1/4778,http://data.europa.eu/ux2/nace2.1/477
+47.79,class,Vânzări cu amănuntul de bunuri de ocazie,Retail sale of second-hand goods,http://data.europa.eu/ux2/nace2.1/4779,http://data.europa.eu/ux2/nace2.1/477
+47.81,class,Vânzări cu amănuntul de autovehicule,Retail sale of motor vehicles,http://data.europa.eu/ux2/nace2.1/4781,http://data.europa.eu/ux2/nace2.1/478
+47.82,class,Vânzări cu amănuntul de piese și accesorii pentru autovehicule,Retail sale of motor vehicle parts and accessories,http://data.europa.eu/ux2/nace2.1/4782,http://data.europa.eu/ux2/nace2.1/478
+47.83,class,"Vânzări cu amănuntul de motociclete, piese și accesorii pentru motociclete","Retail sale of motorcycles, motorcycle parts and accessories",http://data.europa.eu/ux2/nace2.1/4783,http://data.europa.eu/ux2/nace2.1/478
+47.91,class,Servicii de intermediere pentru vânzarea cu amănuntul nespecializată,Intermediation service activities for non-specialised retail sale,http://data.europa.eu/ux2/nace2.1/4791,http://data.europa.eu/ux2/nace2.1/479
+47.92,class,Servicii de intermediere pentru vânzarea cu amănuntul specializată,Intermediation service activities for specialised retail sale,http://data.europa.eu/ux2/nace2.1/4792,http://data.europa.eu/ux2/nace2.1/479
+49.11,class,Transportul feroviar greu de călători,Passenger heavy rail transport,http://data.europa.eu/ux2/nace2.1/4911,http://data.europa.eu/ux2/nace2.1/491
+49.12,class,Alte tipuri de transport feroviar de călători,Other passenger rail transport,http://data.europa.eu/ux2/nace2.1/4912,http://data.europa.eu/ux2/nace2.1/491
+49.20,class,Transport feroviar de mărfuri,Freight rail transport,http://data.europa.eu/ux2/nace2.1/4920,http://data.europa.eu/ux2/nace2.1/492
+49.31,class,Transport rutier regulat de călători,Scheduled passenger transport by road,http://data.europa.eu/ux2/nace2.1/4931,http://data.europa.eu/ux2/nace2.1/493
+49.32,class,Transport rutier neregulat de călători,Non-scheduled passenger transport by road,http://data.europa.eu/ux2/nace2.1/4932,http://data.europa.eu/ux2/nace2.1/493
+49.33,class,Servicii de transport de călători la cerere cu vehicul cu șofer,On-demand passenger transport service activities by vehicle with driver,http://data.europa.eu/ux2/nace2.1/4933,http://data.europa.eu/ux2/nace2.1/493
+49.34,class,"Transport de călători cu funiculare, teleferice și teleschiuri",Passenger transport by cableways and ski lifts,http://data.europa.eu/ux2/nace2.1/4934,http://data.europa.eu/ux2/nace2.1/493
+49.39,class,Alte transporturi terestre de călători n.c.a.,Other passenger land transport n.e.c.,http://data.europa.eu/ux2/nace2.1/4939,http://data.europa.eu/ux2/nace2.1/493
+49.41,class,Transport rutier de mărfuri,Freight transport by road,http://data.europa.eu/ux2/nace2.1/4941,http://data.europa.eu/ux2/nace2.1/494
+49.42,class,Servicii de mutare,Removal services,http://data.europa.eu/ux2/nace2.1/4942,http://data.europa.eu/ux2/nace2.1/494
+49.50,class,Transporturi prin conducte,Transport via pipeline,http://data.europa.eu/ux2/nace2.1/4950,http://data.europa.eu/ux2/nace2.1/495
+50.10,class,Transporturi maritime și costiere de pasageri,Sea and coastal passenger water transport,http://data.europa.eu/ux2/nace2.1/5010,http://data.europa.eu/ux2/nace2.1/501
+50.20,class,Transporturi maritime și costiere de marfă,Sea and coastal freight water transport,http://data.europa.eu/ux2/nace2.1/5020,http://data.europa.eu/ux2/nace2.1/502
+50.30,class,Transporturi de pasageri pe căi navigabile interioare,Inland passenger water transport,http://data.europa.eu/ux2/nace2.1/5030,http://data.europa.eu/ux2/nace2.1/503
+50.40,class,Transportul de marfă pe căile navigabile interioare,Inland freight water transport,http://data.europa.eu/ux2/nace2.1/5040,http://data.europa.eu/ux2/nace2.1/504
+51.10,class,Transporturi aeriene de pasageri,Passenger air transport,http://data.europa.eu/ux2/nace2.1/5110,http://data.europa.eu/ux2/nace2.1/511
+51.21,class,Transport aerian de marfă,Freight air transport,http://data.europa.eu/ux2/nace2.1/5121,http://data.europa.eu/ux2/nace2.1/512
+51.22,class,Transportul spațial,Space transport,http://data.europa.eu/ux2/nace2.1/5122,http://data.europa.eu/ux2/nace2.1/512
+52.10,class,Antrepozitare și depozitare,Warehousing and storage,http://data.europa.eu/ux2/nace2.1/5210,http://data.europa.eu/ux2/nace2.1/521
+52.21,class,Activități de servicii anexe pentru transporturi terestre,Service activities incidental to land transportation,http://data.europa.eu/ux2/nace2.1/5221,http://data.europa.eu/ux2/nace2.1/522
+52.22,class,Activități de servicii anexe transporturilor pe apă,Service activities incidental to water transportation,http://data.europa.eu/ux2/nace2.1/5222,http://data.europa.eu/ux2/nace2.1/522
+52.23,class,Activități de servicii anexe transporturilor aeriene,Service activities incidental to air transportation,http://data.europa.eu/ux2/nace2.1/5223,http://data.europa.eu/ux2/nace2.1/522
+52.24,class,Manipulări,Cargo handling,http://data.europa.eu/ux2/nace2.1/5224,http://data.europa.eu/ux2/nace2.1/522
+52.25,class,Activități de servicii de logistică,Logistics service activities,http://data.europa.eu/ux2/nace2.1/5225,http://data.europa.eu/ux2/nace2.1/522
+52.26,class,Alte activități anexe transporturilor,Other support activities for transportation,http://data.europa.eu/ux2/nace2.1/5226,http://data.europa.eu/ux2/nace2.1/522
+52.31,class,Servicii de intermediere pentru transport de marfă,Intermediation service activities for freight transportation,http://data.europa.eu/ux2/nace2.1/5231,http://data.europa.eu/ux2/nace2.1/523
+52.32,class,Servicii de intermediere pentru transport de pasageri,Intermediation service activities for passenger transportation,http://data.europa.eu/ux2/nace2.1/5232,http://data.europa.eu/ux2/nace2.1/523
+53.10,class,Activități de poștă în cadrul unei obligații de serviciu universal,Postal activities under universal service obligation,http://data.europa.eu/ux2/nace2.1/5310,http://data.europa.eu/ux2/nace2.1/531
+53.20,class,Alte activități de poștă și de curier,Other postal and courier activities,http://data.europa.eu/ux2/nace2.1/5320,http://data.europa.eu/ux2/nace2.1/532
+53.30,class,Servicii de intermediere pentru activități poștale și de curier,Intermediation service activities for postal and courier activities,http://data.europa.eu/ux2/nace2.1/5330,http://data.europa.eu/ux2/nace2.1/533
+55.10,class,Hoteluri și alte facilități de cazare similare,Hotels and similar accommodation,http://data.europa.eu/ux2/nace2.1/5510,http://data.europa.eu/ux2/nace2.1/551
+55.20,class,Facilități de cazare pentru vacanțe și perioade de scurtă durată,Holiday and other short-stay accommodation,http://data.europa.eu/ux2/nace2.1/5520,http://data.europa.eu/ux2/nace2.1/552
+55.30,class,Terenuri de camping și parcuri pentru vehicule de agrement,Camping grounds and recreational vehicle parks,http://data.europa.eu/ux2/nace2.1/5530,http://data.europa.eu/ux2/nace2.1/553
+55.40,class,Servicii de intermediere pentru cazare,Intermediation service activities for accommodation,http://data.europa.eu/ux2/nace2.1/5540,http://data.europa.eu/ux2/nace2.1/554
+55.90,class,Alte servicii de cazare,Other accommodation,http://data.europa.eu/ux2/nace2.1/5590,http://data.europa.eu/ux2/nace2.1/559
+56.11,class,Activități de restaurant,Restaurant activities,http://data.europa.eu/ux2/nace2.1/5611,http://data.europa.eu/ux2/nace2.1/561
+56.12,class,Servicii de restaurante mobile,Mobile food service activities,http://data.europa.eu/ux2/nace2.1/5612,http://data.europa.eu/ux2/nace2.1/561
+56.21,class,Servicii de catering,Event catering activities,http://data.europa.eu/ux2/nace2.1/5621,http://data.europa.eu/ux2/nace2.1/562
+56.22,class,Activități de servicii de catering pe bază de contract și alte activități de servicii de alimentație publică,Contract catering service activities and other food service activities,http://data.europa.eu/ux2/nace2.1/5622,http://data.europa.eu/ux2/nace2.1/562
+56.30,class,Servicii de servire a băuturilor,Beverage serving activities,http://data.europa.eu/ux2/nace2.1/5630,http://data.europa.eu/ux2/nace2.1/563
+56.40,class,Servicii de intermediere pentru activități de servicii de alimentație publică și de servire a băuturilor,Intermediation service activities for food and beverage services activities,http://data.europa.eu/ux2/nace2.1/5640,http://data.europa.eu/ux2/nace2.1/564
+58.11,class,Activități de editare a cărților,Publishing of books,http://data.europa.eu/ux2/nace2.1/5811,http://data.europa.eu/ux2/nace2.1/581
+58.12,class,Activități de editare a ziarelor,Publishing of newspapers,http://data.europa.eu/ux2/nace2.1/5812,http://data.europa.eu/ux2/nace2.1/581
+58.13,class,Activități de editare a revistelor și a periodicelor,Publishing of journals and periodicals,http://data.europa.eu/ux2/nace2.1/5813,http://data.europa.eu/ux2/nace2.1/581
+58.19,class,"Alte activități de editare, cu excepția editării de software","Other publishing activities, except software publishing",http://data.europa.eu/ux2/nace2.1/5819,http://data.europa.eu/ux2/nace2.1/581
+58.21,class,Activități de editare de jocuri video,Publishing of video games,http://data.europa.eu/ux2/nace2.1/5821,http://data.europa.eu/ux2/nace2.1/582
+58.29,class,Alte activități de editare de software,Other software publishing,http://data.europa.eu/ux2/nace2.1/5829,http://data.europa.eu/ux2/nace2.1/582
+59.11,class,"Activități de producție cinematografică, video și de programe de televiziune","Motion picture, video and television programme production activities",http://data.europa.eu/ux2/nace2.1/5911,http://data.europa.eu/ux2/nace2.1/591
+59.12,class,"Post-producție cinematografică, video și de programe de televiziune","Motion picture, video and television programme post-production activities",http://data.europa.eu/ux2/nace2.1/5912,http://data.europa.eu/ux2/nace2.1/591
+59.13,class,Activități de distribuție de filme cinematografice și video,Motion picture and video distribution activities,http://data.europa.eu/ux2/nace2.1/5913,http://data.europa.eu/ux2/nace2.1/591
+59.14,class,Proiecții de filme cinematografice,Motion picture projection activities,http://data.europa.eu/ux2/nace2.1/5914,http://data.europa.eu/ux2/nace2.1/591
+59.20,class,Înregistrări audio și activități de editare muzicală,Sound recording and music publishing activities,http://data.europa.eu/ux2/nace2.1/5920,http://data.europa.eu/ux2/nace2.1/592
+60.10,class,Activități de radiodifuziune și distribuție audio,Radio broadcasting and audio distribution activities,http://data.europa.eu/ux2/nace2.1/6010,http://data.europa.eu/ux2/nace2.1/601
+60.20,class,"Activități de programare, difuzare de programe de televiziune și de programe video","Television programming, broadcasting and video distribution activities",http://data.europa.eu/ux2/nace2.1/6020,http://data.europa.eu/ux2/nace2.1/602
+60.31,class,Servicii ale agențiilor de presă,News agency activities,http://data.europa.eu/ux2/nace2.1/6031,http://data.europa.eu/ux2/nace2.1/603
+60.39,class,Alte activități de distribuție de conținut,Other content distribution activities,http://data.europa.eu/ux2/nace2.1/6039,http://data.europa.eu/ux2/nace2.1/603
+61.10,class,"Activități de telecomunicații cu fir, fără fir și prin satelit","Wired, wireless, and satellite telecommunication activities",http://data.europa.eu/ux2/nace2.1/6110,http://data.europa.eu/ux2/nace2.1/611
+61.20,class,Activități de revânzare de telecomunicații și servicii de intermediere pentru telecomunicații,Telecommunication reselling activities and intermediation service activities for telecommunication,http://data.europa.eu/ux2/nace2.1/6120,http://data.europa.eu/ux2/nace2.1/612
+61.90,class,Alte activități de telecomunicații,Other telecommunication activities,http://data.europa.eu/ux2/nace2.1/6190,http://data.europa.eu/ux2/nace2.1/619
+62.10,class,Activități de programare informatică,Computer programming activities,http://data.europa.eu/ux2/nace2.1/6210,http://data.europa.eu/ux2/nace2.1/621
+62.20,class,Activități de consultanță în domeniul informaticii și de gestionare a echipamentelor informatice,Computer consultancy and computer facilities management activities,http://data.europa.eu/ux2/nace2.1/6220,http://data.europa.eu/ux2/nace2.1/622
+62.90,class,Alte activități de servicii privind tehnologia informației,Other information technology and computer service activities,http://data.europa.eu/ux2/nace2.1/6290,http://data.europa.eu/ux2/nace2.1/629
+63.10,class,"Infrastructura informatică, prelucrarea datelor, găzduirea și activitățile conexe","Computing infrastructure, data processing, hosting and related activities",http://data.europa.eu/ux2/nace2.1/6310,http://data.europa.eu/ux2/nace2.1/631
+63.91,class,Activitățile portalurilor web de căutare pe internet,Web search portal activities,http://data.europa.eu/ux2/nace2.1/6391,http://data.europa.eu/ux2/nace2.1/639
+63.92,class,Alte activități de servicii informatice,Other information service activities,http://data.europa.eu/ux2/nace2.1/6392,http://data.europa.eu/ux2/nace2.1/639
+64.11,class,Servicii ale băncii centrale,Central banking,http://data.europa.eu/ux2/nace2.1/6411,http://data.europa.eu/ux2/nace2.1/641
+64.19,class,Alte intermedieri monetare,Other monetary intermediation,http://data.europa.eu/ux2/nace2.1/6419,http://data.europa.eu/ux2/nace2.1/641
+64.21,class,Activități ale holding-urilor,Activities of holding companies,http://data.europa.eu/ux2/nace2.1/6421,http://data.europa.eu/ux2/nace2.1/642
+64.22,class,Activități ale canalelor de finanțare,Activities of financing conduits,http://data.europa.eu/ux2/nace2.1/6422,http://data.europa.eu/ux2/nace2.1/642
+64.31,class,Activități ale fondurilor de investiții de pe piața monetară și ale fondurilor de investiții din afara pieței monetare,Activities of money market and non-money market investments funds,http://data.europa.eu/ux2/nace2.1/6431,http://data.europa.eu/ux2/nace2.1/643
+64.32,class,"Activități de tipul administrării fiduciare, imobiliare și conturi ale agențiilor","Activities of trust, estate and agency accounts",http://data.europa.eu/ux2/nace2.1/6432,http://data.europa.eu/ux2/nace2.1/643
+64.91,class,Leasing financiar,Financial leasing,http://data.europa.eu/ux2/nace2.1/6491,http://data.europa.eu/ux2/nace2.1/649
+64.92,class,Alte activități de creditare,Other credit granting,http://data.europa.eu/ux2/nace2.1/6492,http://data.europa.eu/ux2/nace2.1/649
+64.99,class,"Alte activități financiare, cu excepția asigurărilor și a fondurilor de pensii n.c.a.","Other financial service activities, except insurance and pension funding n.e.c.",http://data.europa.eu/ux2/nace2.1/6499,http://data.europa.eu/ux2/nace2.1/649
+65.11,class,Activități de asigurări de viață,Life insurance,http://data.europa.eu/ux2/nace2.1/6511,http://data.europa.eu/ux2/nace2.1/651
+65.12,class,Alte activități de asigurări,Non-life insurance,http://data.europa.eu/ux2/nace2.1/6512,http://data.europa.eu/ux2/nace2.1/651
+65.20,class,Activități de reasigurare,Reinsurance,http://data.europa.eu/ux2/nace2.1/6520,http://data.europa.eu/ux2/nace2.1/652
+65.30,class,Activități ale fondurilor de pensii,Pension funding,http://data.europa.eu/ux2/nace2.1/6530,http://data.europa.eu/ux2/nace2.1/653
+66.11,class,Administrarea piețelor financiare,Administration of financial markets,http://data.europa.eu/ux2/nace2.1/6611,http://data.europa.eu/ux2/nace2.1/661
+66.12,class,Tranzacționarea contractelor de valori mobiliare și de mărfuri,Security and commodity contracts brokerage,http://data.europa.eu/ux2/nace2.1/6612,http://data.europa.eu/ux2/nace2.1/661
+66.19,class,"Alte activități auxiliare serviciilor financiare, cu excepția asigurărilor și a fondurilor de pensii","Other activities auxiliary to financial services, except insurance and pension funding",http://data.europa.eu/ux2/nace2.1/6619,http://data.europa.eu/ux2/nace2.1/661
+66.21,class,Evaluarea riscurilor și daunelor,Risk and damage evaluation,http://data.europa.eu/ux2/nace2.1/6621,http://data.europa.eu/ux2/nace2.1/662
+66.22,class,Activități ale agenților și brokerilor de asigurări,Activities of insurance agents and brokers,http://data.europa.eu/ux2/nace2.1/6622,http://data.europa.eu/ux2/nace2.1/662
+66.29,class,Activități auxiliare de asigurări și fonduri de pensii n.c.a.,Activities auxiliary to insurance and pension funding n.e.c.,http://data.europa.eu/ux2/nace2.1/6629,http://data.europa.eu/ux2/nace2.1/662
+66.30,class,Administrarea fondurilor,Fund management activities,http://data.europa.eu/ux2/nace2.1/6630,http://data.europa.eu/ux2/nace2.1/663
+68.11,class,Cumpărarea și vânzarea bunurilor imobiliare proprii,Buying and selling of own real estate,http://data.europa.eu/ux2/nace2.1/6811,http://data.europa.eu/ux2/nace2.1/681
+68.12,class,Dezvoltarea proiectelor de construcții,Development of building projects,http://data.europa.eu/ux2/nace2.1/6812,http://data.europa.eu/ux2/nace2.1/681
+68.20,class,Închirierea și subînchirierea bunurilor imobiliare proprii sau închiriate,Rental and operating of own or leased real estate,http://data.europa.eu/ux2/nace2.1/6820,http://data.europa.eu/ux2/nace2.1/682
+68.31,class,Servicii de intermediere pentru activități imobiliare,Intermediation service activities for real estate activities,http://data.europa.eu/ux2/nace2.1/6831,http://data.europa.eu/ux2/nace2.1/683
+68.32,class,Alte activități imobiliare pe bază de comision sau contract,Other real estate activities on a fee or contract basis,http://data.europa.eu/ux2/nace2.1/6832,http://data.europa.eu/ux2/nace2.1/683
+69.10,class,Activități juridice,Legal activities,http://data.europa.eu/ux2/nace2.1/6910,http://data.europa.eu/ux2/nace2.1/691
+69.20,class,Activități de contabilitate și audit financiar; consultanță în domeniul fiscal,"Accounting, bookkeeping and auditing activities; tax consultancy",http://data.europa.eu/ux2/nace2.1/6920,http://data.europa.eu/ux2/nace2.1/692
+70.10,class,Activități ale sediilor sociale,Activities of head offices,http://data.europa.eu/ux2/nace2.1/7010,http://data.europa.eu/ux2/nace2.1/701
+70.20,class,Activități de consultanță în afaceri și management,Business and other management consultancy activities,http://data.europa.eu/ux2/nace2.1/7020,http://data.europa.eu/ux2/nace2.1/702
+71.11,class,Activități de arhitectură,Architectural activities,http://data.europa.eu/ux2/nace2.1/7111,http://data.europa.eu/ux2/nace2.1/711
+71.12,class,Activități de inginerie și servicii de consultanță tehnică legate de acestea,Engineering activities and related technical consultancy,http://data.europa.eu/ux2/nace2.1/7112,http://data.europa.eu/ux2/nace2.1/711
+71.20,class,Activități de încercări și analize tehnice,Technical testing and analysis,http://data.europa.eu/ux2/nace2.1/7120,http://data.europa.eu/ux2/nace2.1/712
+72.10,class,Cercetare-dezvoltare în științe naturale și inginerie,Research and experimental development on natural sciences and engineering,http://data.europa.eu/ux2/nace2.1/7210,http://data.europa.eu/ux2/nace2.1/721
+72.20,class,Cercetare-dezvoltare în științe sociale și umaniste,Research and experimental development on social sciences and humanities,http://data.europa.eu/ux2/nace2.1/7220,http://data.europa.eu/ux2/nace2.1/722
+73.11,class,Activități ale agențiilor de publicitate,Activities of advertising agencies,http://data.europa.eu/ux2/nace2.1/7311,http://data.europa.eu/ux2/nace2.1/731
+73.12,class,Reprezentări media,Media representation,http://data.europa.eu/ux2/nace2.1/7312,http://data.europa.eu/ux2/nace2.1/731
+73.20,class,Cercetare de piață și sondaje de opinie,Market research and public opinion polling,http://data.europa.eu/ux2/nace2.1/7320,http://data.europa.eu/ux2/nace2.1/732
+73.30,class,Activități de relații publice și comunicare,Public relations and communication activities,http://data.europa.eu/ux2/nace2.1/7330,http://data.europa.eu/ux2/nace2.1/733
+74.11,class,Activități de design industrial și vestimentar,Industrial product and fashion design activities,http://data.europa.eu/ux2/nace2.1/7411,http://data.europa.eu/ux2/nace2.1/741
+74.12,class,Design grafic și activități de comunicare vizuală,Graphic design and visual communication activities,http://data.europa.eu/ux2/nace2.1/7412,http://data.europa.eu/ux2/nace2.1/741
+74.13,class,Activități de design de interioare,Interior design activities,http://data.europa.eu/ux2/nace2.1/7413,http://data.europa.eu/ux2/nace2.1/741
+74.14,class,Alte activități de design specializat,Other specialised design activities,http://data.europa.eu/ux2/nace2.1/7414,http://data.europa.eu/ux2/nace2.1/741
+74.20,class,Activități fotografice,Photographic activities,http://data.europa.eu/ux2/nace2.1/7420,http://data.europa.eu/ux2/nace2.1/742
+74.30,class,Activități de traducere scrisă și orală (interpreți),Translation and interpretation activities,http://data.europa.eu/ux2/nace2.1/7430,http://data.europa.eu/ux2/nace2.1/743
+74.91,class,Activități de brokeraj în materie de brevete și servicii de marketing,Patent brokering and marketing service activities,http://data.europa.eu/ux2/nace2.1/7491,http://data.europa.eu/ux2/nace2.1/749
+74.99,class,"Toate celelalte activități profesionale, științifice și tehnice n.c.a.","All other professional, scientific and technical activities n.e.c.",http://data.europa.eu/ux2/nace2.1/7499,http://data.europa.eu/ux2/nace2.1/749
+75.00,class,Activități veterinare,Veterinary activities,http://data.europa.eu/ux2/nace2.1/7500,http://data.europa.eu/ux2/nace2.1/750
+77.11,class,Închiriere și leasing de autoturisme și de autovehicule ușoare,Rental and leasing of cars and light motor vehicles,http://data.europa.eu/ux2/nace2.1/7711,http://data.europa.eu/ux2/nace2.1/771
+77.12,class,Închiriere și leasing de camioane,Rental and leasing of trucks,http://data.europa.eu/ux2/nace2.1/7712,http://data.europa.eu/ux2/nace2.1/771
+77.21,class,Închiriere și leasing de articole de agrement și sport,Rental and leasing of recreational and sports goods,http://data.europa.eu/ux2/nace2.1/7721,http://data.europa.eu/ux2/nace2.1/772
+77.22,class,Închiriere și leasing de alte bunuri personale și de uz casnic,Rental and leasing of other personal and household goods,http://data.europa.eu/ux2/nace2.1/7722,http://data.europa.eu/ux2/nace2.1/772
+77.31,class,Închiriere și leasing de mașini și echipamente agricole,Rental and leasing of agricultural machinery and equipment,http://data.europa.eu/ux2/nace2.1/7731,http://data.europa.eu/ux2/nace2.1/773
+77.32,class,Închiriere și leasing de mașini și echipamente de construcții civile,Rental and leasing of construction and civil engineering machinery and equipment,http://data.europa.eu/ux2/nace2.1/7732,http://data.europa.eu/ux2/nace2.1/773
+77.33,class,"Închiriere și leasing de mașini, echipament de birou și calculatoare","Rental and leasing of office machinery, equipment and computers",http://data.europa.eu/ux2/nace2.1/7733,http://data.europa.eu/ux2/nace2.1/773
+77.34,class,Închiriere și leasing de mijloace de transport pe apă,Rental and leasing of water transport equipment,http://data.europa.eu/ux2/nace2.1/7734,http://data.europa.eu/ux2/nace2.1/773
+77.35,class,Închiriere și leasing de mijloace de transport aerian,Rental and leasing of air transport equipment,http://data.europa.eu/ux2/nace2.1/7735,http://data.europa.eu/ux2/nace2.1/773
+77.39,class,"Închiriere și leasing de alte mașini, echipamente și bunuri corporale n.c.a.","Rental and leasing of other machinery, equipment and tangible goods n.e.c.",http://data.europa.eu/ux2/nace2.1/7739,http://data.europa.eu/ux2/nace2.1/773
+77.40,class,"Leasing de proprietate intelectuală și produse similare, cu excepția lucrărilor care fac obiectul drepturilor de autor","Leasing of intellectual property and similar products, except copyrighted works",http://data.europa.eu/ux2/nace2.1/7740,http://data.europa.eu/ux2/nace2.1/774
+77.51,class,"Servicii de intermediere pentru închirierea și leasingul autoturismelor, autorulotelor și remorcilor","Intermediation service activities for rental and leasing of cars, motorhomes and trailers",http://data.europa.eu/ux2/nace2.1/7751,http://data.europa.eu/ux2/nace2.1/775
+77.52,class,Servicii de intermediere pentru închirierea și leasingul de alte bunuri corporale și imobilizări necorporale nefinanciare,Intermediation service activities for rental and leasing of other tangible goods and non-financial intangible assets,http://data.europa.eu/ux2/nace2.1/7752,http://data.europa.eu/ux2/nace2.1/775
+78.10,class,Activități ale agențiilor de plasare a forței de muncă,Activities of employment placement agencies,http://data.europa.eu/ux2/nace2.1/7810,http://data.europa.eu/ux2/nace2.1/781
+78.20,class,Activități ale agențiilor de plasare temporară a forței de muncă și alte resurse umane,Temporary employment agency activities and other human resource provisions,http://data.europa.eu/ux2/nace2.1/7820,http://data.europa.eu/ux2/nace2.1/782
+79.11,class,Activități ale agențiilor de turism,Travel agency activities,http://data.europa.eu/ux2/nace2.1/7911,http://data.europa.eu/ux2/nace2.1/791
+79.12,class,Activități ale tur-operatorilor,Tour operator activities,http://data.europa.eu/ux2/nace2.1/7912,http://data.europa.eu/ux2/nace2.1/791
+79.90,class,Alte servicii de rezervări și activități asociate,Other reservation service and related activities,http://data.europa.eu/ux2/nace2.1/7990,http://data.europa.eu/ux2/nace2.1/799
+80.01,class,Activități de investigație și securitate private,Investigation and private security activities,http://data.europa.eu/ux2/nace2.1/8001,http://data.europa.eu/ux2/nace2.1/800
+80.09,class,Activități de securitate n.c.a.,Security activities n.e.c.,http://data.europa.eu/ux2/nace2.1/8009,http://data.europa.eu/ux2/nace2.1/800
+81.10,class,Activități combinate de servicii pentru clădiri,Combined facilities support activities,http://data.europa.eu/ux2/nace2.1/8110,http://data.europa.eu/ux2/nace2.1/811
+81.21,class,Activități generale de curățenie a clădirilor,General cleaning of buildings,http://data.europa.eu/ux2/nace2.1/8121,http://data.europa.eu/ux2/nace2.1/812
+81.22,class,Alte activități de curățenie a clădirilor și curățenie industrială,Other building and industrial cleaning activities,http://data.europa.eu/ux2/nace2.1/8122,http://data.europa.eu/ux2/nace2.1/812
+81.23,class,Alte activități de curățenie,Other cleaning activities,http://data.europa.eu/ux2/nace2.1/8123,http://data.europa.eu/ux2/nace2.1/812
+81.30,class,Activități de întreținere peisagistică,Landscape service activities,http://data.europa.eu/ux2/nace2.1/8130,http://data.europa.eu/ux2/nace2.1/813
+82.10,class,Activități de secretariat și servicii suport,Office administrative and support activities,http://data.europa.eu/ux2/nace2.1/8210,http://data.europa.eu/ux2/nace2.1/821
+82.20,class,Activități ale centrelor de intermediere telefonică (call center),Activities of call centres,http://data.europa.eu/ux2/nace2.1/8220,http://data.europa.eu/ux2/nace2.1/822
+82.30,class,"Activități de organizare a expozițiilor, târgurilor și congreselor",Organisation of conventions and trade shows,http://data.europa.eu/ux2/nace2.1/8230,http://data.europa.eu/ux2/nace2.1/823
+82.40,class,Activități de servicii de intermediere pentru activități suport pentru întreprinderi n.c.a.,Intermediation service activities for business support service activities n.e.c.,http://data.europa.eu/ux2/nace2.1/8240,http://data.europa.eu/ux2/nace2.1/824
+82.91,class,Activități ale agențiilor de colectare și ale birourilor de credit,Activities of collection agencies and credit bureaus,http://data.europa.eu/ux2/nace2.1/8291,http://data.europa.eu/ux2/nace2.1/829
+82.92,class,Activități de ambalare,Packaging activities,http://data.europa.eu/ux2/nace2.1/8292,http://data.europa.eu/ux2/nace2.1/829
+82.99,class,Alte activități de servicii suport pentru întreprinderi n.c.a.,Other business support service activities n.e.c.,http://data.europa.eu/ux2/nace2.1/8299,http://data.europa.eu/ux2/nace2.1/829
+84.11,class,Activități de administrație publică generală,General public administration activities,http://data.europa.eu/ux2/nace2.1/8411,http://data.europa.eu/ux2/nace2.1/841
+84.12,class,"Reglementarea serviciilor de asistență medicală, de învățământ, culturale și a altor servicii sociale","Regulation of health care, education, cultural services and other social services",http://data.europa.eu/ux2/nace2.1/8412,http://data.europa.eu/ux2/nace2.1/841
+84.13,class,Reglementarea și eficientizarea activităților economice,Regulation of and contribution to more efficient operation of businesses,http://data.europa.eu/ux2/nace2.1/8413,http://data.europa.eu/ux2/nace2.1/841
+84.21,class,Activități de afaceri externe,Foreign affairs,http://data.europa.eu/ux2/nace2.1/8421,http://data.europa.eu/ux2/nace2.1/842
+84.22,class,Activități de apărare,Defence activities,http://data.europa.eu/ux2/nace2.1/8422,http://data.europa.eu/ux2/nace2.1/842
+84.23,class,Activități de justiție,Justice and judicial activities,http://data.europa.eu/ux2/nace2.1/8423,http://data.europa.eu/ux2/nace2.1/842
+84.24,class,Activități de ordine publică și de protecție civilă,Public order and safety activities,http://data.europa.eu/ux2/nace2.1/8424,http://data.europa.eu/ux2/nace2.1/842
+84.25,class,Activități de luptă împotriva incendiilor și de prevenire a acestora,Fire service activities,http://data.europa.eu/ux2/nace2.1/8425,http://data.europa.eu/ux2/nace2.1/842
+84.30,class,Activități de protecție socială obligatorie,Compulsory social security activities,http://data.europa.eu/ux2/nace2.1/8430,http://data.europa.eu/ux2/nace2.1/843
+85.10,class,Învățământ preșcolar,Pre-primary education,http://data.europa.eu/ux2/nace2.1/8510,http://data.europa.eu/ux2/nace2.1/851
+85.20,class,Învățământ primar,Primary education,http://data.europa.eu/ux2/nace2.1/8520,http://data.europa.eu/ux2/nace2.1/852
+85.31,class,Învățământ liceal general,General secondary education,http://data.europa.eu/ux2/nace2.1/8531,http://data.europa.eu/ux2/nace2.1/853
+85.32,class,Învățământ liceal profesional,Vocational secondary education,http://data.europa.eu/ux2/nace2.1/8532,http://data.europa.eu/ux2/nace2.1/853
+85.33,class,Învățământ postliceal neuniversitar,Post-secondary non-tertiary education,http://data.europa.eu/ux2/nace2.1/8533,http://data.europa.eu/ux2/nace2.1/853
+85.40,class,Învățământ superior,Tertiary education,http://data.europa.eu/ux2/nace2.1/8540,http://data.europa.eu/ux2/nace2.1/854
+85.51,class,Învățământ sportiv și de agrement,Sports and recreation education,http://data.europa.eu/ux2/nace2.1/8551,http://data.europa.eu/ux2/nace2.1/855
+85.52,class,Învățământ cultural,Cultural education,http://data.europa.eu/ux2/nace2.1/8552,http://data.europa.eu/ux2/nace2.1/855
+85.53,class,Școli de șoferi,Driving school activities,http://data.europa.eu/ux2/nace2.1/8553,http://data.europa.eu/ux2/nace2.1/855
+85.59,class,Alte forme de învățământ n.c.a.,Other education n.e.c.,http://data.europa.eu/ux2/nace2.1/8559,http://data.europa.eu/ux2/nace2.1/855
+85.61,class,"Activități de intermediere pentru cursuri și tutori (îndrumători, profesori)",Intermediation service activities for courses and tutors,http://data.europa.eu/ux2/nace2.1/8561,http://data.europa.eu/ux2/nace2.1/856
+85.69,class,Activități de sprijin pentru învățământ n.c.a.,Educational support activities n.e.c.,http://data.europa.eu/ux2/nace2.1/8569,http://data.europa.eu/ux2/nace2.1/856
+86.10,class,Activități de asistență spitalicească,Hospital activities,http://data.europa.eu/ux2/nace2.1/8610,http://data.europa.eu/ux2/nace2.1/861
+86.21,class,Activități de practică medicală generală,General medical practice activities,http://data.europa.eu/ux2/nace2.1/8621,http://data.europa.eu/ux2/nace2.1/862
+86.22,class,Activități ale medicilor specialiști,Medical specialists activities,http://data.europa.eu/ux2/nace2.1/8622,http://data.europa.eu/ux2/nace2.1/862
+86.23,class,Activități de practică stomatologică,Dental practice care activities,http://data.europa.eu/ux2/nace2.1/8623,http://data.europa.eu/ux2/nace2.1/862
+86.91,class,Servicii de diagnostic imagistic și activități de laborator medical,Diagnostic imaging services and medical laboratory activities,http://data.europa.eu/ux2/nace2.1/8691,http://data.europa.eu/ux2/nace2.1/869
+86.92,class,Transportul pacienților cu ambulanța,Patient transportation by ambulance,http://data.europa.eu/ux2/nace2.1/8692,http://data.europa.eu/ux2/nace2.1/869
+86.93,class,"Activități ale psihologilor și psihoterapeuților, cu excepția medicilor","Activities of psychologists and psychotherapists, except medical doctors",http://data.europa.eu/ux2/nace2.1/8693,http://data.europa.eu/ux2/nace2.1/869
+86.94,class,Activități ale infirmierelor și moașelor,Nursing and midwifery activities,http://data.europa.eu/ux2/nace2.1/8694,http://data.europa.eu/ux2/nace2.1/869
+86.95,class,Activități de fizioterapie,Physiotherapy activities,http://data.europa.eu/ux2/nace2.1/8695,http://data.europa.eu/ux2/nace2.1/869
+86.96,class,"Activități de medicină tradițională, complementară și alternativă","Traditional, complementary and alternative medicine activities",http://data.europa.eu/ux2/nace2.1/8696,http://data.europa.eu/ux2/nace2.1/869
+86.97,class,"Servicii de intermediere pentru servicii medicale, stomatologice și alte servicii de sănătate umană","Intermediation service activities for medical, dental and other human health services",http://data.europa.eu/ux2/nace2.1/8697,http://data.europa.eu/ux2/nace2.1/869
+86.99,class,Alte servicii de sănătate umană n.c.a.,Other human health activities n.e.c.,http://data.europa.eu/ux2/nace2.1/8699,http://data.europa.eu/ux2/nace2.1/869
+87.10,class,Activități ale centrelor de îngrijire medicală cu cazare,Residential nursing care activities,http://data.europa.eu/ux2/nace2.1/8710,http://data.europa.eu/ux2/nace2.1/871
+87.20,class,Activități ale centrelor de recuperare psihică și de dezintoxicare,Residential care activities for persons living with or having a diagnosis of a mental illness or substance abuse,http://data.europa.eu/ux2/nace2.1/8720,http://data.europa.eu/ux2/nace2.1/872
+87.30,class,Activități ale căminelor pentru persoane în vârstă sau persoane cu handicap,Residential care activities for older persons or persons with physical disabilities,http://data.europa.eu/ux2/nace2.1/8730,http://data.europa.eu/ux2/nace2.1/873
+87.91,class,Servicii de intermediere pentru activități de îngrijire cu cazare,Intermediation service activities for residential care activities,http://data.europa.eu/ux2/nace2.1/8791,http://data.europa.eu/ux2/nace2.1/879
+87.99,class,Alte activități de îngrijire cu cazare n.c.a.,Other residential care activities n.e.c.,http://data.europa.eu/ux2/nace2.1/8799,http://data.europa.eu/ux2/nace2.1/879
+88.10,class,Activități de asistență socială fără cazare pentru persoanele în vârstă sau persoanele cu handicap,Social work activities without accommodation for older persons or persons with disabilities,http://data.europa.eu/ux2/nace2.1/8810,http://data.europa.eu/ux2/nace2.1/881
+88.91,class,Activități de îngrijire a copiilor pe timp de zi,Child day-care activities,http://data.europa.eu/ux2/nace2.1/8891,http://data.europa.eu/ux2/nace2.1/889
+88.99,class,Alte activități sociale fără cazare n.c.a.,Other social work activities without accommodation n.e.c.,http://data.europa.eu/ux2/nace2.1/8899,http://data.europa.eu/ux2/nace2.1/889
+90.11,class,Activități de creație literară și de compoziție muzicală,Literary creation and musical composition activities,http://data.europa.eu/ux2/nace2.1/9011,http://data.europa.eu/ux2/nace2.1/901
+90.12,class,Activități de creație în domeniul artelor vizuale,Visual arts creation activities,http://data.europa.eu/ux2/nace2.1/9012,http://data.europa.eu/ux2/nace2.1/901
+90.13,class,Alte activități de creație artistică,Other arts creation activities,http://data.europa.eu/ux2/nace2.1/9013,http://data.europa.eu/ux2/nace2.1/901
+90.20,class,Activități de interpretare artistică (spectacole),Activities of performing arts,http://data.europa.eu/ux2/nace2.1/9020,http://data.europa.eu/ux2/nace2.1/902
+90.31,class,Gestionarea sălilor și a amplasamentelor de spectacol,Operation of arts facilities and sites,http://data.europa.eu/ux2/nace2.1/9031,http://data.europa.eu/ux2/nace2.1/903
+90.39,class,Alte activități de sprijinire a artelor și a artelor spectacolului,Other support activities to arts and performing arts,http://data.europa.eu/ux2/nace2.1/9039,http://data.europa.eu/ux2/nace2.1/903
+91.11,class,Activități ale bibliotecilor,Library activities,http://data.europa.eu/ux2/nace2.1/9111,http://data.europa.eu/ux2/nace2.1/911
+91.12,class,Activități ale arhivelor,Archive activities,http://data.europa.eu/ux2/nace2.1/9112,http://data.europa.eu/ux2/nace2.1/911
+91.21,class,Activități legate de muzee și colecții,Museum and collection activities,http://data.europa.eu/ux2/nace2.1/9121,http://data.europa.eu/ux2/nace2.1/912
+91.22,class,Activități legate de situri istorice și monumente,Historical site and monument activities,http://data.europa.eu/ux2/nace2.1/9122,http://data.europa.eu/ux2/nace2.1/912
+91.30,class,"Activități de conservare, restaurare și alte activități de sprijin pentru patrimoniul cultural","Conservation, restoration and other support activities for cultural heritage",http://data.europa.eu/ux2/nace2.1/9130,http://data.europa.eu/ux2/nace2.1/913
+91.41,class,Activități ale grădinilor botanice și zoologice,Botanical and zoological garden activities,http://data.europa.eu/ux2/nace2.1/9141,http://data.europa.eu/ux2/nace2.1/914
+91.42,class,Activități ale rezervațiilor naturale,Nature reserve activities,http://data.europa.eu/ux2/nace2.1/9142,http://data.europa.eu/ux2/nace2.1/914
+92.00,class,Activități de jocuri de noroc și pariuri,Gambling and betting activities,http://data.europa.eu/ux2/nace2.1/9200,http://data.europa.eu/ux2/nace2.1/920
+93.11,class,Gestionarea instalațiilor sportive,Operation of sports facilities,http://data.europa.eu/ux2/nace2.1/9311,http://data.europa.eu/ux2/nace2.1/931
+93.12,class,Activități ale cluburilor sportive,Activities of sports clubs,http://data.europa.eu/ux2/nace2.1/9312,http://data.europa.eu/ux2/nace2.1/931
+93.13,class,Activități ale centrelor de fitness,Activities of fitness centres,http://data.europa.eu/ux2/nace2.1/9313,http://data.europa.eu/ux2/nace2.1/931
+93.19,class,Activități sportive n.c.a.,Sports activities n.e.c.,http://data.europa.eu/ux2/nace2.1/9319,http://data.europa.eu/ux2/nace2.1/931
+93.21,class,Activități ale parcurilor de distracții și ale parcurilor tematice,Activities of amusement parks and theme parks,http://data.europa.eu/ux2/nace2.1/9321,http://data.europa.eu/ux2/nace2.1/932
+93.29,class,Activități recreative și distractive n.c.a.,Amusement and recreation activities n.e.c.,http://data.europa.eu/ux2/nace2.1/9329,http://data.europa.eu/ux2/nace2.1/932
+94.11,class,Activități ale organizațiilor economice și patronale,Activities of business and employers membership organisations,http://data.europa.eu/ux2/nace2.1/9411,http://data.europa.eu/ux2/nace2.1/941
+94.12,class,Activități ale organizațiilor profesionale,Activities of professional membership organisations,http://data.europa.eu/ux2/nace2.1/9412,http://data.europa.eu/ux2/nace2.1/941
+94.20,class,Activități ale organizațiilor sindicale,Activities of trade unions,http://data.europa.eu/ux2/nace2.1/9420,http://data.europa.eu/ux2/nace2.1/942
+94.91,class,Activități ale organizațiilor religioase,Activities of religious organisations,http://data.europa.eu/ux2/nace2.1/9491,http://data.europa.eu/ux2/nace2.1/949
+94.92,class,Activități ale organizațiilor politice,Activities of political organisations,http://data.europa.eu/ux2/nace2.1/9492,http://data.europa.eu/ux2/nace2.1/949
+94.99,class,Activități ale altor organizații asociative n.c.a.,Activities of other membership organisations n.e.c.,http://data.europa.eu/ux2/nace2.1/9499,http://data.europa.eu/ux2/nace2.1/949
+95.10,class,Repararea și întreținerea calculatoarelor și a echipamentelor de comunicații,Repair and maintenance of computers and communication equipment,http://data.europa.eu/ux2/nace2.1/9510,http://data.europa.eu/ux2/nace2.1/951
+95.21,class,Repararea și întreținerea produselor electronice de larg consum,Repair and maintenance of consumer electronics,http://data.europa.eu/ux2/nace2.1/9521,http://data.europa.eu/ux2/nace2.1/952
+95.22,class,Repararea și întreținerea articolelor electrocasnice și a echipamentelor pentru casă și grădină,Repair and maintenance of household appliances and home and garden equipment,http://data.europa.eu/ux2/nace2.1/9522,http://data.europa.eu/ux2/nace2.1/952
+95.23,class,Repararea și întreținerea articolelor de încălțăminte și produselor din piele,Repair and maintenance of footwear and leather goods,http://data.europa.eu/ux2/nace2.1/9523,http://data.europa.eu/ux2/nace2.1/952
+95.24,class,Repararea și întreținerea mobilei și a mobilierului casnic,Repair and maintenance of furniture and home furnishings,http://data.europa.eu/ux2/nace2.1/9524,http://data.europa.eu/ux2/nace2.1/952
+95.25,class,"Repararea și întreținerea ceasurilor, orologiilor și bijuteriilor","Repair and maintenance of watches, clocks and jewellery",http://data.europa.eu/ux2/nace2.1/9525,http://data.europa.eu/ux2/nace2.1/952
+95.29,class,Repararea și întreținerea bunurilor personale și de uz casnic n.c.a.,Repair and maintenance of personal and household goods n.e.c.,http://data.europa.eu/ux2/nace2.1/9529,http://data.europa.eu/ux2/nace2.1/952
+95.31,class,Repararea și întreținerea autovehiculelor,Repair and maintenance of motor vehicles,http://data.europa.eu/ux2/nace2.1/9531,http://data.europa.eu/ux2/nace2.1/953
+95.32,class,Repararea și întreținerea motocicletelor,Repair and maintenance of motorcycles,http://data.europa.eu/ux2/nace2.1/9532,http://data.europa.eu/ux2/nace2.1/953
+95.40,class,"Servicii de intermediere pentru repararea și întreținerea calculatoarelor, a bunurilor personale și de uz casnic și a autovehiculelor și motocicletelor","Intermediation service activities for repair and maintenance of computers, personal and household goods, and motor vehicles and motorcycles",http://data.europa.eu/ux2/nace2.1/9540,http://data.europa.eu/ux2/nace2.1/954
+96.10,class,Spălarea și curățarea articolelor textile și a produselor din blană,Washing and cleaning of textile and fur products,http://data.europa.eu/ux2/nace2.1/9610,http://data.europa.eu/ux2/nace2.1/961
+96.21,class,Activități ale saloanelor de coafură și frizerie,Hairdressing and barber activities,http://data.europa.eu/ux2/nace2.1/9621,http://data.europa.eu/ux2/nace2.1/962
+96.22,class,Servicii de cosmetică și de înfrumusețare,Beauty care and other beauty treatment activities,http://data.europa.eu/ux2/nace2.1/9622,http://data.europa.eu/ux2/nace2.1/962
+96.23,class,"Activități balneare, de saună și baie de aburi","Day spa, sauna and steam bath activities",http://data.europa.eu/ux2/nace2.1/9623,http://data.europa.eu/ux2/nace2.1/962
+96.30,class,Activități de pompe funebre și similare,Funeral and related activities,http://data.europa.eu/ux2/nace2.1/9630,http://data.europa.eu/ux2/nace2.1/963
+96.40,class,Activități de servicii de intermediere pentru servicii personale,Intermediation service activities for personal services,http://data.europa.eu/ux2/nace2.1/9640,http://data.europa.eu/ux2/nace2.1/964
+96.91,class,Activități de servicii personale la domiciliu,Provision of domestic personal service activities,http://data.europa.eu/ux2/nace2.1/9691,http://data.europa.eu/ux2/nace2.1/969
+96.99,class,Alte activități de servicii personale n.c.a.,Other personal service activities n.e.c.,http://data.europa.eu/ux2/nace2.1/9699,http://data.europa.eu/ux2/nace2.1/969
+97.00,class,Activități ale gospodăriilor în calitate de angajatori de personal casnic,Activities of households as employers of domestic personnel,http://data.europa.eu/ux2/nace2.1/9700,http://data.europa.eu/ux2/nace2.1/970
+98.10,class,Activități nediferențiate ale gospodăriilor în calitate de producători de bunuri pentru uz propriu,Undifferentiated goods-producing activities of private households for own use,http://data.europa.eu/ux2/nace2.1/9810,http://data.europa.eu/ux2/nace2.1/981
+98.20,class,Activități nediferențiate ale gospodăriilor în calitate de producători de servicii pentru uz propriu,Undifferentiated service-producing activities of private households for own use,http://data.europa.eu/ux2/nace2.1/9820,http://data.europa.eu/ux2/nace2.1/982
+99.00,class,Activități ale organizațiilor și organismelor extrateritoriale,Activities of extraterritorial organisations and bodies,http://data.europa.eu/ux2/nace2.1/9900,http://data.europa.eu/ux2/nace2.1/990
+01,division,"Producție vegetală și producție animală, vânătoare și servicii anexe","Crop and animal production, hunting and related service activities",http://data.europa.eu/ux2/nace2.1/01,http://data.europa.eu/ux2/nace2.1/A
+02,division,Silvicultură și exploatare forestieră,Forestry and logging,http://data.europa.eu/ux2/nace2.1/02,http://data.europa.eu/ux2/nace2.1/A
+03,division,Pescuit și acvacultură,Fishing and aquaculture,http://data.europa.eu/ux2/nace2.1/03,http://data.europa.eu/ux2/nace2.1/A
+05,division,Extracția cărbunelui și lignitului,Mining of coal and lignite,http://data.europa.eu/ux2/nace2.1/05,http://data.europa.eu/ux2/nace2.1/B
+06,division,Extracția țițeiului și a gazelor naturale,Extraction of crude petroleum and natural gas,http://data.europa.eu/ux2/nace2.1/06,http://data.europa.eu/ux2/nace2.1/B
+07,division,Extracția minereurilor metalifere,Mining of metal ores,http://data.europa.eu/ux2/nace2.1/07,http://data.europa.eu/ux2/nace2.1/B
+08,division,Alte activități extractive,Other mining and quarrying,http://data.europa.eu/ux2/nace2.1/08,http://data.europa.eu/ux2/nace2.1/B
+09,division,Activități de servicii anexe extracției,Mining support service activities,http://data.europa.eu/ux2/nace2.1/09,http://data.europa.eu/ux2/nace2.1/B
+10,division,Industria alimentară,Manufacture of food products,http://data.europa.eu/ux2/nace2.1/10,http://data.europa.eu/ux2/nace2.1/C
+11,division,Fabricarea băuturilor,Manufacture of beverages,http://data.europa.eu/ux2/nace2.1/11,http://data.europa.eu/ux2/nace2.1/C
+12,division,Fabricarea produselor din tutun,Manufacture of tobacco products,http://data.europa.eu/ux2/nace2.1/12,http://data.europa.eu/ux2/nace2.1/C
+13,division,Fabricarea produselor textile,Manufacture of textiles,http://data.europa.eu/ux2/nace2.1/13,http://data.europa.eu/ux2/nace2.1/C
+14,division,Fabricarea articolelor de îmbrăcăminte,Manufacture of wearing apparel,http://data.europa.eu/ux2/nace2.1/14,http://data.europa.eu/ux2/nace2.1/C
+15,division,Fabricarea articolelor din piele și a accesoriilor din alte materiale,Manufacture of leather and related products of other materials,http://data.europa.eu/ux2/nace2.1/15,http://data.europa.eu/ux2/nace2.1/C
+16,division,"Prelucrarea lemnului și fabricarea produselor din lemn și plută, cu excepția mobilei; fabricarea articolelor din paie și din alte materiale vegetale împletite","Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials",http://data.europa.eu/ux2/nace2.1/16,http://data.europa.eu/ux2/nace2.1/C
+17,division,Fabricarea hârtiei și a produselor din hârtie,Manufacture of paper and paper products,http://data.europa.eu/ux2/nace2.1/17,http://data.europa.eu/ux2/nace2.1/C
+18,division,Tipărirea și reproducerea pe suporți a înregistrărilor,Printing and reproduction of recorded media,http://data.europa.eu/ux2/nace2.1/18,http://data.europa.eu/ux2/nace2.1/C
+19,division,Fabricarea produselor de cocserie și a produselor obținute prin rafinarea petrolului,Manufacture of coke and refined petroleum products,http://data.europa.eu/ux2/nace2.1/19,http://data.europa.eu/ux2/nace2.1/C
+20,division,Fabricarea substanțelor și a produselor chimice,Manufacture of chemicals and chemical products,http://data.europa.eu/ux2/nace2.1/20,http://data.europa.eu/ux2/nace2.1/C
+21,division,Fabricarea produselor farmaceutice de bază și a preparatelor farmaceutice,Manufacture of basic pharmaceutical products and pharmaceutical preparations,http://data.europa.eu/ux2/nace2.1/21,http://data.europa.eu/ux2/nace2.1/C
+22,division,Fabricarea produselor din cauciuc și mase plastice,Manufacture of rubber and plastic products,http://data.europa.eu/ux2/nace2.1/22,http://data.europa.eu/ux2/nace2.1/C
+23,division,Fabricarea altor produse minerale nemetalice,Manufacture of other non-metallic mineral products,http://data.europa.eu/ux2/nace2.1/23,http://data.europa.eu/ux2/nace2.1/C
+24,division,Industria metalurgică,Manufacture of basic metals,http://data.europa.eu/ux2/nace2.1/24,http://data.europa.eu/ux2/nace2.1/C
+25,division,"Industria construcțiilor metalice și a produselor din metal, exclusiv mașini, utilaje și instalații","Manufacture of fabricated metal products, except machinery and equipment",http://data.europa.eu/ux2/nace2.1/25,http://data.europa.eu/ux2/nace2.1/C
+26,division,Fabricarea calculatoarelor și a produselor electronice și optice,"Manufacture of computer, electronic and optical products",http://data.europa.eu/ux2/nace2.1/26,http://data.europa.eu/ux2/nace2.1/C
+27,division,Fabricarea de echipamente electrice,Manufacture of electrical equipment,http://data.europa.eu/ux2/nace2.1/27,http://data.europa.eu/ux2/nace2.1/C
+28,division,"Fabricarea de mașini, utilaje și echipamente n.c.a.",Manufacture of machinery and equipment n.e.c.,http://data.europa.eu/ux2/nace2.1/28,http://data.europa.eu/ux2/nace2.1/C
+29,division,"Fabricarea autovehiculelor, remorcilor și semiremorcilor","Manufacture of motor vehicles, trailers and semi-trailers",http://data.europa.eu/ux2/nace2.1/29,http://data.europa.eu/ux2/nace2.1/C
+30,division,Fabricarea altor mijloace de transport,Manufacture of other transport equipment,http://data.europa.eu/ux2/nace2.1/30,http://data.europa.eu/ux2/nace2.1/C
+31,division,Fabricarea de mobilă,Manufacture of furniture,http://data.europa.eu/ux2/nace2.1/31,http://data.europa.eu/ux2/nace2.1/C
+32,division,Alte activități ale industriei prelucrătoare,Other manufacturing,http://data.europa.eu/ux2/nace2.1/32,http://data.europa.eu/ux2/nace2.1/C
+33,division,"Repararea, întreținerea și instalarea mașinilor și echipamentelor","Repair, maintenance and installation of machinery and equipment",http://data.europa.eu/ux2/nace2.1/33,http://data.europa.eu/ux2/nace2.1/C
+35,division,"Producția și furnizarea de energie electrică, gaze, abur și aer condiționat","Electricity, gas, steam and air conditioning supply",http://data.europa.eu/ux2/nace2.1/35,http://data.europa.eu/ux2/nace2.1/D
+36,division,"Captarea, tratarea și distribuția apei","Water collection, treatment and supply",http://data.europa.eu/ux2/nace2.1/36,http://data.europa.eu/ux2/nace2.1/E
+37,division,Colectarea și epurarea apelor uzate,Sewerage,http://data.europa.eu/ux2/nace2.1/37,http://data.europa.eu/ux2/nace2.1/E
+38,division,"Colectarea deșeurilor, activități de recuperare și de eliminare a deșeurilor","Waste collection, recovery and disposal activities",http://data.europa.eu/ux2/nace2.1/38,http://data.europa.eu/ux2/nace2.1/E
+39,division,Activități de decontaminare și alte activități de servicii de gestionare a deșeurilor,Remediation activities and other waste management service activities,http://data.europa.eu/ux2/nace2.1/39,http://data.europa.eu/ux2/nace2.1/E
+41,division,Construcția de clădiri rezidențiale și nerezidențiale,Construction of residential and non-residential buildings,http://data.europa.eu/ux2/nace2.1/41,http://data.europa.eu/ux2/nace2.1/F
+42,division,Construcții civile,Civil engineering,http://data.europa.eu/ux2/nace2.1/42,http://data.europa.eu/ux2/nace2.1/F
+43,division,Lucrări de construcții specializate,Specialised construction activities,http://data.europa.eu/ux2/nace2.1/43,http://data.europa.eu/ux2/nace2.1/F
+46,division,Comerț cu ridicata,Wholesale trade,http://data.europa.eu/ux2/nace2.1/46,http://data.europa.eu/ux2/nace2.1/G
+47,division,Comerț cu amănuntul,Retail trade,http://data.europa.eu/ux2/nace2.1/47,http://data.europa.eu/ux2/nace2.1/G
+49,division,Transporturi terestre și transporturi prin conducte,Land transport and transport via pipelines,http://data.europa.eu/ux2/nace2.1/49,http://data.europa.eu/ux2/nace2.1/H
+50,division,Transportul pe apă,Water transport,http://data.europa.eu/ux2/nace2.1/50,http://data.europa.eu/ux2/nace2.1/H
+51,division,Transportul aerian,Air transport,http://data.europa.eu/ux2/nace2.1/51,http://data.europa.eu/ux2/nace2.1/H
+52,division,"Antrepozitare, depozitare și activități auxiliare pentru transporturi","Warehousing, storage and support activities for transportation",http://data.europa.eu/ux2/nace2.1/52,http://data.europa.eu/ux2/nace2.1/H
+53,division,Activități de poștă și de curier,Postal and courier activities,http://data.europa.eu/ux2/nace2.1/53,http://data.europa.eu/ux2/nace2.1/H
+55,division,Hoteluri și alte facilități de cazare,Accommodation,http://data.europa.eu/ux2/nace2.1/55,http://data.europa.eu/ux2/nace2.1/I
+56,division,Servicii de alimentație publică,Food and beverage service activities,http://data.europa.eu/ux2/nace2.1/56,http://data.europa.eu/ux2/nace2.1/I
+58,division,Activități de editare,Publishing activities,http://data.europa.eu/ux2/nace2.1/58,http://data.europa.eu/ux2/nace2.1/J
+59,division,"Producția cinematografică, video și de programe de televiziune, înregistrări audio și activități de editare muzicală","Motion picture, video and television programme production, sound recording and music publishing activities",http://data.europa.eu/ux2/nace2.1/59,http://data.europa.eu/ux2/nace2.1/J
+60,division,"Activități de programare, difuzare, agenție de presă și alte activități de distribuție de conținut","Programming, broadcasting, news agency and other content distribution activities",http://data.europa.eu/ux2/nace2.1/60,http://data.europa.eu/ux2/nace2.1/J
+61,division,Telecomunicațiile,Telecommunication,http://data.europa.eu/ux2/nace2.1/61,http://data.europa.eu/ux2/nace2.1/K
+62,division,"Activități de programare informatică, consultanță și activități asociate","Computer programming, consultancy and related activities",http://data.europa.eu/ux2/nace2.1/62,http://data.europa.eu/ux2/nace2.1/K
+63,division,"Infrastructură informatică, prelucrarea datelor, găzduire și alte activități de servicii informatice","Computing infrastructure, data processing, hosting and other information service activities",http://data.europa.eu/ux2/nace2.1/63,http://data.europa.eu/ux2/nace2.1/K
+64,division,"Activități de servicii financiare, cu excepția asigurărilor și a fondurilor de pensii","Financial service activities, except insurance and pension funding",http://data.europa.eu/ux2/nace2.1/64,http://data.europa.eu/ux2/nace2.1/L
+65,division,"Asigurări, reasigurări și fonduri de pensii, cu excepția asigurărilor sociale obligatorii","Insurance, reinsurance and pension funding, except compulsory social security",http://data.europa.eu/ux2/nace2.1/65,http://data.europa.eu/ux2/nace2.1/L
+66,division,Activități auxiliare serviciilor financiare și de asigurări,Activities auxiliary to financial services and insurance activities,http://data.europa.eu/ux2/nace2.1/66,http://data.europa.eu/ux2/nace2.1/L
+68,division,Tranzacții imobiliare,Real estate activities,http://data.europa.eu/ux2/nace2.1/68,http://data.europa.eu/ux2/nace2.1/M
+69,division,Activități juridice și de contabilitate,Legal and accounting activities,http://data.europa.eu/ux2/nace2.1/69,http://data.europa.eu/ux2/nace2.1/N
+70,division,Activități ale sediilor sociale și de consultanță în management,Activities of head offices and management consultancy,http://data.europa.eu/ux2/nace2.1/70,http://data.europa.eu/ux2/nace2.1/N
+71,division,Activități de arhitectură și inginerie; activități de încercări și analize tehnice,Architectural and engineering activities; technical testing and analysis,http://data.europa.eu/ux2/nace2.1/71,http://data.europa.eu/ux2/nace2.1/N
+72,division,Cercetare și dezvoltare științifică,Scientific research and development,http://data.europa.eu/ux2/nace2.1/72,http://data.europa.eu/ux2/nace2.1/N
+73,division,"Activități de publicitate, cercetare de piață și relații publice","Activities of advertising, market research and public relations",http://data.europa.eu/ux2/nace2.1/73,http://data.europa.eu/ux2/nace2.1/N
+74,division,"Alte activități specializate, științifice și tehnice","Other professional, scientific and technical activities",http://data.europa.eu/ux2/nace2.1/74,http://data.europa.eu/ux2/nace2.1/N
+75,division,Activități veterinare,Veterinary activities,http://data.europa.eu/ux2/nace2.1/75,http://data.europa.eu/ux2/nace2.1/N
+77,division,Activități de închiriere și leasing,Rental and leasing activities,http://data.europa.eu/ux2/nace2.1/77,http://data.europa.eu/ux2/nace2.1/O
+78,division,Activități de ocupare a forței de muncă,Employment activities,http://data.europa.eu/ux2/nace2.1/78,http://data.europa.eu/ux2/nace2.1/O
+79,division,Activități ale agențiilor turistice și ale tur-operatorilor; alte servicii de rezervare și asistență turistică,"Travel agency, tour operator and other reservation service and related activities",http://data.europa.eu/ux2/nace2.1/79,http://data.europa.eu/ux2/nace2.1/O
+80,division,Activități de investigație și securitate,Investigation and security activities,http://data.europa.eu/ux2/nace2.1/80,http://data.europa.eu/ux2/nace2.1/O
+81,division,Servicii legate de clădiri și amenajări peisagistice,Services to buildings and landscape activities,http://data.europa.eu/ux2/nace2.1/81,http://data.europa.eu/ux2/nace2.1/O
+82,division,"Activități de secretariat, servicii suport și alte activități de servicii prestate în principal întreprinderilor","Office administrative, office support and other business support activities",http://data.europa.eu/ux2/nace2.1/82,http://data.europa.eu/ux2/nace2.1/O
+84,division,Administrație publică și apărare; servicii de asigurări sociale din sistemul public,Public administration and defence; compulsory social security,http://data.europa.eu/ux2/nace2.1/84,http://data.europa.eu/ux2/nace2.1/P
+85,division,Învățământ,Education,http://data.europa.eu/ux2/nace2.1/85,http://data.europa.eu/ux2/nace2.1/Q
+86,division,Activități pentru sănătatea umană,Human health activities,http://data.europa.eu/ux2/nace2.1/86,http://data.europa.eu/ux2/nace2.1/R
+87,division,Activități de îngrijire cu cazare,Residential care activities,http://data.europa.eu/ux2/nace2.1/87,http://data.europa.eu/ux2/nace2.1/R
+88,division,Activități de asistență socială fără cazare,Social work activities without accommodation,http://data.europa.eu/ux2/nace2.1/88,http://data.europa.eu/ux2/nace2.1/R
+90,division,Activități de creație și interpretare artistică,Arts creation and performing arts activities,http://data.europa.eu/ux2/nace2.1/90,http://data.europa.eu/ux2/nace2.1/S
+91,division,"Activități ale bibliotecilor, arhivelor, muzeelor și alte activități culturale","Libraries, archives, museums and other cultural activities",http://data.europa.eu/ux2/nace2.1/91,http://data.europa.eu/ux2/nace2.1/S
+92,division,Activități de jocuri de noroc și pariuri,Gambling and betting activities,http://data.europa.eu/ux2/nace2.1/92,http://data.europa.eu/ux2/nace2.1/S
+93,division,"Activități sportive, recreative și distractive",Sports activities and amusement and recreation activities,http://data.europa.eu/ux2/nace2.1/93,http://data.europa.eu/ux2/nace2.1/S
+94,division,Activități ale organizațiilor asociative,Activities of membership organisations,http://data.europa.eu/ux2/nace2.1/94,http://data.europa.eu/ux2/nace2.1/T
+95,division,"Repararea și întreținerea calculatoarelor, a bunurilor personale și de uz casnic și a autovehiculelor și motocicletelor","Repair and maintenance of computers, personal and household goods, and motor vehicles and motorcycles",http://data.europa.eu/ux2/nace2.1/95,http://data.europa.eu/ux2/nace2.1/T
+96,division,Activități de servicii personale,Personal service activities,http://data.europa.eu/ux2/nace2.1/96,http://data.europa.eu/ux2/nace2.1/T
+97,division,Activități ale gospodăriilor în calitate de angajatori de personal casnic,Activities of households as employers of domestic personnel,http://data.europa.eu/ux2/nace2.1/97,http://data.europa.eu/ux2/nace2.1/U
+98,division,Activități nediferențiate ale gospodăriilor în calitate de producători de bunuri și servicii pentru uz propriu,Undifferentiated goods- and service-producing activities of private households for own use,http://data.europa.eu/ux2/nace2.1/98,http://data.europa.eu/ux2/nace2.1/U
+99,division,Activități ale organizațiilor și organismelor extrateritoriale,Activities of extraterritorial organisations and bodies,http://data.europa.eu/ux2/nace2.1/99,http://data.europa.eu/ux2/nace2.1/V
+01.1,group,Cultivarea plantelor nepermanente,Growing of non-perennial crops,http://data.europa.eu/ux2/nace2.1/011,http://data.europa.eu/ux2/nace2.1/01
+01.2,group,Cultivarea plantelor permanente,Growing of perennial crops,http://data.europa.eu/ux2/nace2.1/012,http://data.europa.eu/ux2/nace2.1/01
+01.3,group,Înmulțirea plantelor,Plant propagation,http://data.europa.eu/ux2/nace2.1/013,http://data.europa.eu/ux2/nace2.1/01
+01.4,group,Creșterea animalelor,Animal production,http://data.europa.eu/ux2/nace2.1/014,http://data.europa.eu/ux2/nace2.1/01
+01.5,group,Agricultură mixtă,Mixed farming,http://data.europa.eu/ux2/nace2.1/015,http://data.europa.eu/ux2/nace2.1/01
+01.6,group,Activități auxiliare agriculturii și activități de pregătire a produsului recoltei,Support activities to agriculture and post-harvest crop activities,http://data.europa.eu/ux2/nace2.1/016,http://data.europa.eu/ux2/nace2.1/01
+01.7,group,"Vânătoare, capturarea cu capcane a vânatului și activități de servicii anexe vânătorii","Hunting, trapping and related service activities",http://data.europa.eu/ux2/nace2.1/017,http://data.europa.eu/ux2/nace2.1/01
+02.1,group,Silvicultură și alte activități forestiere,Silviculture and other forestry activities,http://data.europa.eu/ux2/nace2.1/021,http://data.europa.eu/ux2/nace2.1/02
+02.2,group,Exploatare forestieră,Logging,http://data.europa.eu/ux2/nace2.1/022,http://data.europa.eu/ux2/nace2.1/02
+02.3,group,Colectarea produselor nelemnoase din flora spontană,Gathering of wild growing non-wood products,http://data.europa.eu/ux2/nace2.1/023,http://data.europa.eu/ux2/nace2.1/02
+02.4,group,Activități de servicii anexe silviculturii,Support services to forestry,http://data.europa.eu/ux2/nace2.1/024,http://data.europa.eu/ux2/nace2.1/02
+03.1,group,Pescuitul,Fishing,http://data.europa.eu/ux2/nace2.1/031,http://data.europa.eu/ux2/nace2.1/03
+03.2,group,Acvacultură,Aquaculture,http://data.europa.eu/ux2/nace2.1/032,http://data.europa.eu/ux2/nace2.1/03
+03.3,group,Activități anexe pescuitului și acvaculturii,Support activities for fishing and aquaculture,http://data.europa.eu/ux2/nace2.1/033,http://data.europa.eu/ux2/nace2.1/03
+05.1,group,Extracția huilei,Mining of hard coal,http://data.europa.eu/ux2/nace2.1/051,http://data.europa.eu/ux2/nace2.1/05
+05.2,group,Extracția lignitului,Mining of lignite,http://data.europa.eu/ux2/nace2.1/052,http://data.europa.eu/ux2/nace2.1/05
+06.1,group,Extracția țițeiului,Extraction of crude petroleum,http://data.europa.eu/ux2/nace2.1/061,http://data.europa.eu/ux2/nace2.1/06
+06.2,group,Extracția gazelor naturale,Extraction of natural gas,http://data.europa.eu/ux2/nace2.1/062,http://data.europa.eu/ux2/nace2.1/06
+07.1,group,Extracția minereurilor feroase,Mining of iron ores,http://data.europa.eu/ux2/nace2.1/071,http://data.europa.eu/ux2/nace2.1/07
+07.2,group,Extracția minereurilor metalifere neferoase,Mining of non-ferrous metal ores,http://data.europa.eu/ux2/nace2.1/072,http://data.europa.eu/ux2/nace2.1/07
+08.1,group,"Exploatarea în carieră a pietrei, nisipului și argilei","Quarrying of stone, sand and clay",http://data.europa.eu/ux2/nace2.1/081,http://data.europa.eu/ux2/nace2.1/08
+08.9,group,Activități extractive și de exploatare n.c.a.,Mining and quarrying n.e.c.,http://data.europa.eu/ux2/nace2.1/089,http://data.europa.eu/ux2/nace2.1/08
+09.1,group,Activități de servicii anexe extracției de țiței și gaze naturale,Support activities for petroleum and natural gas extraction,http://data.europa.eu/ux2/nace2.1/091,http://data.europa.eu/ux2/nace2.1/09
+09.9,group,Activități de servicii anexe altor industrii extractive și de exploatare,Support activities for other mining and quarrying,http://data.europa.eu/ux2/nace2.1/099,http://data.europa.eu/ux2/nace2.1/09
+10.1,group,Prelucrarea și conservarea cărnii și producția de produse din carne,Processing and preserving of meat and production of meat products,http://data.europa.eu/ux2/nace2.1/101,http://data.europa.eu/ux2/nace2.1/10
+10.2,group,"Prelucrarea și conservarea peștelui, crustaceelor și moluștelor","Processing and preserving of fish, crustaceans and molluscs",http://data.europa.eu/ux2/nace2.1/102,http://data.europa.eu/ux2/nace2.1/10
+10.3,group,Prelucrarea și conservarea fructelor și legumelor,Processing and preserving of fruit and vegetables,http://data.europa.eu/ux2/nace2.1/103,http://data.europa.eu/ux2/nace2.1/10
+10.4,group,Fabricarea uleiurilor și grăsimilor vegetale și animale,Manufacture of vegetable and animal oils and fats,http://data.europa.eu/ux2/nace2.1/104,http://data.europa.eu/ux2/nace2.1/10
+10.5,group,Fabricarea produselor lactate și a gheții comestibile,Manufacture of dairy products and edible ice,http://data.europa.eu/ux2/nace2.1/105,http://data.europa.eu/ux2/nace2.1/10
+10.6,group,"Fabricarea produselor de morărit, a amidonului și a produselor din amidon","Manufacture of grain mill products, starches and starch products",http://data.europa.eu/ux2/nace2.1/106,http://data.europa.eu/ux2/nace2.1/10
+10.7,group,Fabricarea produselor de brutărie și a produselor făinoase,Manufacture of bakery and farinaceous products,http://data.europa.eu/ux2/nace2.1/107,http://data.europa.eu/ux2/nace2.1/10
+10.8,group,Fabricarea altor produse alimentare,Manufacture of other food products,http://data.europa.eu/ux2/nace2.1/108,http://data.europa.eu/ux2/nace2.1/10
+10.9,group,Fabricarea preparatelor pentru hrana animalelor,Manufacture of prepared animal feeds,http://data.europa.eu/ux2/nace2.1/109,http://data.europa.eu/ux2/nace2.1/10
+11.0,group,Fabricarea băuturilor,Manufacture of beverages,http://data.europa.eu/ux2/nace2.1/110,http://data.europa.eu/ux2/nace2.1/11
+12.0,group,Fabricarea produselor din tutun,Manufacture of tobacco products,http://data.europa.eu/ux2/nace2.1/120,http://data.europa.eu/ux2/nace2.1/12
+13.1,group,Pregătirea și filarea fibrelor textile,Preparation and spinning of textile fibres,http://data.europa.eu/ux2/nace2.1/131,http://data.europa.eu/ux2/nace2.1/13
+13.2,group,Producția de țesături,Weaving of textiles,http://data.europa.eu/ux2/nace2.1/132,http://data.europa.eu/ux2/nace2.1/13
+13.3,group,Finisarea materialelor textile,Finishing of textiles,http://data.europa.eu/ux2/nace2.1/133,http://data.europa.eu/ux2/nace2.1/13
+13.9,group,Fabricarea altor materiale textile,Manufacture of other textiles,http://data.europa.eu/ux2/nace2.1/139,http://data.europa.eu/ux2/nace2.1/13
+14.1,group,Fabricarea de articole de îmbrăcăminte tricotate și croșetate,Manufacture of knitted and crocheted apparel,http://data.europa.eu/ux2/nace2.1/141,http://data.europa.eu/ux2/nace2.1/14
+14.2,group,Fabricarea altor articole de îmbrăcăminte și accesorii,Manufacture of other wearing apparel and accessories,http://data.europa.eu/ux2/nace2.1/142,http://data.europa.eu/ux2/nace2.1/14
+15.1,group,"Tăbăcirea, vopsirea, finisarea pieilor și a blănurilor; fabricarea articolelor de voiaj și marochinărie și a harnașamentelor","Tanning, dyeing, dressing of leather and fur; manufacture of luggage, handbags, saddlery and harness",http://data.europa.eu/ux2/nace2.1/151,http://data.europa.eu/ux2/nace2.1/15
+15.2,group,Fabricarea încălțămintei,Manufacture of footwear,http://data.europa.eu/ux2/nace2.1/152,http://data.europa.eu/ux2/nace2.1/15
+16.1,group,Tăierea și rindeluirea lemnului; prelucrarea și finisarea lemnului,Sawmilling and planing of wood; processing and finishing of wood,http://data.europa.eu/ux2/nace2.1/161,http://data.europa.eu/ux2/nace2.1/16
+16.2,group,"Fabricarea produselor din lemn, plută, paie și alte materiale vegetale împletite","Manufacture of products of wood, cork, straw and plaiting materials",http://data.europa.eu/ux2/nace2.1/162,http://data.europa.eu/ux2/nace2.1/16
+17.1,group,"Fabricarea celulozei, hârtiei și cartonului","Manufacture of pulp, paper and paperboard",http://data.europa.eu/ux2/nace2.1/171,http://data.europa.eu/ux2/nace2.1/17
+17.2,group,Fabricarea articolelor din hârtie și carton,Manufacture of articles of paper and paperboard,http://data.europa.eu/ux2/nace2.1/172,http://data.europa.eu/ux2/nace2.1/17
+18.1,group,Tipărire și activități de servicii conexe tipăririi,Printing and service activities related to printing,http://data.europa.eu/ux2/nace2.1/181,http://data.europa.eu/ux2/nace2.1/18
+18.2,group,Reproducerea înregistrărilor,Reproduction of recorded media,http://data.europa.eu/ux2/nace2.1/182,http://data.europa.eu/ux2/nace2.1/18
+19.1,group,Fabricarea produselor de cocserie,Manufacture of coke oven products,http://data.europa.eu/ux2/nace2.1/191,http://data.europa.eu/ux2/nace2.1/19
+19.2,group,Fabricarea produselor petroliere rafinate și a produselor pe bază de combustibili fosili,Manufacture of refined petroleum products and fossil fuel products,http://data.europa.eu/ux2/nace2.1/192,http://data.europa.eu/ux2/nace2.1/19
+20.1,group,"Fabricarea produselor chimice de bază, a îngrășămintelor și produselor azotoase, a materialelor plastice și a cauciucului sintetic în forme primare","Manufacture of basic chemicals, fertilisers and nitrogen compounds, plastics and synthetic rubber in primary forms",http://data.europa.eu/ux2/nace2.1/201,http://data.europa.eu/ux2/nace2.1/20
+20.2,group,"Fabricarea pesticidelor, dezinfectanților și a altor produse agrochimice","Manufacture of pesticides, disinfectants and other agrochemical products",http://data.europa.eu/ux2/nace2.1/202,http://data.europa.eu/ux2/nace2.1/20
+20.3,group,"Fabricarea vopselelor, lacurilor și produselor similare, cernelii tipografice și masticului","Manufacture of paints, varnishes and similar coatings, printing ink and mastics",http://data.europa.eu/ux2/nace2.1/203,http://data.europa.eu/ux2/nace2.1/20
+20.4,group,Fabricarea produselor de spălat și de întreținere,"Manufacture of washing, cleaning and polishing preparations",http://data.europa.eu/ux2/nace2.1/204,http://data.europa.eu/ux2/nace2.1/20
+20.5,group,Fabricarea altor produse chimice,Manufacture of other chemical products,http://data.europa.eu/ux2/nace2.1/205,http://data.europa.eu/ux2/nace2.1/20
+20.6,group,Fabricarea fibrelor artificiale sau sintetice,Manufacture of man-made fibres,http://data.europa.eu/ux2/nace2.1/206,http://data.europa.eu/ux2/nace2.1/20
+21.1,group,Fabricarea produselor farmaceutice de bază,Manufacture of basic pharmaceutical products,http://data.europa.eu/ux2/nace2.1/211,http://data.europa.eu/ux2/nace2.1/21
+21.2,group,Fabricarea preparatelor farmaceutice,Manufacture of pharmaceutical preparations,http://data.europa.eu/ux2/nace2.1/212,http://data.europa.eu/ux2/nace2.1/21
+22.1,group,Fabricarea de produse din cauciuc,Manufacture of rubber products,http://data.europa.eu/ux2/nace2.1/221,http://data.europa.eu/ux2/nace2.1/22
+22.2,group,Fabricarea produselor din plastic,Manufacture of plastic products,http://data.europa.eu/ux2/nace2.1/222,http://data.europa.eu/ux2/nace2.1/22
+23.1,group,Fabricarea sticlei și a articolelor din sticlă,Manufacture of glass and glass products,http://data.europa.eu/ux2/nace2.1/231,http://data.europa.eu/ux2/nace2.1/23
+23.2,group,Fabricarea de produse refractare,Manufacture of refractory products,http://data.europa.eu/ux2/nace2.1/232,http://data.europa.eu/ux2/nace2.1/23
+23.3,group,Fabricarea materialelor de construcții din argilă,Manufacture of clay building materials,http://data.europa.eu/ux2/nace2.1/233,http://data.europa.eu/ux2/nace2.1/23
+23.4,group,Fabricarea altor produse din porțelan și din ceramică,Manufacture of other porcelain and ceramic products,http://data.europa.eu/ux2/nace2.1/234,http://data.europa.eu/ux2/nace2.1/23
+23.5,group,"Fabricarea cimentului, varului și ipsosului","Manufacture of cement, lime and plaster",http://data.europa.eu/ux2/nace2.1/235,http://data.europa.eu/ux2/nace2.1/23
+23.6,group,"Fabricarea articolelor din beton, ciment și ipsos","Manufacture of articles of concrete, cement and plaster",http://data.europa.eu/ux2/nace2.1/236,http://data.europa.eu/ux2/nace2.1/23
+23.7,group,"Tăierea, fasonarea și finisarea pietrei","Cutting, shaping and finishing of stone",http://data.europa.eu/ux2/nace2.1/237,http://data.europa.eu/ux2/nace2.1/23
+23.9,group,Fabricarea produselor abrazive și produselor minerale nemetalice n.c.a.,Manufacture of abrasive products and non-metallic mineral products n.e.c.,http://data.europa.eu/ux2/nace2.1/239,http://data.europa.eu/ux2/nace2.1/23
+24.1,group,Producția de metale feroase sub forme primare și de feroaliaje,Manufacture of basic iron and steel and of ferro-alloys,http://data.europa.eu/ux2/nace2.1/241,http://data.europa.eu/ux2/nace2.1/24
+24.2,group,"Producția de tuburi, țevi, profile tubulare și accesorii pentru acestea, din oțel","Manufacture of tubes, pipes, hollow profiles and related fittings, of steel",http://data.europa.eu/ux2/nace2.1/242,http://data.europa.eu/ux2/nace2.1/24
+24.3,group,Fabricarea altor produse prin prelucrarea primară a oțelului,Manufacture of other products of first processing of steel,http://data.europa.eu/ux2/nace2.1/243,http://data.europa.eu/ux2/nace2.1/24
+24.4,group,Prelucrarea metalelor prețioase și a altor metale neferoase de bază,Manufacture of basic precious and other non-ferrous metals,http://data.europa.eu/ux2/nace2.1/244,http://data.europa.eu/ux2/nace2.1/24
+24.5,group,Turnarea metalelor,Casting of metals,http://data.europa.eu/ux2/nace2.1/245,http://data.europa.eu/ux2/nace2.1/24
+25.1,group,Fabricarea structurilor metalice pentru construcții,Manufacture of structural metal products,http://data.europa.eu/ux2/nace2.1/251,http://data.europa.eu/ux2/nace2.1/25
+25.2,group,"Producția de rezervoare, cisterne și containere metalice","Manufacture of tanks, reservoirs and containers of metal",http://data.europa.eu/ux2/nace2.1/252,http://data.europa.eu/ux2/nace2.1/25
+25.3,group,Fabricarea armamentului și munițiilor,Manufacture of weapons and ammunition,http://data.europa.eu/ux2/nace2.1/253,http://data.europa.eu/ux2/nace2.1/25
+25.4,group,Forjarea și modelarea metalului și metalurgiei pulberilor,Forging and shaping metal and powder metallurgy,http://data.europa.eu/ux2/nace2.1/254,http://data.europa.eu/ux2/nace2.1/25
+25.5,group,Tratarea și acoperirea metalelor; prelucrare,Treatment and coating of metals; machining,http://data.europa.eu/ux2/nace2.1/255,http://data.europa.eu/ux2/nace2.1/25
+25.6,group,"Fabricarea produselor de tăiat, a uneltelor și a articolelor de fierărie","Manufacture of cutlery, tools and general hardware",http://data.europa.eu/ux2/nace2.1/256,http://data.europa.eu/ux2/nace2.1/25
+25.9,group,Fabricarea altor produse metalice prelucrate,Manufacture of other fabricated metal products,http://data.europa.eu/ux2/nace2.1/259,http://data.europa.eu/ux2/nace2.1/25
+26.1,group,Fabricarea componentelor și a subansamblurilor electronice,Manufacture of electronic components and boards,http://data.europa.eu/ux2/nace2.1/261,http://data.europa.eu/ux2/nace2.1/26
+26.2,group,Fabricarea calculatoarelor și a echipamentelor periferice,Manufacture of computers and peripheral equipment,http://data.europa.eu/ux2/nace2.1/262,http://data.europa.eu/ux2/nace2.1/26
+26.3,group,Fabricarea echipamentelor de comunicație,Manufacture of communication equipment,http://data.europa.eu/ux2/nace2.1/263,http://data.europa.eu/ux2/nace2.1/26
+26.4,group,Fabricarea produselor electronice de larg consum,Manufacture of consumer electronics,http://data.europa.eu/ux2/nace2.1/264,http://data.europa.eu/ux2/nace2.1/26
+26.5,group,"Fabricarea de instrumente de măsură, verificare și control, orologii și ceasuri","Manufacture of measuring testing instruments, clocks and watches",http://data.europa.eu/ux2/nace2.1/265,http://data.europa.eu/ux2/nace2.1/26
+26.6,group,"Fabricarea de echipamente pentru radiologie, electrodiagnostic și electroterapie","Manufacture of irradiation, electromedical and electrotherapeutic equipment",http://data.europa.eu/ux2/nace2.1/266,http://data.europa.eu/ux2/nace2.1/26
+26.7,group,"Fabricarea instrumentelor optice, a suporturilor magnetice și optice și a echipamentelor fotografice","Manufacture of optical instruments, magnetic and optical media and photographic equipment",http://data.europa.eu/ux2/nace2.1/267,http://data.europa.eu/ux2/nace2.1/26
+27.1,group,"Fabricarea motoarelor, generatoarelor și transformatoarelor electrice și a aparatelor de distribuție și control al electricității","Manufacture of electric motors, generators, transformers and electricity distribution and control apparatus",http://data.europa.eu/ux2/nace2.1/271,http://data.europa.eu/ux2/nace2.1/27
+27.2,group,Fabricarea bateriilor și acumulatorilor,Manufacture of batteries and accumulators,http://data.europa.eu/ux2/nace2.1/272,http://data.europa.eu/ux2/nace2.1/27
+27.3,group,Fabricarea de fire și cabluri și a dispozitivelor de conexiune pentru acestea,Manufacture of wiring and wiring devices,http://data.europa.eu/ux2/nace2.1/273,http://data.europa.eu/ux2/nace2.1/27
+27.4,group,Fabricarea de echipamente electrice de iluminat,Manufacture of lighting equipment,http://data.europa.eu/ux2/nace2.1/274,http://data.europa.eu/ux2/nace2.1/27
+27.5,group,Fabricarea aparaturii de uz casnic,Manufacture of domestic appliances,http://data.europa.eu/ux2/nace2.1/275,http://data.europa.eu/ux2/nace2.1/27
+27.9,group,Fabricarea altor echipamente electrice,Manufacture of other electrical equipment,http://data.europa.eu/ux2/nace2.1/279,http://data.europa.eu/ux2/nace2.1/27
+28.1,group,Fabricarea de mașini și utilaje de utilizare generală,Manufacture of general-purpose machinery,http://data.europa.eu/ux2/nace2.1/281,http://data.europa.eu/ux2/nace2.1/28
+28.2,group,Fabricarea altor mașini și utilaje de utilizare generală,Manufacture of other general-purpose machinery,http://data.europa.eu/ux2/nace2.1/282,http://data.europa.eu/ux2/nace2.1/28
+28.3,group,Fabricarea mașinilor și utilajelor pentru agricultură și exploatări forestiere,Manufacture of agricultural and forestry machinery,http://data.europa.eu/ux2/nace2.1/283,http://data.europa.eu/ux2/nace2.1/28
+28.4,group,Fabricarea utilajelor pentru prelucrarea metalelor și a mașinilor-unelte,Manufacture of metal forming machinery and machine tools,http://data.europa.eu/ux2/nace2.1/284,http://data.europa.eu/ux2/nace2.1/28
+28.9,group,Fabricarea altor mașini și utilaje cu utilizare specifică,Manufacture of other special-purpose machinery,http://data.europa.eu/ux2/nace2.1/289,http://data.europa.eu/ux2/nace2.1/28
+29.1,group,Fabricarea autovehiculelor,Manufacture of motor vehicles,http://data.europa.eu/ux2/nace2.1/291,http://data.europa.eu/ux2/nace2.1/29
+29.2,group,Fabricarea de caroserii pentru autovehicule; fabricarea de remorci și semiremorci,Manufacture of bodies and coachwork for motor vehicles; manufacture of trailers and semi-trailers,http://data.europa.eu/ux2/nace2.1/292,http://data.europa.eu/ux2/nace2.1/29
+29.3,group,Fabricarea de piese și accesorii pentru autovehicule,Manufacture of motor vehicle parts and accessories,http://data.europa.eu/ux2/nace2.1/293,http://data.europa.eu/ux2/nace2.1/29
+30.1,group,Construcția de nave și ambarcațiuni,Building of ships and boats,http://data.europa.eu/ux2/nace2.1/301,http://data.europa.eu/ux2/nace2.1/30
+30.2,group,Fabricarea locomotivelor pentru trenuri și a materialului rulant,Manufacture of railway locomotives and rolling stock,http://data.europa.eu/ux2/nace2.1/302,http://data.europa.eu/ux2/nace2.1/30
+30.3,group,"Fabricarea aeronavelor, navelor spațiale și a mașinilor asociate",Manufacture of air and spacecraft and related machinery,http://data.europa.eu/ux2/nace2.1/303,http://data.europa.eu/ux2/nace2.1/30
+30.4,group,Fabricarea vehiculelor militare de luptă,Manufacture of military fighting vehicles,http://data.europa.eu/ux2/nace2.1/304,http://data.europa.eu/ux2/nace2.1/30
+30.9,group,Fabricarea mijloacelor de transport n.c.a.,Manufacture of transport equipment n.e.c.,http://data.europa.eu/ux2/nace2.1/309,http://data.europa.eu/ux2/nace2.1/30
+31.0,group,Fabricarea de mobilă,Manufacture of furniture,http://data.europa.eu/ux2/nace2.1/310,http://data.europa.eu/ux2/nace2.1/31
+32.1,group,"Fabricarea bijuteriilor, imitațiilor de bijuterii și articolelor similare","Manufacture of jewellery, bijouterie and related articles",http://data.europa.eu/ux2/nace2.1/321,http://data.europa.eu/ux2/nace2.1/32
+32.2,group,Fabricarea instrumentelor muzicale,Manufacture of musical instruments,http://data.europa.eu/ux2/nace2.1/322,http://data.europa.eu/ux2/nace2.1/32
+32.3,group,Fabricarea articolelor pentru sport,Manufacture of sports goods,http://data.europa.eu/ux2/nace2.1/323,http://data.europa.eu/ux2/nace2.1/32
+32.4,group,Fabricarea jocurilor și jucăriilor,Manufacture of games and toys,http://data.europa.eu/ux2/nace2.1/324,http://data.europa.eu/ux2/nace2.1/32
+32.5,group,"Fabricarea de dispozitive, aparate și instrumente medicale și stomatologice",Manufacture of medical and dental instruments and supplies,http://data.europa.eu/ux2/nace2.1/325,http://data.europa.eu/ux2/nace2.1/32
+32.9,group,Activități manufacturiere n.c.a.,Manufacturing n.e.c.,http://data.europa.eu/ux2/nace2.1/329,http://data.europa.eu/ux2/nace2.1/32
+33.1,group,"Repararea și întreținerea mașinilor, echipamentelor și produselor metalice industriale","Repair and maintenance of fabricated metal products, machinery and equipment",http://data.europa.eu/ux2/nace2.1/331,http://data.europa.eu/ux2/nace2.1/33
+33.2,group,Instalarea mașinilor și echipamentelor industriale,Installation of industrial machinery and equipment,http://data.europa.eu/ux2/nace2.1/332,http://data.europa.eu/ux2/nace2.1/33
+35.1,group,"Producția, transportul și distribuția energiei electrice","Electric power generation, transmission and distribution",http://data.europa.eu/ux2/nace2.1/351,http://data.europa.eu/ux2/nace2.1/35
+35.2,group,Producția gazelor și distribuția combustibililor gazoși prin conducte,"Manufacture of gas, and distribution of gaseous fuels through mains",http://data.europa.eu/ux2/nace2.1/352,http://data.europa.eu/ux2/nace2.1/35
+35.3,group,Furnizarea aburului și aerului condiționat,Steam and air conditioning supply,http://data.europa.eu/ux2/nace2.1/353,http://data.europa.eu/ux2/nace2.1/35
+35.4,group,Activități ale brokerilor și agenților din domeniul energiei electrice și al gazelor naturale,Activities of brokers and agents for electric power and natural gas,http://data.europa.eu/ux2/nace2.1/354,http://data.europa.eu/ux2/nace2.1/35
+36.0,group,"Captarea, tratarea și distribuția apei","Water collection, treatment and supply",http://data.europa.eu/ux2/nace2.1/360,http://data.europa.eu/ux2/nace2.1/36
+37.0,group,Colectarea și epurarea apelor uzate,Sewerage,http://data.europa.eu/ux2/nace2.1/370,http://data.europa.eu/ux2/nace2.1/37
+38.1,group,Colectarea deșeurilor,Waste collection,http://data.europa.eu/ux2/nace2.1/381,http://data.europa.eu/ux2/nace2.1/38
+38.2,group,Recuperarea deșeurilor,Waste recovery,http://data.europa.eu/ux2/nace2.1/382,http://data.europa.eu/ux2/nace2.1/38
+38.3,group,Eliminarea deșeurilor fără recuperare,Waste disposal without recovery,http://data.europa.eu/ux2/nace2.1/383,http://data.europa.eu/ux2/nace2.1/38
+39.0,group,Activități de decontaminare și alte activități de servicii de gestionare a deșeurilor,Remediation activities and other waste management service activities,http://data.europa.eu/ux2/nace2.1/390,http://data.europa.eu/ux2/nace2.1/39
+41.0,group,Construcția de clădiri rezidențiale și nerezidențiale,Construction of residential and non-residential buildings,http://data.europa.eu/ux2/nace2.1/410,http://data.europa.eu/ux2/nace2.1/41
+42.1,group,Construcția de drumuri și de căi ferate,Construction of roads and railways,http://data.europa.eu/ux2/nace2.1/421,http://data.europa.eu/ux2/nace2.1/42
+42.2,group,Construcția proiectelor utilitare,Construction of utility projects,http://data.europa.eu/ux2/nace2.1/422,http://data.europa.eu/ux2/nace2.1/42
+42.9,group,Construcția altor proiecte de construcții civile,Construction of other civil engineering projects,http://data.europa.eu/ux2/nace2.1/429,http://data.europa.eu/ux2/nace2.1/42
+43.1,group,Lucrări de demolare și de pregătire a șantierelor,Demolition and site preparation,http://data.europa.eu/ux2/nace2.1/431,http://data.europa.eu/ux2/nace2.1/43
+43.2,group,"Lucrări de instalații electrice, instalații sanitare și alte lucrări de instalații","Electrical, plumbing and other construction installation activities",http://data.europa.eu/ux2/nace2.1/432,http://data.europa.eu/ux2/nace2.1/43
+43.3,group,Lucrări de finisare a clădirilor,Building completion and finishing,http://data.europa.eu/ux2/nace2.1/433,http://data.europa.eu/ux2/nace2.1/43
+43.4,group,Lucrări specializate de construcții de clădiri,Specialised construction activities in construction of buildings,http://data.europa.eu/ux2/nace2.1/434,http://data.europa.eu/ux2/nace2.1/43
+43.5,group,Lucrări specializate de activități de construcție în construcții civile,Specialised construction activities in civil engineering,http://data.europa.eu/ux2/nace2.1/435,http://data.europa.eu/ux2/nace2.1/43
+43.6,group,Activități de servicii de intermediere pentru servicii specializate de construcții,Intermediation service activities for specialised construction services,http://data.europa.eu/ux2/nace2.1/436,http://data.europa.eu/ux2/nace2.1/43
+43.9,group,Alte lucrări de construcții specializate,Other specialised construction activities,http://data.europa.eu/ux2/nace2.1/439,http://data.europa.eu/ux2/nace2.1/43
+46.1,group,Comerț cu ridicata pe bază de comision sau contract,Wholesale on a fee or contract basis,http://data.europa.eu/ux2/nace2.1/461,http://data.europa.eu/ux2/nace2.1/46
+46.2,group,Vânzări cu ridicata de materii prime agricole și animale vii,Wholesale of agricultural raw materials and live animals,http://data.europa.eu/ux2/nace2.1/462,http://data.europa.eu/ux2/nace2.1/46
+46.3,group,"Vânzări cu ridicata de produse alimentare, băuturi și tutun","Wholesale of food, beverages and tobacco",http://data.europa.eu/ux2/nace2.1/463,http://data.europa.eu/ux2/nace2.1/46
+46.4,group,Vânzări cu ridicata de bunuri de uz gospodăresc,Wholesale of household goods,http://data.europa.eu/ux2/nace2.1/464,http://data.europa.eu/ux2/nace2.1/46
+46.5,group,Vânzări cu ridicata de echipamente informatice și de comunicații,Wholesale of information and communication equipment,http://data.europa.eu/ux2/nace2.1/465,http://data.europa.eu/ux2/nace2.1/46
+46.6,group,"Vânzări cu ridicata de alte mașini, echipamente și accesorii","Wholesale of other machinery, equipment and supplies",http://data.europa.eu/ux2/nace2.1/466,http://data.europa.eu/ux2/nace2.1/46
+46.7,group,"Vânzări cu ridicata de autovehicule, motociclete și piese și accesorii pentru acestea","Wholesale of motor vehicles, motorcycles and related parts and accessories",http://data.europa.eu/ux2/nace2.1/467,http://data.europa.eu/ux2/nace2.1/46
+46.8,group,Alte vânzări cu ridicata specializate,Other specialised wholesale,http://data.europa.eu/ux2/nace2.1/468,http://data.europa.eu/ux2/nace2.1/46
+46.9,group,Servicii de comerț cu ridicata nespecializat,Non-specialised wholesale trade,http://data.europa.eu/ux2/nace2.1/469,http://data.europa.eu/ux2/nace2.1/46
+47.1,group,Vânzări cu amănuntul nespecializate,Non-specialised retail sale,http://data.europa.eu/ux2/nace2.1/471,http://data.europa.eu/ux2/nace2.1/47
+47.2,group,"Vânzări cu amănuntul de produse alimentare, băuturi și tutun","Retail sale of food, beverages and tobacco",http://data.europa.eu/ux2/nace2.1/472,http://data.europa.eu/ux2/nace2.1/47
+47.3,group,Vânzări cu amănuntul de carburanți pentru autovehicule,Retail sale of automotive fuel,http://data.europa.eu/ux2/nace2.1/473,http://data.europa.eu/ux2/nace2.1/47
+47.4,group,Vânzări cu amănuntul de echipamente informatice și de comunicații,Retail sale of information and communication equipment,http://data.europa.eu/ux2/nace2.1/474,http://data.europa.eu/ux2/nace2.1/47
+47.5,group,Vânzări cu amănuntul de alte produse de uz gospodăresc,Retail sale of other household equipment,http://data.europa.eu/ux2/nace2.1/475,http://data.europa.eu/ux2/nace2.1/47
+47.6,group,Vânzări cu amănuntul de bunuri culturale și recreative,Retail sale of cultural and recreational goods,http://data.europa.eu/ux2/nace2.1/476,http://data.europa.eu/ux2/nace2.1/47
+47.7,group,"Vânzări cu amănuntul de alte bunuri, cu excepția autovehiculelor și motocicletelor","Retail sale of other goods, except motor vehicles and motorcycles",http://data.europa.eu/ux2/nace2.1/477,http://data.europa.eu/ux2/nace2.1/47
+47.8,group,"Vânzări cu amănuntul de autovehicule, motociclete și piese și accesorii pentru acestea","Retail sale of motor vehicles, motorcycles and related parts and accessories",http://data.europa.eu/ux2/nace2.1/478,http://data.europa.eu/ux2/nace2.1/47
+47.9,group,Servicii de intermediere pentru vânzarea cu amănuntul,Intermediation service activities for retail sale,http://data.europa.eu/ux2/nace2.1/479,http://data.europa.eu/ux2/nace2.1/47
+49.1,group,Transportul feroviar de călători,Passenger rail transport,http://data.europa.eu/ux2/nace2.1/491,http://data.europa.eu/ux2/nace2.1/49
+49.2,group,Transport feroviar de mărfuri,Freight rail transport,http://data.europa.eu/ux2/nace2.1/492,http://data.europa.eu/ux2/nace2.1/49
+49.3,group,Alte transporturi terestre de călători,Other passenger land transport,http://data.europa.eu/ux2/nace2.1/493,http://data.europa.eu/ux2/nace2.1/49
+49.4,group,Transporturi rutiere de marfă și servicii de mutare,Freight transport by road and removal services,http://data.europa.eu/ux2/nace2.1/494,http://data.europa.eu/ux2/nace2.1/49
+49.5,group,Transporturi prin conducte,Transport via pipeline,http://data.europa.eu/ux2/nace2.1/495,http://data.europa.eu/ux2/nace2.1/49
+50.1,group,Transporturi maritime și costiere de pasageri,Sea and coastal passenger water transport,http://data.europa.eu/ux2/nace2.1/501,http://data.europa.eu/ux2/nace2.1/50
+50.2,group,Transporturi maritime și costiere de marfă,Sea and coastal freight water transport,http://data.europa.eu/ux2/nace2.1/502,http://data.europa.eu/ux2/nace2.1/50
+50.3,group,Transporturi de pasageri pe căi navigabile interioare,Inland passenger water transport,http://data.europa.eu/ux2/nace2.1/503,http://data.europa.eu/ux2/nace2.1/50
+50.4,group,Transportul de marfă pe căile navigabile interioare,Inland freight water transport,http://data.europa.eu/ux2/nace2.1/504,http://data.europa.eu/ux2/nace2.1/50
+51.1,group,Transporturi aeriene de pasageri,Passenger air transport,http://data.europa.eu/ux2/nace2.1/511,http://data.europa.eu/ux2/nace2.1/51
+51.2,group,Transport aerian de marfă și transporturi spațiale,Freight air transport and space transport,http://data.europa.eu/ux2/nace2.1/512,http://data.europa.eu/ux2/nace2.1/51
+52.1,group,Antrepozitare și depozitare,Warehousing and storage,http://data.europa.eu/ux2/nace2.1/521,http://data.europa.eu/ux2/nace2.1/52
+52.2,group,Activități anexe pentru transporturi,Support activities for transportation,http://data.europa.eu/ux2/nace2.1/522,http://data.europa.eu/ux2/nace2.1/52
+52.3,group,Servicii de intermediere pentru transport,Intermediation service activities for transportation,http://data.europa.eu/ux2/nace2.1/523,http://data.europa.eu/ux2/nace2.1/52
+53.1,group,Activități de poștă în cadrul unei obligații de serviciu universal,Postal activities under universal service obligation,http://data.europa.eu/ux2/nace2.1/531,http://data.europa.eu/ux2/nace2.1/53
+53.2,group,Alte activități de poștă și de curier,Other postal and courier activities,http://data.europa.eu/ux2/nace2.1/532,http://data.europa.eu/ux2/nace2.1/53
+53.3,group,Servicii de intermediere pentru activități poștale și de curier,Intermediation service activities for postal and courier activities,http://data.europa.eu/ux2/nace2.1/533,http://data.europa.eu/ux2/nace2.1/53
+55.1,group,Hoteluri și alte facilități de cazare similare,Hotels and similar accommodation,http://data.europa.eu/ux2/nace2.1/551,http://data.europa.eu/ux2/nace2.1/55
+55.2,group,Facilități de cazare pentru vacanțe și perioade de scurtă durată,Holiday and other short-stay accommodation,http://data.europa.eu/ux2/nace2.1/552,http://data.europa.eu/ux2/nace2.1/55
+55.3,group,Terenuri de camping și parcuri pentru vehicule de agrement,Camping grounds and recreational vehicle parks,http://data.europa.eu/ux2/nace2.1/553,http://data.europa.eu/ux2/nace2.1/55
+55.4,group,Servicii de intermediere pentru cazare,Intermediation service activities for accommodation,http://data.europa.eu/ux2/nace2.1/554,http://data.europa.eu/ux2/nace2.1/55
+55.9,group,Alte servicii de cazare,Other accommodation,http://data.europa.eu/ux2/nace2.1/559,http://data.europa.eu/ux2/nace2.1/55
+56.1,group,Restaurante și servicii de restaurante mobile,Restaurants and mobile food service activities,http://data.europa.eu/ux2/nace2.1/561,http://data.europa.eu/ux2/nace2.1/56
+56.2,group,"Catering pentru evenimente, activități de servicii de catering pe bază de contract și alte activități de servicii de alimentație publică","Event catering, contract catering service activities and other food service activities",http://data.europa.eu/ux2/nace2.1/562,http://data.europa.eu/ux2/nace2.1/56
+56.3,group,Servicii de servire a băuturilor,Beverage serving activities,http://data.europa.eu/ux2/nace2.1/563,http://data.europa.eu/ux2/nace2.1/56
+56.4,group,Servicii de intermediere pentru activități de servicii de alimentație publică și de servire a băuturilor,Intermediation service activities for food and beverage services activities,http://data.europa.eu/ux2/nace2.1/564,http://data.europa.eu/ux2/nace2.1/56
+58.1,group,"Activități de editare de cărți, ziare și alte activități de editare, cu excepția editării de software","Publishing of books, newspapers and other publishing activities, except software publishing",http://data.europa.eu/ux2/nace2.1/581,http://data.europa.eu/ux2/nace2.1/58
+58.2,group,Activități de editare de software,Software publishing,http://data.europa.eu/ux2/nace2.1/582,http://data.europa.eu/ux2/nace2.1/58
+59.1,group,"Activități cinematografice, video și de programe de televiziune","Motion picture, video and television programme activities",http://data.europa.eu/ux2/nace2.1/591,http://data.europa.eu/ux2/nace2.1/59
+59.2,group,Înregistrări audio și activități de editare muzicală,Sound recording and music publishing activities,http://data.europa.eu/ux2/nace2.1/592,http://data.europa.eu/ux2/nace2.1/59
+60.1,group,Activități de radiodifuziune și distribuție audio,Radio broadcasting and audio distribution activities,http://data.europa.eu/ux2/nace2.1/601,http://data.europa.eu/ux2/nace2.1/60
+60.2,group,"Activități de programare, difuzare de programe de televiziune și de programe video","Television programming, broadcasting and video distribution activities",http://data.europa.eu/ux2/nace2.1/602,http://data.europa.eu/ux2/nace2.1/60
+60.3,group,Activități de agenție de presă și alte activități de distribuție de conținut,News agency and other content distribution activities,http://data.europa.eu/ux2/nace2.1/603,http://data.europa.eu/ux2/nace2.1/60
+61.1,group,"Activități de telecomunicații cu fir, fără fir și prin satelit","Wired, wireless, and satellite telecommunication activities",http://data.europa.eu/ux2/nace2.1/611,http://data.europa.eu/ux2/nace2.1/61
+61.2,group,Activități de revânzare de telecomunicații și servicii de intermediere pentru telecomunicații,Telecommunication reselling activities and intermediation service activities for telecommunication,http://data.europa.eu/ux2/nace2.1/612,http://data.europa.eu/ux2/nace2.1/61
+61.9,group,Alte activități de telecomunicații,Other telecommunication activities,http://data.europa.eu/ux2/nace2.1/619,http://data.europa.eu/ux2/nace2.1/61
+62.1,group,Activități de programare informatică,Computer programming activities,http://data.europa.eu/ux2/nace2.1/621,http://data.europa.eu/ux2/nace2.1/62
+62.2,group,Activități de consultanță în domeniul informaticii și de gestionare a echipamentelor informatice,Computer consultancy and computer facilities management activities,http://data.europa.eu/ux2/nace2.1/622,http://data.europa.eu/ux2/nace2.1/62
+62.9,group,Alte activități de servicii privind tehnologia informației,Other information technology and computer service activities,http://data.europa.eu/ux2/nace2.1/629,http://data.europa.eu/ux2/nace2.1/62
+63.1,group,"Infrastructura informatică, prelucrarea datelor, găzduirea și activitățile conexe","Computing infrastructure, data processing, hosting and related activities",http://data.europa.eu/ux2/nace2.1/631,http://data.europa.eu/ux2/nace2.1/63
+63.9,group,Activitățile portalurilor web de căutare pe internet și alte activități de servicii informatice,Web search portal activities and other information service activities,http://data.europa.eu/ux2/nace2.1/639,http://data.europa.eu/ux2/nace2.1/63
+64.1,group,Servicii de intermediere monetară,Monetary intermediation,http://data.europa.eu/ux2/nace2.1/641,http://data.europa.eu/ux2/nace2.1/64
+64.2,group,Activități ale holding-urilor și ale canalelor de finanțare,Activities of holding companies and financing conduits,http://data.europa.eu/ux2/nace2.1/642,http://data.europa.eu/ux2/nace2.1/64
+64.3,group,"Activități de tipul administrării fiduciare, fondurilor și al altor entități financiare similare","Activities of trusts, funds and similar financial entities",http://data.europa.eu/ux2/nace2.1/643,http://data.europa.eu/ux2/nace2.1/64
+64.9,group,"Alte activități de servicii financiare, cu excepția asigurărilor și a fondurilor de pensii","Other financial service activities, except insurance and pension funding",http://data.europa.eu/ux2/nace2.1/649,http://data.europa.eu/ux2/nace2.1/64
+65.1,group,Activități de asigurări,Insurance,http://data.europa.eu/ux2/nace2.1/651,http://data.europa.eu/ux2/nace2.1/65
+65.2,group,Activități de reasigurare,Reinsurance,http://data.europa.eu/ux2/nace2.1/652,http://data.europa.eu/ux2/nace2.1/65
+65.3,group,Activități ale fondurilor de pensii,Pension funding,http://data.europa.eu/ux2/nace2.1/653,http://data.europa.eu/ux2/nace2.1/65
+66.1,group,"Activități auxiliare serviciilor financiare, cu excepția asigurărilor și a fondurilor de pensii","Activities auxiliary to financial services, except insurance and pension funding",http://data.europa.eu/ux2/nace2.1/661,http://data.europa.eu/ux2/nace2.1/66
+66.2,group,Activități auxiliare de asigurări și fonduri de pensii,Activities auxiliary to insurance and pension funding,http://data.europa.eu/ux2/nace2.1/662,http://data.europa.eu/ux2/nace2.1/66
+66.3,group,Administrarea fondurilor,Fund management activities,http://data.europa.eu/ux2/nace2.1/663,http://data.europa.eu/ux2/nace2.1/66
+68.1,group,Cumpărarea și vânzarea bunurilor imobiliare proprii și dezvoltarea de proiecte imobiliare,Real estate activities with own property and development of building projects,http://data.europa.eu/ux2/nace2.1/681,http://data.europa.eu/ux2/nace2.1/68
+68.2,group,Închirierea și subînchirierea bunurilor imobiliare proprii sau închiriate,Rental and operating of own or leased real estate,http://data.europa.eu/ux2/nace2.1/682,http://data.europa.eu/ux2/nace2.1/68
+68.3,group,Activități imobiliare pe bază de comision sau contract,Real estate activities on a fee or contract basis,http://data.europa.eu/ux2/nace2.1/683,http://data.europa.eu/ux2/nace2.1/68
+69.1,group,Activități juridice,Legal activities,http://data.europa.eu/ux2/nace2.1/691,http://data.europa.eu/ux2/nace2.1/69
+69.2,group,Activități de contabilitate și audit financiar; consultanță în domeniul fiscal,"Accounting, bookkeeping and auditing activities; tax consultancy",http://data.europa.eu/ux2/nace2.1/692,http://data.europa.eu/ux2/nace2.1/69
+70.1,group,Activități ale sediilor sociale,Activities of head offices,http://data.europa.eu/ux2/nace2.1/701,http://data.europa.eu/ux2/nace2.1/70
+70.2,group,Activități de consultanță în afaceri și management,Business and other management consultancy activities,http://data.europa.eu/ux2/nace2.1/702,http://data.europa.eu/ux2/nace2.1/70
+71.1,group,"Activități de arhitectură, inginerie și servicii de consultanță tehnică legate de acestea",Architectural and engineering activities and related technical consultancy,http://data.europa.eu/ux2/nace2.1/711,http://data.europa.eu/ux2/nace2.1/71
+71.2,group,Activități de încercări și analize tehnice,Technical testing and analysis,http://data.europa.eu/ux2/nace2.1/712,http://data.europa.eu/ux2/nace2.1/71
+72.1,group,Cercetare-dezvoltare în științe naturale și inginerie,Research and experimental development on natural sciences and engineering,http://data.europa.eu/ux2/nace2.1/721,http://data.europa.eu/ux2/nace2.1/72
+72.2,group,Cercetare-dezvoltare în științe sociale și umaniste,Research and experimental development on social sciences and humanities,http://data.europa.eu/ux2/nace2.1/722,http://data.europa.eu/ux2/nace2.1/72
+73.1,group,Publicitatea,Advertising,http://data.europa.eu/ux2/nace2.1/731,http://data.europa.eu/ux2/nace2.1/73
+73.2,group,Cercetare de piață și sondaje de opinie,Market research and public opinion polling,http://data.europa.eu/ux2/nace2.1/732,http://data.europa.eu/ux2/nace2.1/73
+73.3,group,Activități de relații publice și comunicare,Public relations and communication activities,http://data.europa.eu/ux2/nace2.1/733,http://data.europa.eu/ux2/nace2.1/73
+74.1,group,Activități de design specializat,Specialised design activities,http://data.europa.eu/ux2/nace2.1/741,http://data.europa.eu/ux2/nace2.1/74
+74.2,group,Activități fotografice,Photographic activities,http://data.europa.eu/ux2/nace2.1/742,http://data.europa.eu/ux2/nace2.1/74
+74.3,group,Activități de traducere scrisă și orală (interpreți),Translation and interpretation activities,http://data.europa.eu/ux2/nace2.1/743,http://data.europa.eu/ux2/nace2.1/74
+74.9,group,"Alte activități profesionale, științifice și tehnice n.c.a.","Other professional, scientific and technical activities n.e.c.",http://data.europa.eu/ux2/nace2.1/749,http://data.europa.eu/ux2/nace2.1/74
+75.0,group,Activități veterinare,Veterinary activities,http://data.europa.eu/ux2/nace2.1/750,http://data.europa.eu/ux2/nace2.1/75
+77.1,group,Închiriere și leasing de autovehicule,Rental and leasing of motor vehicles,http://data.europa.eu/ux2/nace2.1/771,http://data.europa.eu/ux2/nace2.1/77
+77.2,group,Închiriere și leasing de bunuri personale și de uz casnic,Rental and leasing of personal and household goods,http://data.europa.eu/ux2/nace2.1/772,http://data.europa.eu/ux2/nace2.1/77
+77.3,group,"Închiriere și leasing de alte mașini, echipamente și bunuri corporale","Rental and leasing of other machinery, equipment and tangible goods",http://data.europa.eu/ux2/nace2.1/773,http://data.europa.eu/ux2/nace2.1/77
+77.4,group,"Leasing de proprietate intelectuală și produse similare, cu excepția lucrărilor care fac obiectul drepturilor de autor","Leasing of intellectual property and similar products, except copyrighted works",http://data.europa.eu/ux2/nace2.1/774,http://data.europa.eu/ux2/nace2.1/77
+77.5,group,Servicii de intermediere pentru închirierea și leasingul de bunuri corporale și imobilizări necorporale nefinanciare,Intermediation service activities for rental and leasing of tangible goods and non-financial intangible assets,http://data.europa.eu/ux2/nace2.1/775,http://data.europa.eu/ux2/nace2.1/77
+78.1,group,Activități ale agențiilor de plasare a forței de muncă,Activities of employment placement agencies,http://data.europa.eu/ux2/nace2.1/781,http://data.europa.eu/ux2/nace2.1/78
+78.2,group,Activități ale agențiilor de plasare temporară a forței de muncă și alte resurse umane,Temporary employment agency activities and other human resource provisions,http://data.europa.eu/ux2/nace2.1/782,http://data.europa.eu/ux2/nace2.1/78
+79.1,group,Activități ale agențiilor turistice și ale tur-operatorilor,Travel agency and tour operator activities,http://data.europa.eu/ux2/nace2.1/791,http://data.europa.eu/ux2/nace2.1/79
+79.9,group,Alte servicii de rezervări și activități asociate,Other reservation service and related activities,http://data.europa.eu/ux2/nace2.1/799,http://data.europa.eu/ux2/nace2.1/79
+80.0,group,Activități de investigație și securitate,Investigation and security activities,http://data.europa.eu/ux2/nace2.1/800,http://data.europa.eu/ux2/nace2.1/80
+81.1,group,Activități combinate de servicii pentru clădiri,Combined facilities support activities,http://data.europa.eu/ux2/nace2.1/811,http://data.europa.eu/ux2/nace2.1/81
+81.2,group,Activități de curățenie,Cleaning activities,http://data.europa.eu/ux2/nace2.1/812,http://data.europa.eu/ux2/nace2.1/81
+81.3,group,Activități de întreținere peisagistică,Landscape service activities,http://data.europa.eu/ux2/nace2.1/813,http://data.europa.eu/ux2/nace2.1/81
+82.1,group,Activități de secretariat și servicii suport,Office administrative and support activities,http://data.europa.eu/ux2/nace2.1/821,http://data.europa.eu/ux2/nace2.1/82
+82.2,group,Activități ale centrelor de intermediere telefonică (call center),Activities of call centres,http://data.europa.eu/ux2/nace2.1/822,http://data.europa.eu/ux2/nace2.1/82
+82.3,group,"Activități de organizare a expozițiilor, târgurilor și congreselor",Organisation of conventions and trade shows,http://data.europa.eu/ux2/nace2.1/823,http://data.europa.eu/ux2/nace2.1/82
+82.4,group,Activități de servicii de intermediere pentru activități suport pentru întreprinderi n.c.a.,Intermediation service activities for business support service activities n.e.c.,http://data.europa.eu/ux2/nace2.1/824,http://data.europa.eu/ux2/nace2.1/82
+82.9,group,Activități de servicii suport pentru întreprinderi n.c.a.,Business support service activities n.e.c.,http://data.europa.eu/ux2/nace2.1/829,http://data.europa.eu/ux2/nace2.1/82
+84.1,group,"Administrația de stat și politicile economice, sociale și de mediu comunitare","Administration of the State and the economic, social and environmental policies of the community",http://data.europa.eu/ux2/nace2.1/841,http://data.europa.eu/ux2/nace2.1/84
+84.2,group,Asigurarea de servicii pentru societate,Provision of services to the community as a whole,http://data.europa.eu/ux2/nace2.1/842,http://data.europa.eu/ux2/nace2.1/84
+84.3,group,Activități de protecție socială obligatorie,Compulsory social security activities,http://data.europa.eu/ux2/nace2.1/843,http://data.europa.eu/ux2/nace2.1/84
+85.1,group,Învățământ preșcolar,Pre-primary education,http://data.europa.eu/ux2/nace2.1/851,http://data.europa.eu/ux2/nace2.1/85
+85.2,group,Învățământ primar,Primary education,http://data.europa.eu/ux2/nace2.1/852,http://data.europa.eu/ux2/nace2.1/85
+85.3,group,Învățământ liceal și învățământ postliceal neuniversitar,Secondary and post-secondary non-tertiary education,http://data.europa.eu/ux2/nace2.1/853,http://data.europa.eu/ux2/nace2.1/85
+85.4,group,Învățământ superior,Tertiary education,http://data.europa.eu/ux2/nace2.1/854,http://data.europa.eu/ux2/nace2.1/85
+85.5,group,Alte forme de învățământ,Other education,http://data.europa.eu/ux2/nace2.1/855,http://data.europa.eu/ux2/nace2.1/85
+85.6,group,Activități de sprijin pentru învățământ,Educational support activities,http://data.europa.eu/ux2/nace2.1/856,http://data.europa.eu/ux2/nace2.1/85
+86.1,group,Activități de asistență spitalicească,Hospital activities,http://data.europa.eu/ux2/nace2.1/861,http://data.europa.eu/ux2/nace2.1/86
+86.2,group,Activități de practică medicală și stomatologică,Medical and dental practice activities,http://data.europa.eu/ux2/nace2.1/862,http://data.europa.eu/ux2/nace2.1/86
+86.9,group,Alte servicii de sănătate umană,Other human health activities,http://data.europa.eu/ux2/nace2.1/869,http://data.europa.eu/ux2/nace2.1/86
+87.1,group,Activități ale centrelor de îngrijire medicală cu cazare,Residential nursing care activities,http://data.europa.eu/ux2/nace2.1/871,http://data.europa.eu/ux2/nace2.1/87
+87.2,group,Activități ale centrelor de recuperare psihică și de dezintoxicare,Residential care activities for persons living with or having a diagnosis of a mental illness or substance abuse,http://data.europa.eu/ux2/nace2.1/872,http://data.europa.eu/ux2/nace2.1/87
+87.3,group,Activități ale căminelor pentru persoane în vârstă sau persoane cu handicap,Residential care activities for older persons or persons with physical disabilities,http://data.europa.eu/ux2/nace2.1/873,http://data.europa.eu/ux2/nace2.1/87
+87.9,group,Alte activități de îngrijire cu cazare,Other residential care activities,http://data.europa.eu/ux2/nace2.1/879,http://data.europa.eu/ux2/nace2.1/87
+88.1,group,Activități de asistență socială fără cazare pentru persoanele în vârstă sau persoanele cu handicap,Social work activities without accommodation for older persons or persons with disabilities,http://data.europa.eu/ux2/nace2.1/881,http://data.europa.eu/ux2/nace2.1/88
+88.9,group,Alte activități de asistență socială fără cazare,Other social work activities without accommodation,http://data.europa.eu/ux2/nace2.1/889,http://data.europa.eu/ux2/nace2.1/88
+90.1,group,Activități de creație artistică,Arts creation activities,http://data.europa.eu/ux2/nace2.1/901,http://data.europa.eu/ux2/nace2.1/90
+90.2,group,Activități de interpretare artistică (spectacole),Activities of performing arts,http://data.europa.eu/ux2/nace2.1/902,http://data.europa.eu/ux2/nace2.1/90
+90.3,group,Activități de sprijinire a creației artistice și a artelor spectacolului,Support activities to arts creation and performing arts,http://data.europa.eu/ux2/nace2.1/903,http://data.europa.eu/ux2/nace2.1/90
+91.1,group,Activități ale bibliotecilor și arhivelor,Library and archive activities,http://data.europa.eu/ux2/nace2.1/911,http://data.europa.eu/ux2/nace2.1/91
+91.2,group,"Activități legate de muzee, colecții, situri istorice și monumente","Museum, collection, historical site and monument activities",http://data.europa.eu/ux2/nace2.1/912,http://data.europa.eu/ux2/nace2.1/91
+91.3,group,"Activități de conservare, restaurare și alte activități de sprijin pentru patrimoniul cultural","Conservation, restoration and other support activities for cultural heritage",http://data.europa.eu/ux2/nace2.1/913,http://data.europa.eu/ux2/nace2.1/91
+91.4,group,"Activități ale grădinilor botanice, zoologice și ale rezervațiilor naturale",Botanical and zoological garden and nature reserve activities,http://data.europa.eu/ux2/nace2.1/914,http://data.europa.eu/ux2/nace2.1/91
+92.0,group,Activități de jocuri de noroc și pariuri,Gambling and betting activities,http://data.europa.eu/ux2/nace2.1/920,http://data.europa.eu/ux2/nace2.1/92
+93.1,group,Activități sportive,Sports activities,http://data.europa.eu/ux2/nace2.1/931,http://data.europa.eu/ux2/nace2.1/93
+93.2,group,Activități recreative și distractive,Amusement and recreation activities,http://data.europa.eu/ux2/nace2.1/932,http://data.europa.eu/ux2/nace2.1/93
+94.1,group,"Activități ale organizațiilor economice, patronale și profesionale","Activities of business, employers and professional membership organisations",http://data.europa.eu/ux2/nace2.1/941,http://data.europa.eu/ux2/nace2.1/94
+94.2,group,Activități ale organizațiilor sindicale,Activities of trade unions,http://data.europa.eu/ux2/nace2.1/942,http://data.europa.eu/ux2/nace2.1/94
+94.9,group,Activități ale altor organizații asociative,Activities of other membership organisations,http://data.europa.eu/ux2/nace2.1/949,http://data.europa.eu/ux2/nace2.1/94
+95.1,group,Repararea și întreținerea calculatoarelor și a echipamentelor de comunicații,Repair and maintenance of computers and communication equipment,http://data.europa.eu/ux2/nace2.1/951,http://data.europa.eu/ux2/nace2.1/95
+95.2,group,Repararea și întreținerea bunurilor personale și de uz casnic,Repair and maintenance of personal and household goods,http://data.europa.eu/ux2/nace2.1/952,http://data.europa.eu/ux2/nace2.1/95
+95.3,group,Repararea și întreținerea autovehiculelor și a motocicletelor,Repair and maintenance of motor vehicles and motorcycles,http://data.europa.eu/ux2/nace2.1/953,http://data.europa.eu/ux2/nace2.1/95
+95.4,group,"Servicii de intermediere pentru repararea și întreținerea calculatoarelor, a bunurilor personale și de uz casnic și a autovehiculelor și motocicletelor","Intermediation service activities for repair and maintenance of computers, personal and household goods, and motor vehicles and motorcycles",http://data.europa.eu/ux2/nace2.1/954,http://data.europa.eu/ux2/nace2.1/95
+96.1,group,Spălarea și curățarea articolelor textile și a produselor din blană,Washing and cleaning of textile and fur products,http://data.europa.eu/ux2/nace2.1/961,http://data.europa.eu/ux2/nace2.1/96
+96.2,group,"Coafură, servicii de înfrumusețare, centre balneare și activități similare","Hairdressing, beauty treatment, day spa and similar activities",http://data.europa.eu/ux2/nace2.1/962,http://data.europa.eu/ux2/nace2.1/96
+96.3,group,Activități de pompe funebre și similare,Funeral and related activities,http://data.europa.eu/ux2/nace2.1/963,http://data.europa.eu/ux2/nace2.1/96
+96.4,group,Activități de servicii de intermediere pentru servicii personale,Intermediation service activities for personal services,http://data.europa.eu/ux2/nace2.1/964,http://data.europa.eu/ux2/nace2.1/96
+96.9,group,Alte activități de servicii personale,Other personal service activities,http://data.europa.eu/ux2/nace2.1/969,http://data.europa.eu/ux2/nace2.1/96
+97.0,group,Activități ale gospodăriilor în calitate de angajatori de personal casnic,Activities of households as employers of domestic personnel,http://data.europa.eu/ux2/nace2.1/970,http://data.europa.eu/ux2/nace2.1/97
+98.1,group,Activități nediferențiate ale gospodăriilor în calitate de producători de bunuri pentru uz propriu,Undifferentiated goods-producing activities of private households for own use,http://data.europa.eu/ux2/nace2.1/981,http://data.europa.eu/ux2/nace2.1/98
+98.2,group,Activități nediferențiate ale gospodăriilor în calitate de producători de servicii pentru uz propriu,Undifferentiated service-producing activities of private households for own use,http://data.europa.eu/ux2/nace2.1/982,http://data.europa.eu/ux2/nace2.1/98
+99.0,group,Activități ale organizațiilor și organismelor extrateritoriale,Activities of extraterritorial organisations and bodies,http://data.europa.eu/ux2/nace2.1/990,http://data.europa.eu/ux2/nace2.1/99
+A,section,"AGRICULTURĂ, SILVICULTURĂ ȘI PESCUIT","AGRICULTURE, FORESTRY AND FISHING",http://data.europa.eu/ux2/nace2.1/A,
+B,section,INDUSTRIA EXTRACTIVĂ ȘI EXPLOATAREA ÎN CARIERE,MINING AND QUARRYING,http://data.europa.eu/ux2/nace2.1/B,
+C,section,INDUSTRIA PRELUCRĂTOARE,MANUFACTURING,http://data.europa.eu/ux2/nace2.1/C,
+D,section,"PRODUCȚIA ȘI FURNIZAREA DE ENERGIE ELECTRICĂ, GAZE, ABUR ȘI AER CONDIȚIONAT","ELECTRICITY, GAS, STEAM AND AIR CONDITIONING SUPPLY",http://data.europa.eu/ux2/nace2.1/D,
+E,section,"DISTRIBUȚIA APEI; SALUBRITATE, GESTIONARE A DEȘEURILOR ȘI ACTIVITĂȚI DE DECONTAMINARE","WATER SUPPLY; SEWERAGE, WASTE MANAGEMENT AND REMEDIATION ACTIVITIES",http://data.europa.eu/ux2/nace2.1/E,
+F,section,CONSTRUCȚII,CONSTRUCTION,http://data.europa.eu/ux2/nace2.1/F,
+G,section,COMERȚUL CU RIDICATA ȘI CU AMĂNUNTUL,WHOLESALE AND RETAIL TRADE,http://data.europa.eu/ux2/nace2.1/G,
+H,section,TRANSPORT ȘI DEPOZITARE,TRANSPORTATION AND STORAGE,http://data.europa.eu/ux2/nace2.1/H,
+I,section,SERVICII DE CAZARE ȘI RESTAURANTE,ACCOMMODATION AND FOOD SERVICE ACTIVITIES,http://data.europa.eu/ux2/nace2.1/I,
+J,section,"ACTIVITĂȚI DE EDITARE, DE RADIODIFUZIUNE ȘI TELEVIZIUNE ȘI DE PRODUCȚIE ȘI DISTRIBUȚIE DE CONȚINUT","PUBLISHING, BROADCASTING, AND CONTENT PRODUCTION AND DISTRIBUTION ACTIVITIES",http://data.europa.eu/ux2/nace2.1/J,
+K,section,"ACTIVITĂȚI DE TELECOMUNICAȚII, PROGRAMARE INFORMATICĂ, CONSULTANȚĂ, INFRASTRUCTURĂ INFORMATICĂ ȘI ALTE SERVICII INFORMATICE","TELECOMMUNICATION, COMPUTER PROGRAMMING, CONSULTING, COMPUTING INFRASTRUCTURE AND OTHER INFORMATION SERVICE ACTIVITIES",http://data.europa.eu/ux2/nace2.1/K,
+L,section,ACTIVITĂȚI FINANCIARE ȘI DE ASIGURĂRI,FINANCIAL AND INSURANCE ACTIVITIES,http://data.europa.eu/ux2/nace2.1/L,
+M,section,TRANZACȚII IMOBILIARE,REAL ESTATE ACTIVITIES,http://data.europa.eu/ux2/nace2.1/M,
+N,section,"ACTIVITĂȚI PROFESIONALE, ȘTIINȚIFICE ȘI TEHNICE","PROFESSIONAL, SCIENTIFIC AND TECHNICAL ACTIVITIES",http://data.europa.eu/ux2/nace2.1/N,
+O,section,ACTIVITĂȚI DE SERVICII ADMINISTRATIVE ȘI ACTIVITĂȚI DE SERVICII SUPORT,ADMINISTRATIVE AND SUPPORT SERVICE ACTIVITIES,http://data.europa.eu/ux2/nace2.1/O,
+P,section,ADMINISTRAȚIE PUBLICĂ ȘI APĂRARE; SERVICII DE ASIGURĂRI SOCIALE DIN SISTEMUL PUBLIC,PUBLIC ADMINISTRATION AND DEFENCE; COMPULSORY SOCIAL SECURITY,http://data.europa.eu/ux2/nace2.1/P,
+Q,section,ÎNVĂȚĂMÂNT,EDUCATION,http://data.europa.eu/ux2/nace2.1/Q,
+R,section,SĂNĂTATE ȘI ASISTENȚĂ SOCIALĂ,HUMAN HEALTH AND SOCIAL WORK ACTIVITIES,http://data.europa.eu/ux2/nace2.1/R,
+S,section,"ACTIVITĂȚI DE SPECTACOLE, CULTURALE, SPORTIVE ȘI RECREATIVE","ARTS, SPORTS AND RECREATION",http://data.europa.eu/ux2/nace2.1/S,
+T,section,ALTE ACTIVITĂȚI DE SERVICII,OTHER SERVICE ACTIVITIES,http://data.europa.eu/ux2/nace2.1/T,
+U,section,ACTIVITĂȚI ALE GOSPODĂRIILOR PRIVATE ÎN CALITATE DE ANGAJATORI; ACTIVITĂȚI ALE GOSPODĂRIILOR PRIVATE DE PRODUCERE DE BUNURI ȘI SERVICII PENTRU UZ PROPRIU,ACTIVITIES OF HOUSEHOLDS AS EMPLOYERS AND UNDIFFERENTIATED GOODS - AND SERVICE-PRODUCING ACTIVITIES OF HOUSEHOLDS FOR OWN USE,http://data.europa.eu/ux2/nace2.1/U,
+V,section,ACTIVITĂȚI ALE ORGANIZAȚIILOR ȘI ORGANISMELOR EXTRATERITORIALE,ACTIVITIES OF EXTRATERRITORIAL ORGANISATIONS AND BODIES,http://data.europa.eu/ux2/nace2.1/V,

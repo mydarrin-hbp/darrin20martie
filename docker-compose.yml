@@ -1,19 +1,69 @@
-services:
+version: "3.9"
 
+services:
   postgres:
     image: postgres:16
     container_name: mydarrin-postgres
-
     environment:
       POSTGRES_USER: mydarrin
       POSTGRES_PASSWORD: mydarrin
       POSTGRES_DB: mydarrin
-
     ports:
       - "5432:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    container_name: mydarrin-backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://mydarrin:mydarrin@postgres:5432/mydarrin
+      JWT_SECRET: mydarrin-local-dev-secret-2026
+      ENABLE_BASIC_AUTH_GATE: "true"
+      BASIC_AUTH_GATE_USERNAME: ownergate
+      BASIC_AUTH_GATE_PASSWORD: change-me
+      BACKEND_CORS_ORIGINS: http://127.0.0.1:3000,http://127.0.0.1:3001
+    depends_on:
+      - postgres
+    ports:
+      - "8001:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8001
+        NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION: Basic b3duZXJnYXRlOmNoYW5nZS1tZQ==
+        API_BASE_URL_PUBLIC: http://127.0.0.1:8001
+        BACKEND_GATE_AUTHORIZATION: Basic b3duZXJnYXRlOmNoYW5nZS1tZQ==
+    container_name: mydarrin-frontend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8001
+      NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION: Basic b3duZXJnYXRlOmNoYW5nZS1tZQ==
+    depends_on:
+      - backend
+    ports:
+      - "3000:8080"
+
+  backoffice:
+    build:
+      context: ./backoffice
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8001
+        NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION: Basic b3duZXJnYXRlOmNoYW5nZS1tZQ==
+        NEXT_PUBLIC_GATE_USERNAME: ownergate
+        NEXT_PUBLIC_GATE_PASSWORD: change-me
+    container_name: mydarrin-backoffice
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8001
+      NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION: Basic b3duZXJnYXRlOmNoYW5nZS1tZQ==
+      NEXT_PUBLIC_GATE_USERNAME: ownergate
+      NEXT_PUBLIC_GATE_PASSWORD: change-me
+    depends_on:
+      - backend
+    ports:
+      - "3001:8080"
 
 volumes:
   postgres_data:

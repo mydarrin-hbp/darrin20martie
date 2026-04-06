@@ -995,7 +995,7 @@ function BackofficeCreatePanel() {
             <span className="rounded-full bg-[#1E2E4D] px-5 py-3 text-sm font-semibold text-white">Salveaza si creeaza altul</span>
             <span className="rounded-full bg-[#EF7F1A] px-5 py-3 text-sm font-semibold text-white">Salveaza si publica</span>
             <Link href="/mockup-v1/public" className="rounded-full border border-[#1E2E4D]/12 bg-white px-5 py-3 text-sm font-semibold text-[#1E2E4D]">
-              Previzualizare Publica
+              Vizualizare LIVE
             </Link>
           </div>
         </div>

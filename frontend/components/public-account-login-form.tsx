@@ -8,6 +8,7 @@ export function PublicAccountLoginForm() {
   const [step, setStep] = useState<"email" | "password">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,8 +52,35 @@ export function PublicAccountLoginForm() {
               : rawRole.includes("admin")
                 ? "admin"
                 : "client";
+      const providerType = window.localStorage.getItem("mydarrin_provider_type") ?? "";
+      const providerRedirect =
+        providerType === "materials-marketplace"
+          ? "/marketplace/providers/materials"
+          : providerType === "materials-ip"
+            ? "/marketplace/providers/materials/ip"
+            : providerType === "rental"
+              ? "/marketplace/providers/rental"
+              : providerType === "concrete"
+                ? "/marketplace/providers/concrete"
+                : "";
       if ((payload.verification_status ?? "").toUpperCase() === "APPROVED") {
-        window.location.href = `/my-account?role=${roleParam}`;
+        if (providerRedirect && (roleParam === "partner" || roleParam === "provider")) {
+          window.location.href = providerRedirect;
+          return;
+        }
+        if (roleParam === "investor") {
+          window.location.href = "/investors/account";
+          return;
+        }
+        if (roleParam === "partner") {
+          window.location.href = "/partners/account";
+          return;
+        }
+        if (roleParam === "admin") {
+          window.location.href = "/admin/access-request";
+          return;
+        }
+        window.location.href = "/my-account";
         return;
       }
       setMessage("Autentificare reusita. Contul este in verificare.");
@@ -100,14 +128,23 @@ export function PublicAccountLoginForm() {
           </label>
           <label className="v3-form-field">
             <span>Parola</span>
-            <input
-              className="v3-form-control v3-form-control-rect"
-              type="password"
-              placeholder="Introdu parola"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                className="v3-form-control v3-form-control-rect pr-12"
+                type={showPassword ? "text" : "password"}
+                placeholder="Introdu parola"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold uppercase tracking-wide text-orange-600"
+                onClick={() => setShowPassword((value) => !value)}
+              >
+                {showPassword ? "Ascunde" : "Afiseaza"}
+              </button>
+            </div>
           </label>
           <div className="v3-auth-actions">
             <button type="submit" className="v3-primary-button v3-auth-primary" disabled={loading}>

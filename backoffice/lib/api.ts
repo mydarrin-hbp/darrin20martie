@@ -20,6 +20,22 @@ export type AdminUser = {
   design_edit?: boolean;
 };
 
+export type ProviderRecord = {
+  id: number;
+  name: string;
+  contact_email?: string | null;
+  provider_type: "MATERIAL" | "RENTAL";
+  is_active: boolean;
+};
+
+export type MarketplaceCommissionRecord = {
+  id: number;
+  category: "MATERIAL" | "RENTAL" | "LABOR";
+  min_percentage: number;
+  max_percentage: number;
+  is_active: boolean;
+};
+
 export type AdminCollaboratorRecord = {
   id: number;
   user_id: number;
@@ -439,6 +455,32 @@ export type InsightsRecord = {
   provider_performance: Array<{ provider: string; order_count: number; gmv: number }>;
 };
 
+export type AiDarrinStatus = {
+  documents_total: number;
+  learning_snapshot: Record<string, unknown>;
+  provider: string;
+  api_key_configured: boolean;
+};
+
+export type AiDarrinInterpretRequest = {
+  service_id: number;
+  country_id: number;
+  zone_id: number;
+  locality_id?: number | null;
+  currency: string;
+  legislation_code: string;
+  message: string;
+  urgency?: boolean | null;
+  service_level?: "BASIC" | "STANDARD" | "PREMIUM";
+  resources?: Array<{
+    resource_type: "LABOR" | "MATERIAL" | "EQUIPMENT" | "TRANSPORT" | "OTHER";
+    name: string;
+    unit: string;
+    quantity: number;
+    unit_cost: number;
+  }>;
+};
+
 export type EscoImportResult = {
   uri: string;
   class_name: string;
@@ -724,7 +766,7 @@ export function updateUserProfile(
     phone: string | null;
     city: string | null;
     role: "CLIENT" | "PARTNER" | "INVESTOR" | "ADMIN" | "SUPER_ADMIN" | null;
-    verification_status: "PENDING" | "APPROVED" | "REJECTED" | null;
+    verification_status: "PENDING" | "PENDING_DOCS" | "UNDER_REVIEW" | "VERIFIED" | "APPROVED" | "REJECTED" | null;
   }>,
 ) {
   return request<AdminUser>(`/api/v1/admin/users/${userId}`, {
@@ -732,6 +774,50 @@ export function updateUserProfile(
     token,
     body,
   });
+}
+
+export function getProviders(token: string) {
+  return request<ProviderRecord[]>("/api/v1/backoffice/providers", { token });
+}
+
+export function createProvider(token: string, body: Omit<ProviderRecord, "id">) {
+  return request<ProviderRecord>("/api/v1/backoffice/providers", { method: "POST", token, body });
+}
+
+export function updateProvider(token: string, id: number, body: Partial<Omit<ProviderRecord, "id">>) {
+  return request<ProviderRecord>(`/api/v1/backoffice/providers/${id}`, { method: "PUT", token, body });
+}
+
+export function deleteProvider(token: string, id: number) {
+  return request<{ message: string }>(`/api/v1/backoffice/providers/${id}`, { method: "DELETE", token });
+}
+
+export function getMarketplaceCommissions(token: string) {
+  return request<MarketplaceCommissionRecord[]>("/api/v1/backoffice/marketplace-commissions", { token });
+}
+
+export function createMarketplaceCommission(token: string, body: Omit<MarketplaceCommissionRecord, "id">) {
+  return request<MarketplaceCommissionRecord>("/api/v1/backoffice/marketplace-commissions", {
+    method: "POST",
+    token,
+    body,
+  });
+}
+
+export function updateMarketplaceCommission(
+  token: string,
+  id: number,
+  body: Partial<Omit<MarketplaceCommissionRecord, "id" | "category">>,
+) {
+  return request<MarketplaceCommissionRecord>(`/api/v1/backoffice/marketplace-commissions/${id}`, {
+    method: "PUT",
+    token,
+    body,
+  });
+}
+
+export function deleteMarketplaceCommission(token: string, id: number) {
+  return request<{ message: string }>(`/api/v1/backoffice/marketplace-commissions/${id}`, { method: "DELETE", token });
 }
 
 export function getDomains(token: string) {
@@ -1260,6 +1346,22 @@ export function updateBackofficeReview(
 
 export function getInsights(token: string) {
   return request<InsightsRecord>("/api/v1/backoffice/insights", { token });
+}
+
+export function getAiDarrinStatus(token: string) {
+  return request<AiDarrinStatus>("/api/v1/ai/status", { token });
+}
+
+export function syncAiDarrinDocs(token: string) {
+  return request<AiDarrinStatus>("/api/v1/ai/sync", { method: "POST", token });
+}
+
+export function interpretAiDarrin(token: string, body: AiDarrinInterpretRequest) {
+  return request<Record<string, unknown>>("/api/v1/ai/interpret", {
+    method: "POST",
+    token,
+    body,
+  });
 }
 
 export function getTaxRules(token: string) {

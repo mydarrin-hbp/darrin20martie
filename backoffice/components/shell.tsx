@@ -54,7 +54,56 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
+        <div className="admin-quick-links">
+          <a className="admin-quick-link" href="/catalog" target="_blank" rel="noreferrer">
+            Catalog Materiale
+          </a>
+          <a className="admin-quick-link" href="/catalog?resource_type=EQUIPMENT" target="_blank" rel="noreferrer">
+            Inchirieri Utilaje
+          </a>
+          <a className="admin-quick-link admin-quick-link-accent" href="/partners/join" target="_blank" rel="noreferrer">
+            Devino Partener
+          </a>
+        </div>
+
         <main className="admin-canvas">{children}</main>
+
+        <footer className="admin-footer">
+          <div className="admin-footer-grid">
+            <div>
+              <div className="admin-footer-title">Domenii</div>
+              <div className="admin-footer-links">
+                <span>Constructii & Instalatii</span>
+                <span>Electrice & Iluminat</span>
+                <span>Utilaje Rental</span>
+              </div>
+            </div>
+            <div>
+              <div className="admin-footer-title">Servicii</div>
+              <div className="admin-footer-links">
+                <span>Catalog servicii</span>
+                <span>Devizuri</span>
+                <span>Comenzi live</span>
+              </div>
+            </div>
+            <div>
+              <div className="admin-footer-title">Parteneri</div>
+              <div className="admin-footer-links">
+                <span>Onboarding</span>
+                <span>Documente</span>
+                <span>Ratinguri</span>
+              </div>
+            </div>
+            <div>
+              <div className="admin-footer-title">Investitori</div>
+              <div className="admin-footer-links">
+                <span>Runde SEED</span>
+                <span>Quorum live</span>
+                <span>Raportare</span>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -170,6 +170,10 @@ class LaborRateBase(BaseModel):
     locality_id: int | None = None
     skill_code: str = Field(min_length=2, max_length=120)
     skill_label: str = Field(min_length=2, max_length=255)
+    ro_skill_code: str | None = Field(default=None, max_length=64)
+    esco_code: str | None = Field(default=None, max_length=64)
+    uniclass_code: str | None = Field(default=None, max_length=64)
+    deviz_indicator_series: str | None = Field(default=None, max_length=32)
     currency: str = Field(min_length=3, max_length=3, default="RON")
     base_rate: float = Field(ge=0, default=0.0)
     weekend_multiplier: float = Field(ge=0, default=1.0)
@@ -188,6 +192,10 @@ class LaborRateUpdate(BaseModel):
     locality_id: int | None = None
     skill_code: str | None = Field(default=None, min_length=2, max_length=120)
     skill_label: str | None = Field(default=None, min_length=2, max_length=255)
+    ro_skill_code: str | None = Field(default=None, max_length=64)
+    esco_code: str | None = Field(default=None, max_length=64)
+    uniclass_code: str | None = Field(default=None, max_length=64)
+    deviz_indicator_series: str | None = Field(default=None, max_length=32)
     currency: str | None = Field(default=None, min_length=3, max_length=3)
     base_rate: float | None = Field(default=None, ge=0)
     weekend_multiplier: float | None = Field(default=None, ge=0)

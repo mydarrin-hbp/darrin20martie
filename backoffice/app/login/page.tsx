@@ -16,8 +16,11 @@ function LoginScreen() {
   const [authMode, setAuthMode] = useState<"login" | "signup">(initialMode);
   const [gateUsername, setGateUsername] = useState(BACKOFFICE_GATE_USERNAME);
   const [gatePassword, setGatePassword] = useState(BACKOFFICE_GATE_PASSWORD);
+  const [showGatePassword, setShowGatePassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [invitePassword, setInvitePassword] = useState("");
   const [inviteFullName, setInviteFullName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +48,7 @@ function LoginScreen() {
     setError(null);
 
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       router.replace(searchParams.get("next") ?? "/dashboard");
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Autentificarea a esuat.");
@@ -99,7 +102,21 @@ function LoginScreen() {
               </label>
               <label className="grid gap-2 text-sm text-muted">
                 Parola gate
-                <input className="field" type="password" value={gatePassword} onChange={(event) => setGatePassword(event.target.value)} />
+                <div className="relative">
+                  <input
+                    className="field pr-12"
+                    type={showGatePassword ? "text" : "password"}
+                    value={gatePassword}
+                    onChange={(event) => setGatePassword(event.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-3 text-xs font-semibold text-accent"
+                    onClick={() => setShowGatePassword((value) => !value)}
+                  >
+                    {showGatePassword ? "Ascunde" : "Arata"}
+                  </button>
+                </div>
               </label>
             </div>
             {error ? <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
@@ -154,11 +171,40 @@ function LoginScreen() {
               <form onSubmit={onSubmit} className="mt-6 grid gap-4">
                 <label className="grid gap-2 text-sm text-muted">
                   Email
-                  <input className="field" value={email} onChange={(event) => setEmail(event.target.value)} />
+                  <input
+                    className="field"
+                    value={email}
+                    autoComplete="username"
+                    onChange={(event) => setEmail(event.target.value)}
+                  />
                 </label>
                 <label className="grid gap-2 text-sm text-muted">
                   Parola
-                  <input className="field" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                  <div className="relative">
+                    <input
+                      className="field pr-12"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      autoComplete="current-password"
+                      onChange={(event) => setPassword(event.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-3 text-xs font-semibold text-accent"
+                      onClick={() => setShowPassword((value) => !value)}
+                    >
+                      {showPassword ? "Ascunde" : "Arata"}
+                    </button>
+                  </div>
+                </label>
+                <label className="flex items-center gap-3 text-sm text-muted">
+                  <input
+                    className="h-4 w-4 accent-ink"
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(event) => setRememberMe(event.target.checked)}
+                  />
+                  Pastreaza sesiunea in Chrome
                 </label>
                 {error ? <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
                 <button type="submit" className="btn-primary mt-2 w-full" disabled={loading}>

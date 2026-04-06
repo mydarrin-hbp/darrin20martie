@@ -6,6 +6,8 @@ import type { CSSProperties, ReactNode } from "react";
 
 import type {
   HomepageContent,
+  PublicCatalogCategoryItem,
+  PublicCatalogCategoryListResponse,
   PublicCatalogPrice,
   PublicCatalogServiceCard,
   PublicServiceTaxonomy,
@@ -18,6 +20,7 @@ import {
   PublicRoleSelectionForm,
 } from "@/components/public-account-register-form";
 import { GeoAddressAutocomplete } from "@/components/geo-address-autocomplete";
+import { CatalogTree } from "@/components/catalog-tree";
 import { InvestorSeedWidget } from "@/components/investor-seed-widget";
 import { PublicCheckoutSubmit } from "@/components/public-checkout-submit";
 import { GeoRestrictionGate } from "@/components/geo-restriction-gate";
@@ -27,12 +30,17 @@ import { PublicPaymentStatusClient } from "@/components/public-payment-status-cl
 import { PublicAccountLoginForm } from "@/components/public-account-login-form";
 import { ClientOrders } from "@/components/client-orders";
 import { ClientOrderDetailPanel } from "@/components/client-order-detail";
+import { HeroSlider } from "@/components/hero-slider";
+import { PublicAiDarrinChat } from "@/components/public-ai-darrin-chat";
+import { PublicCheckoutDraftSummary, PublicCheckoutFields } from "@/components/public-checkout-fields";
+import { PublicCartClient } from "@/components/public-cart-client";
 import {
   getPublicServiceBySlug,
   publicCrossSellMap,
+  publicDomainTree,
+  publicMaterialPivotMap,
   publicSafetyChecklist,
   publicFooterColumns,
-  publicNavLinks,
   publicQuickLinks,
   publicSelfSignupRoles,
   publicServiceCatalog,
@@ -253,6 +261,138 @@ function normalizeCatalogDimensions(catalogServices?: PublicCatalogServiceCard[]
   return { categoryItems, domainItems };
 }
 
+function buildPublicSidebarSections(catalogServices?: PublicCatalogServiceCard[]) {
+  const { categoryItems, domainItems } = normalizeCatalogDimensions(catalogServices);
+  return [
+    {
+      title: "Servicii",
+      items: categoryItems.length
+        ? categoryItems
+        : [
+            { label: "Servicii principale", href: "/catalog" },
+            { label: "Catalog complet", href: "/catalog" },
+          ],
+      highlight: true,
+    },
+    {
+      title: "Domenii",
+      items: domainItems.length
+        ? domainItems
+        : [
+            { label: "Rezidential", href: "/catalog" },
+            { label: "Commercial", href: "/catalog" },
+            { label: "Industrial", href: "/catalog" },
+        ],
+    },
+    {
+      title: "Materiale (Marketplace)",
+      items: [
+        { label: "Catalog materiale", href: "/materials" },
+        { label: "Consumabile", href: "/materials?category=consumabile-termice" },
+        { label: "HVAC & termice", href: "/materials?category=hvac-instalatii-termice" },
+        { label: "Devino provider", href: "/marketplace/providers" },
+      ],
+    },
+    {
+      title: "Inchirieri Utilaje",
+      items: [
+        { label: "Utilaje rental", href: "/materials?category=utilaje-rental" },
+        { label: "Catalog utilaje", href: "/catalog?resource_type=EQUIPMENT" },
+      ],
+    },
+    {
+      title: "Devino Partener",
+      items: [
+        { label: "Inscriere Partener", href: "/partners/join" },
+        { label: "Creeaza Cont Partener", href: "/account/create" },
+      ],
+    },
+    {
+      title: "Devino Investitor",
+      items: [
+        { label: "Program Investitori", href: "/investors" },
+        { label: "Creeaza Cont Investitor", href: "/investors/create" },
+      ],
+    },
+    {
+      title: "Asiguratori",
+      items: [
+        { label: "Parteneriate Asiguratori", href: "/contact" },
+        { label: "Integrare Asigurari", href: "/contact" },
+      ],
+    },
+    {
+      title: "Clienti",
+      items: [
+        { label: "Cont Client", href: "/account" },
+        { label: "Creeaza Cont Client", href: "/account/create" },
+      ],
+    },
+    {
+      title: "Contact",
+      items: [
+        { label: "Contact My Darrin", href: "/contact" },
+        { label: "AI Darrin", href: "/account" },
+      ],
+    },
+    {
+      title: "Info / Legal",
+      items: [
+        { label: "CUM FUNCTIONEAZA My Darrin", href: "/how-it-works" },
+        { label: "Despre My Darrin", href: "/about" },
+        { label: "Termeni & GDPR", href: "/legal" },
+      ],
+    },
+  ] as SidebarSection[];
+}
+
+function PublicSidebar({ catalogServices }: { catalogServices?: PublicCatalogServiceCard[] }) {
+  const sidebarSections = buildPublicSidebarSections(catalogServices);
+  return (
+    <aside className="v3-sidebar-card w-full lg:sticky lg:top-6">
+      <div className="v3-kicker">Sidebar sincronizat</div>
+      <h2 className="v3-sidebar-title">Navigare publica</h2>
+      <p className="v3-muted-copy">
+        Structura din stanga oglindeste sectiunile publice aprobate in Backoffice. Modificarile de catalog si domenii sunt
+        reflectate instant in acest meniu.
+      </p>
+
+      <div className="v3-sidebar-accordion">
+        {sidebarSections.map((section, index) => (
+          <details
+            key={section.title}
+            className={`v3-sidebar-accordion-item ${section.highlight ? "v3-sidebar-accordion-item-highlight" : ""}`}
+            open={index === 0}
+          >
+            <summary className="v3-sidebar-accordion-summary">
+              <span>{section.title}</span>
+              <span className="v3-sidebar-accordion-icon" aria-hidden />
+            </summary>
+            <div className="v3-sidebar-accordion-body">
+              {section.items.map((item) => (
+                <div key={item.label} className="v3-sidebar-accordion-row">
+                  <Link href={item.href} className="v3-sidebar-accordion-link">
+                    {item.label}
+                  </Link>
+                  {item.subItems?.length ? (
+                    <div className="v3-sidebar-subitems">
+                      {item.subItems.map((subItem) => (
+                        <Link key={subItem.label} href={subItem.href} className="v3-sidebar-subitem">
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </details>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 function resolveFooterLink(label: string) {
   const normalized = label.toLowerCase();
   if (normalized.includes("catalog")) return "/catalog";
@@ -286,14 +426,21 @@ function buildFooterGroups(page: HomepageContent) {
   const supportLinks = findColumn(["companie", "contact", "suport", "despre"]) ?? columnEntries[1] ?? columnEntries[0];
   const usefulPages = findColumn(["pagina", "about", "despre", "contact"]) ?? columnEntries[3] ?? columnEntries[0];
 
+  const ensureHowItWorks = (links: { label: string; href: string }[]) => {
+    if (links.some((link) => link.href === "/how-it-works")) {
+      return links;
+    }
+    return [{ label: "CUM FUNCTIONEAZA My Darrin", href: "/how-it-works" }, ...links];
+  };
+
   return [
     {
       title: "Useful information",
-      links: usefulLinks?.links ?? [],
+      links: ensureHowItWorks(usefulLinks?.links ?? []),
     },
     {
       title: "Terms & conditions",
-      links: legalLinks?.links ?? [],
+      links: ensureHowItWorks(legalLinks?.links ?? []),
     },
     {
       title: "Customer support",
@@ -350,6 +497,7 @@ function parseTierLevels(levelAttachments: Record<string, unknown> | null | unde
     { label: "Bronz", price: "de la 0 RON", note: "Configuratie standard" },
     { label: "Argint", price: "de la 0 RON", note: "Configuratie recomandata" },
     { label: "Aur", price: "de la 0 RON", note: "Executie extinsa" },
+    { label: "Platina", price: "de la 0 RON", note: "Garantie extinsa + mentenanta" },
   ];
 }
 
@@ -509,97 +657,131 @@ function PriceLockup({
 }
 
 function PublicHeader({ page }: { page: HomepageContent }) {
-  const content = page.content;
-  const headerLinks = [
-    { label: "Servicii", href: "/catalog" },
-    { label: "About", href: "/about" },
-    { label: "InteDarrin AI", href: "/account" },
-    { label: "Devino Partener", href: "/partners/join" },
-    { label: "Devino Investitor", href: "/investors" },
-    { label: "Contact", href: "/contact" },
-  ];
-
   return (
     <header className="v3-header-shell">
-      <div className="v3-header-main">
-        <div className="v3-header-main-inner v3-header-main-clean">
+      <div className="v3-header-main v3-header-main-compact">
+        <div className="v3-header-main-inner v3-header-main-clean v3-header-main-compact-inner flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
           <Link href="/" className="v3-header-brand">
             <LogoBlock page={page} />
           </Link>
 
-          <nav className="v3-header-links">
-            {headerLinks.map((link) => (
-              <Link key={link.label} href={link.href} className="v3-header-link">
-                {link.label}
+          <nav className="v3-header-links v3-header-links-compact flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-6">
+            <div className="v3-mega-trigger">
+              <Link href="/catalog" className="v3-header-link">
+                Servicii
               </Link>
-            ))}
-          </nav>
-
-          <div className="v3-header-search">
-            <div className="v3-market-searchbar v3-market-searchbar-compact">
-              <input
-                className="v3-market-search-input"
-                placeholder={content.header?.searchPlaceholder ?? "Cauta servicii, AI, poze, video sau cod serviciu"}
-                aria-label="Cauta servicii"
-              />
-              <Link href="/catalog" className="v3-market-search-action">
-                Cauta
-              </Link>
-            </div>
-          </div>
-
-          <div className="v3-header-actions v3-header-actions-clean">
-            <div className="v3-header-account">
-              <button type="button" className="v3-header-account-chip" aria-haspopup="true">
-                <span className="v3-header-account-icon" aria-hidden />
-                <span className="v3-header-account-label">
-                  Contul meu
-                </span>
-              </button>
-              <div className="v3-header-account-menu">
-                <div className="v3-header-account-title">Momentan nu esti autentificat</div>
-                <Link href="/account" className="v3-primary-button">
-                  Autentifica-te
-                </Link>
-                <Link href="/account/create" className="v3-dark-button">
-                  Creeaza cont
-                </Link>
+              <div className="v3-mega-menu">
+                <div className="v3-mega-column">
+                  <div className="v3-mega-title">Domenii servicii</div>
+                  {publicDomainTree.map((domain) => (
+                    <div key={domain.id} className="v3-mega-group">
+                      <strong>{domain.label}</strong>
+                      <div className="v3-mega-list">
+                        {domain.children?.map((category) => (
+                          <Link key={category.id} href={`/catalog?category=${category.id}`}>
+                            {category.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="v3-mega-column v3-mega-highlight">
+                  <div className="v3-mega-title">Acces rapid</div>
+                  <Link href="/catalog">Catalog servicii</Link>
+                  <Link href="/catalog?domain=constructii">Constructii & Instalatii</Link>
+                  <Link href="/catalog?domain=electrice-iluminat">Electrice & Iluminat</Link>
+                  <Link href="/catalog?resource_type=EQUIPMENT">Utilaje (rental)</Link>
+                </div>
+                <div className="v3-mega-column v3-mega-column-compact">
+                  <div className="v3-mega-title">Servicii cheie</div>
+                  {publicServiceCatalog.slice(0, 6).map((service) => (
+                    <Link key={service.slug} href={`/services/${service.slug}`} className="v3-mega-link-strong">
+                      {service.title}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
-            <Link href="/cart" className="v3-header-cart-chip">
+            <div className="v3-mega-trigger">
+              <Link href="/materials" className="v3-header-link">
+                Materiale
+              </Link>
+              <div className="v3-mega-menu">
+                <div className="v3-mega-column">
+                  <div className="v3-mega-title">Catalog materiale</div>
+                  {publicDomainTree.map((domain) => (
+                    <div key={domain.id} className="v3-mega-group">
+                      <strong>{domain.label}</strong>
+                      <div className="v3-mega-list">
+                        {domain.children?.map((category) => (
+                          <Link key={category.id} href={`/materials?category=${category.id}`}>
+                            {category.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="v3-mega-column v3-mega-highlight">
+                  <div className="v3-mega-title">Marketplace</div>
+                  <Link href="/materials">Catalog materiale</Link>
+                  <Link href="/materials?category=consumabile-termice">Consumabile</Link>
+                  <Link href="/materials?category=usi-ferestre">Usi & Ferestre</Link>
+                  <Link href="/materials?category=hvac-instalatii-termice">HVAC</Link>
+                </div>
+                <div className="v3-mega-column v3-mega-column-compact">
+                  <div className="v3-mega-title">Pivot Material → Serviciu</div>
+                  {Object.values(publicMaterialPivotMap).map((item) => (
+                    <div key={item.label} className="v3-mega-pivot-card">
+                      <strong>{item.label}</strong>
+                      <div className="v3-mega-pivot-actions">
+                        {item.actions.map((action) => (
+                          <span key={action} className="v3-mega-chip">
+                            {action}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <Link href="/about" className="v3-header-link">
+              About
+            </Link>
+            <Link href="/contact" className="v3-header-link">
+              Contact
+            </Link>
+          </nav>
+
+          <div className="v3-header-search w-full lg:w-auto">
+            <div className="v3-market-searchbar v3-market-searchbar-compact v3-market-searchbar-clean">
+              <span className="v3-market-search-filter">Cauta</span>
+              <input
+                className="v3-market-search-input"
+                placeholder={page.content.header?.searchPlaceholder ?? "Cauta servicii, materiale sau cod deviz"}
+                aria-label="Cauta servicii"
+              />
+              <button type="button" className="v3-market-search-action">
+                Cauta
+              </button>
+            </div>
+          </div>
+
+          <div className="v3-header-actions v3-header-actions-clean flex flex-wrap gap-3 lg:flex-nowrap lg:justify-end">
+            <Link href="/partners/join" className="v3-ghost-chip">
+              Devino Partener
+            </Link>
+            <Link href="/investors" className="v3-ghost-chip">
+              Devino Investitor
+            </Link>
+            <Link href="/cos" className="v3-header-cart-chip v3-header-cart-compact">
               <strong>Cos</strong>
             </Link>
-            <Link href="/account" className="v3-ai-chip v3-ai-chip-header">
+            <Link href="/account" className="v3-ai-chip v3-ai-chip-header v3-ai-chip-compact">
               <span className="v3-ai-icon" aria-hidden />
               AI Darrin
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="v3-header-contrast-strip">
-        <div className="v3-header-contrast-inner">
-          <span>Acces rapid</span>
-          <div className="v3-header-contrast-links">
-            <Link href="/my-account" className="v3-header-contrast-link">
-              Contul meu
-            </Link>
-            <Link href="/contact" className="v3-header-contrast-link">
-              Suport clienti
-            </Link>
-            <Link href="/account" className="v3-header-contrast-link">
-              InteDarrin AI
-            </Link>
-            <Link href="/my-account?role=partner" className="v3-header-contrast-link">
-              Parteneri
-            </Link>
-            <Link href="/my-account?role=investor" className="v3-header-contrast-link">
-              Investitori
-            </Link>
-            <Link href="/my-account?role=provider" className="v3-header-contrast-link">
-              Provideri
-            </Link>
-            <Link href="/my-account?role=admin" className="v3-header-contrast-link">
-              Admin
             </Link>
           </div>
         </div>
@@ -610,102 +792,61 @@ function PublicHeader({ page }: { page: HomepageContent }) {
 
 function PublicFooter({ page }: { page: HomepageContent }) {
   const footerGroups = buildFooterGroups(page);
-  const hbpResources = [
+  const linkGroups = [
+    { title: "Linkuri Utile", links: footerGroups[0]?.links ?? [] },
+    { title: "Legal & Termeni", links: footerGroups[1]?.links ?? [] },
+    { title: "Suport & Contact", links: footerGroups[2]?.links ?? [] },
     {
-      title: "Useful information",
-      links: ["Terms and conditions", "Privacy Policy", "ANPC", "How to order online", "Delivery of orders"],
-    },
-    {
-      title: "Terms and conditions",
-      links: ["Payment methods", "General conditions", "Processing of personal data", "Posted services"],
-    },
-    {
-      title: "Policy on the use of cookies",
-      links: ["Online resolution of disputes", "Customer support", "ANPC-SAL", "Support for partners"],
-    },
-    {
-      title: "Useful pages",
-      links: ["About us", "Company", "Contact", "My account", "Repair form", "Call center"],
+      title: "Social Media & Aplicatii mobile",
+      links: [
+        { label: "Facebook", href: "/contact" },
+        { label: "LinkedIn", href: "/contact" },
+        { label: "App Store", href: "/contact" },
+        { label: "Google Play", href: "/contact" },
+      ],
     },
   ];
 
   return (
-    <footer className="v3-footer">
+    <footer className="v3-footer v3-footer-horizontal">
       <div className="v3-footer-inner">
-        <div className="v3-footer-brand">
+        <div className="v3-footer-top-row flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <LogoBlock page={page} inverse />
-          <p className="v3-footer-copy">
-            Platforma publica My Darrin pentru servicii la cerere, AI operational si profesionisti verificati. Continutul
-            homepage-ului este sincronizat din Backoffice prin `site_content_pages`, iar media serviciilor este stocata prin
-            serviciul de attachments cu backend GCS.
-          </p>
-          <div className="v3-footer-pills">
-            <Pill tone="orange">[LOGO MY DARRIN]</Pill>
-            <Pill>[ICON]</Pill>
-            <Pill>[ICON]</Pill>
-            <Pill>[ICON]</Pill>
-          </div>
-          <div className="v3-footer-actions">
+          <div className="v3-footer-top-actions flex flex-wrap gap-3 md:justify-end">
             <span className="v3-language-chip">RO | EN</span>
-          </div>
-          <div className="v3-footer-topbar v3-footer-topbar-simple">
-            <div className="v3-footer-topbar-title">Aboneaza-te / Trimite feedback</div>
-            <div className="v3-footer-topbar-actions">
-              <input className="v3-footer-input" placeholder="Adresa de email" aria-label="Email feedback" />
-              <button type="button" className="v3-footer-cta">
-                Trimite
-              </button>
-            </div>
-            <div className="v3-footer-topbar-apps">
-              <span>Aplicatia My Darrin</span>
-              <div className="v3-footer-app-grid">
-                <span className="v3-footer-app-badge">App Store</span>
-                <span className="v3-footer-app-badge">Google Play</span>
-                <span className="v3-footer-app-badge">AppGallery</span>
-              </div>
-            </div>
+            <Link href="/contact" className="v3-footer-cta">
+              Suport rapid
+            </Link>
+            <Link href="/account" className="v3-ai-chip">
+              <span className="v3-ai-icon" aria-hidden />
+              AI Darrin
+            </Link>
           </div>
         </div>
 
-        <div className="v3-footer-left">
-          <div className="v3-footer-groups">
-            {footerGroups.map((group) => (
-              <div key={group.title} className="v3-footer-group">
-                <div className="v3-footer-title">{group.title}</div>
-                <div className="v3-footer-inline-links">
-                  {group.links.map((link) =>
-                    link.href.startsWith("http") ? (
-                      <a key={link.label} href={link.href} target="_blank" rel="noreferrer">
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link key={link.label} href={link.href}>
-                        {link.label}
-                      </Link>
-                    ),
-                  )}
-                </div>
+        <div className="v3-footer-groups-horizontal grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {linkGroups.map((group) => (
+            <div key={group.title} className="v3-footer-group">
+              <div className="v3-footer-title">{group.title}</div>
+              <div className="v3-footer-inline-links v3-footer-inline-links-horizontal">
+                {group.links.map((link) =>
+                  link.href.startsWith("http") ? (
+                    <a key={link.label} href={link.href} target="_blank" rel="noreferrer">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link key={link.label} href={link.href}>
+                      {link.label}
+                    </Link>
+                  ),
+                )}
               </div>
-            ))}
-          </div>
-
-          <div className="v3-footer-resources">
-            {hbpResources.map((group) => (
-              <div key={group.title} className="v3-footer-resource-col">
-                <div className="v3-footer-resource-title">{group.title}</div>
-                <div className="v3-footer-resource-links">
-                  {group.links.map((label) => (
-                    <span key={label}>{label}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-
       </div>
 
-      <div className="v3-footer-meta">
+      <div className="v3-footer-meta grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:gap-4">
         <div>Home Best Pal SRL | Bucuresti, Romania | contact@mydarrin.com | +40 700 000 000</div>
         <div>{page.content.meta?.domain ?? "mydarrin.homebestpal.com"}</div>
       </div>
@@ -738,7 +879,7 @@ function PublicShell({
 
   return (
     <main
-      className={`${inter.className} v3-page`}
+      className={`${inter.className} v3-page overflow-x-hidden`}
       style={
         {
           "--v3-bg": colors?.background ?? theme?.background ?? "#f5f6f7",
@@ -759,7 +900,7 @@ function PublicShell({
     >
       <GeoRestrictionGate />
       <PublicHeader page={page} />
-      <section className="v3-content-shell">{children}</section>
+      <section className="v3-content-shell px-4 sm:px-6 lg:px-10">{children}</section>
       {hideFooter ? null : <PublicFooter page={page} />}
     </main>
   );
@@ -923,6 +1064,7 @@ function AccountDashboardShell({
   headerStats,
   children,
   action,
+  statusNote,
 }: {
   page: HomepageContent;
   roleLabel: string;
@@ -932,9 +1074,18 @@ function AccountDashboardShell({
   headerStats: Array<{ label: string; value: string; hint?: string }>;
   children: ReactNode;
   action?: ReactNode;
+  statusNote?: { title: string; description: string };
 }) {
   return (
     <PublicShell page={page}>
+      {statusNote ? (
+        <section className="v3-panel-card v3-panel-card-soft">
+          <div className="v3-inline-note v3-inline-note-soft">
+            <strong>{statusNote.title}</strong>
+            <span>{statusNote.description}</span>
+          </div>
+        </section>
+      ) : null}
       <section className="v3-panel-card">
         <div className="v3-page-hero">
           <div>
@@ -955,7 +1106,7 @@ function AccountDashboardShell({
         </div>
       </section>
 
-      <section className="v3-account-shell">
+      <section className="v3-account-shell grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="v3-account-sidebar">
           {sidebar.map((section) => (
             <div key={section.title} className="v3-account-sidebar-section">
@@ -990,8 +1141,28 @@ export function PublicHomepage({
 }) {
   const content = page.content;
   const services = buildHomepageServices(page);
-  const { categoryItems, domainItems } = normalizeCatalogDimensions(catalogServices);
   const heroImageUrl = content.mediaLibrary?.heroImageUrl;
+  const heroSlidesInput = Array.isArray((content as any).heroSlides) ? ((content as any).heroSlides as Array<Record<string, unknown>>) : [];
+  const heroSlides = heroSlidesInput.length
+    ? heroSlidesInput.map((slide, idx) => ({
+        id: String(slide.id ?? `slide-${idx + 1}`),
+        title: String(slide.title ?? `Slide ${idx + 1}`),
+        description: String(slide.description ?? ""),
+        accent: (slide.accent as "orange" | "navy" | "green") ?? (["orange", "navy", "green"][idx % 3] as "orange" | "navy" | "green"),
+        mediaUrl: typeof slide.mediaUrl === "string" ? slide.mediaUrl : undefined,
+        mediaType: (slide.mediaType as "IMAGE" | "VIDEO" | "BANNER") ?? "IMAGE",
+      }))
+    : undefined;
+  const howItWorksSteps = content.howItWorks?.length
+    ? content.howItWorks
+    : [
+        "Descrii / Alegi",
+        "Primesti / selectezi serviciul si nivelele aferente",
+        "Primesti deviz",
+        "Sunt alocati actorii (furnizor serviciu, materiale optional, utilaje optional, transport optional, polita de asigurare optional)",
+        "Executie",
+        "Plata securizata + garantie",
+      ];
   const slogan = content.branding?.slogan ?? "Structura marketplace aprobata";
   const detectedRole = (roleHint ?? "CLIENT").toUpperCase() as "CLIENT" | "INVESTOR" | "PARTNER";
   const heroCopy = {
@@ -1032,6 +1203,9 @@ export function PublicHomepage({
           </div>
         </section>
       ) : null}
+
+      <HeroSlider slides={heroSlides} fullWidth />
+
       <section className="v3-marketplace-stage">
         <article className="v3-marketplace-notice">
           <div className="v3-card-kicker">{slogan}</div>
@@ -1073,115 +1247,12 @@ export function PublicHomepage({
         </Link>
       </section>
 
-      <div className="v3-grid-layout">
-        <aside className="v3-sidebar-card">
-          <div className="v3-kicker">Sidebar sincronizat</div>
-          <h2 className="v3-sidebar-title">Navigare publica</h2>
-          <p className="v3-muted-copy">
-            Structura din stanga oglindeste doar sectiunile publice aprobate in Backoffice. Orice ajustare de categorii,
-            domenii sau linkuri se sincronizeaza automat aici.
-          </p>
-
-          <div className="v3-sidebar-accordion">
-            {([
-              {
-                title: "Servicii",
-                items: categoryItems.length
-                  ? categoryItems
-                  : [
-                      { label: "Servicii principale", href: "/catalog" },
-                      { label: "Catalog complet", href: "/catalog" },
-                    ],
-                highlight: true,
-              },
-              {
-                title: "Domenii",
-                items: domainItems.length
-                  ? domainItems
-                  : [
-                      { label: "Rezidential", href: "/catalog" },
-                      { label: "Commercial", href: "/catalog" },
-                      { label: "Industrial", href: "/catalog" },
-                    ],
-              },
-              {
-                title: "Devino Partener",
-                items: [
-                  { label: "Inscriere Partener", href: "/partners/join" },
-                  { label: "Creeaza Cont Partener", href: "/account/create" },
-                ],
-              },
-              {
-                title: "Devino Investitor",
-                items: [
-                  { label: "Program Investitori", href: "/investors" },
-                  { label: "Creeaza Cont Investitor", href: "/investors/create" },
-                ],
-              },
-              {
-                title: "Asiguratori",
-                items: [
-                  { label: "Parteneriate Asiguratori", href: "/contact" },
-                  { label: "Integrare Asigurari", href: "/contact" },
-                ],
-              },
-              {
-                title: "Clienti",
-                items: [
-                  { label: "Cont Client", href: "/account" },
-                  { label: "Creeaza Cont Client", href: "/account/create" },
-                ],
-              },
-              {
-                title: "Contact",
-                items: [
-                  { label: "Contact My Darrin", href: "/contact" },
-                  { label: "AI Darrin", href: "/account" },
-                ],
-              },
-              {
-                title: "Info / Legal",
-                items: [
-                  { label: "Despre My Darrin", href: "/about" },
-                  { label: "Termeni & GDPR", href: "/legal" },
-                ],
-              },
-            ] as SidebarSection[]).map((section, index) => (
-              <details
-                key={section.title}
-                className={`v3-sidebar-accordion-item ${section.highlight ? "v3-sidebar-accordion-item-highlight" : ""}`}
-                open={index === 0}
-              >
-                <summary className="v3-sidebar-accordion-summary">
-                  <span>{section.title}</span>
-                  <span className="v3-sidebar-accordion-icon" aria-hidden />
-                </summary>
-                <div className="v3-sidebar-accordion-body">
-                  {section.items.map((item) => (
-                    <div key={item.label} className="v3-sidebar-accordion-row">
-                      <Link href={item.href} className="v3-sidebar-accordion-link">
-                        {item.label}
-                      </Link>
-                      {item.subItems?.length ? (
-                        <div className="v3-sidebar-subitems">
-                          {item.subItems.map((subItem) => (
-                            <Link key={subItem.label} href={subItem.href} className="v3-sidebar-subitem">
-                              {subItem.label}
-                            </Link>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  ))}
-                </div>
-              </details>
-            ))}
-          </div>
-        </aside>
+      <div className="v3-grid-layout grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-8">
+        <PublicSidebar catalogServices={catalogServices} />
 
         <div className="v3-page-stack">
           <section className="v3-panel-card">
-            <div className="v3-hero-grid">
+            <div className="v3-hero-grid grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10">
               <div className="v3-hero-copy">
                 <div className="v3-pill-row">
                   <Pill tone="orange">Glovo inspired</Pill>
@@ -1353,8 +1424,11 @@ export function PublicHomepage({
             <article className="v3-section-card v3-section-card-dark">
               <div className="v3-card-kicker v3-card-kicker-light">Cum functioneaza</div>
               <h2 className="v3-section-title">Rapid, clar si fara pasi inutili</h2>
+              <Link href="/how-it-works" className="v3-howitworks-tab">
+                Deschide modul Cum functioneaza
+              </Link>
               <div className="v3-step-list">
-                {(content.howItWorks ?? []).map((step, index) => (
+                {howItWorksSteps.map((step, index) => (
                   <div key={`${step}-${index}`} className="v3-step-card">
                     <div className="v3-step-index">{index + 1}</div>
                     <div>
@@ -1501,8 +1575,14 @@ export function PublicCatalogPage({
         </div>
       </section>
 
-      <section className="v3-section-card">
-        <div className="v3-filter-bar">
+      <div className="v3-grid-layout v3-grid-layout-tight">
+        <PublicSidebar catalogServices={catalogCards} />
+        <div className="v3-page-stack">
+          <section className="v3-section-card v3-catalog-section">
+            <div className="v3-catalog-layout">
+              <CatalogTree />
+              <div>
+                <div className="v3-filter-bar">
           {[
             { label: "Constructii", value: "constructii" },
             { label: "Energie Verde", value: "energie-verde" },
@@ -1517,9 +1597,9 @@ export function PublicCatalogPage({
               {item.label}
             </Link>
           ))}
-        </div>
+                </div>
 
-        <div className="v3-filter-bar v3-filter-bar-secondary">
+                <div className="v3-filter-bar v3-filter-bar-secondary">
           {[
             { label: "Excavatoare", value: "excavator" },
             { label: "Compactoare", value: "compactor" },
@@ -1533,9 +1613,9 @@ export function PublicCatalogPage({
               {item.label}
             </Link>
           ))}
-        </div>
+                </div>
 
-        <div className="v3-catalog-grid">
+                <div className="v3-catalog-grid">
           {catalogServicesResolved.map((service, index) => {
             const catalogMeta = catalogMetaBySlug[service.slug];
             const resolvedPrice = resolveServicePrice(service, dynamicPriceBySlug[service.slug]);
@@ -1590,11 +1670,23 @@ export function PublicCatalogPage({
                     <span className="v3-mini-badge v3-mini-badge-soft">{catalogMeta.brands[0]}</span>
                   ) : null}
                 </div>
+                <div className="v3-tier-summary">
+                  <span>Bronz: manopera standard</span>
+                  <span>Argint: transport + manipulare</span>
+                  <span>Aur: utilaj rental</span>
+                  <span>Platina: garantie + mentenanta 2 ani</span>
+                </div>
                 {availabilityWarning ? <div className="v3-warning-note">{availabilityWarning}</div> : null}
                 {catalogMeta?.availability_status ? (
                   <div className="v3-inline-note">Disponibilitate flota: {catalogMeta.availability_status}</div>
                 ) : null}
                 {rateCardLabel ? <div className="v3-inline-note">Rate-card: {rateCardLabel}</div> : null}
+                {catalogMeta?.object_kind ? (
+                  <div className="v3-inline-note">Tip obiect: {catalogMeta.object_kind}</div>
+                ) : null}
+                {catalogMeta?.pivot_actions?.length ? (
+                  <div className="v3-inline-note">Actiuni sugerate: {catalogMeta.pivot_actions.join(", ")}</div>
+                ) : null}
                 <div className="v3-service-meta">
                   <PriceLockup price={resolvedPrice} compact pulseKey={pricePulseKey ? `${service.slug}:${pricePulseKey}` : null} />
                   <Link href={`/services/${service.slug}`} className="v3-dark-button">
@@ -1604,6 +1696,260 @@ export function PublicCatalogPage({
               </div>
             </article>
           )})}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </PublicShell>
+  );
+}
+
+export function PublicMaterialsPage({
+  page,
+  categories,
+  materials,
+  activeCategory,
+  activeSubcategory,
+}: {
+  page: HomepageContent;
+  categories: PublicCatalogCategoryListResponse | null;
+  materials: PublicCatalogServiceCard[];
+  activeCategory: string | null;
+  activeSubcategory: string | null;
+}) {
+  const groups = categories?.items ?? [];
+  return (
+    <PublicShell page={page}>
+      <section className="v3-panel-card">
+        <div className="v3-page-hero">
+          <div>
+            <div className="v3-eyebrow">Marketplace materiale</div>
+            <h1 className="v3-page-title">Materiale & consumabile gestionate de provideri aprobati</h1>
+            <p className="v3-page-description">
+              Lista de materiale este administrata de provideri de bricolaj sau integrari IP aprobate de SuperAdmin. Selectia
+              materialelor poate declansa automat fluxuri de servicii in My Darrin.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="v3-grid-layout v3-grid-layout-tight">
+        <PublicSidebar />
+        <div className="v3-page-stack">
+          <section className="v3-section-card v3-catalog-section">
+            <div className="v3-catalog-layout">
+              <aside className="v3-catalog-tree">
+                <div className="v3-tree-title">Categorii materiale</div>
+                <div className="v3-tree-list">
+                  {groups.map((group) => (
+                    <div key={group.category_slug} className="v3-tree-node v3-tree-node-level-1">
+                      <Link
+                        href={`/materials?category=${group.category_slug}`}
+                        className={`v3-tree-button ${activeCategory === group.category_slug ? "v3-tree-button-active" : ""}`}
+                      >
+                        <span>{group.category}</span>
+                        <span className="v3-tree-caret">›</span>
+                      </Link>
+                      <div className="v3-tree-children">
+                        {group.subcategories.map((subcategory) => (
+                          <Link
+                            key={subcategory.slug}
+                            href={`/materials?category=${group.category_slug}&subcategory=${subcategory.slug}`}
+                            className={`v3-tree-button v3-tree-node-level-2 ${activeSubcategory === subcategory.slug ? "v3-tree-button-active" : ""}`}
+                          >
+                            {subcategory.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </aside>
+
+              <div>
+                <div className="v3-catalog-grid">
+                  {materials.map((item) => {
+                    const slug = item.slug.toLowerCase();
+                    const pivotKey =
+                      publicMaterialPivotMap[slug] ? slug :
+                      slug.includes("ciment") || slug.includes("silicon") || slug.includes("glet") ? "consumabile-termice" :
+                      null;
+                    const pivot = pivotKey ? publicMaterialPivotMap[pivotKey] : null;
+                    const isConsumable = pivot?.kind === "CONSUMABLE" || pivot?.purchaseOnly;
+                    return (
+                    <article key={item.slug} className="v3-catalog-card">
+                      <div className="v3-catalog-media v3-service-accent-navy">
+                        <Pill>MATERIAL</Pill>
+                      </div>
+                      <div className="v3-catalog-content">
+                        <div className="v3-catalog-category">{item.category ?? "Material"}</div>
+                        <div className="v3-service-title">{item.name}</div>
+                        <p>{item.description ?? "Material disponibil prin marketplace."}</p>
+                        {item.pivot_actions?.length ? (
+                          <div className="v3-inline-note">Actiuni sugerate: {item.pivot_actions.join(", ")}</div>
+                        ) : null}
+                        <div className="v3-service-meta">
+                          <Link href={`/materials/${item.slug}`} className="v3-dark-button">
+                            Vezi detalii
+                          </Link>
+                          <Link href={isConsumable ? "/finalizare-proiect" : "/catalog"} className="v3-primary-button">
+                            {isConsumable ? "Cumpara" : "Solicita serviciu"}
+                          </Link>
+                        </div>
+                      </div>
+                    </article>
+                  )})}
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </PublicShell>
+  );
+}
+
+export function PublicMaterialDetailPage({
+  page,
+  material,
+  specs,
+}: {
+  page: HomepageContent;
+  material: PublicCatalogServiceCard | null;
+  specs: PublicServiceTechnicalSpecs | null;
+}) {
+  if (!material) {
+    return (
+      <PublicShell page={page}>
+        <section className="v3-section-card">
+          <h1 className="v3-page-title">Material indisponibil</h1>
+        </section>
+      </PublicShell>
+    );
+  }
+
+  const resolvePivotKey = () => {
+    const slug = material.slug.toLowerCase();
+    if (publicMaterialPivotMap[slug]) return slug;
+    if (slug.includes("aluminiu")) return "calorifer-aluminiu";
+    if (slug.includes("calorifer") || slug.includes("radiator")) return "radiatoare";
+    if (slug.includes("centrala")) return "centrale-peletti";
+    if (slug.includes("aer") || slug.includes("ac")) return "aer-conditionat";
+    if (slug.includes("parchet") || slug.includes("gresie")) return "parchet-gresie";
+    if (slug.includes("sanitar") || slug.includes("wc") || slug.includes("chiuveta")) return "obiecte-sanitare";
+    if (slug.includes("usa")) return "usi-interior";
+    if (slug.includes("ciment") || slug.includes("silicon") || slug.includes("glet")) return "consumabile-termice";
+    return null;
+  };
+
+  const pivotKey = resolvePivotKey();
+  const pivot = pivotKey ? publicMaterialPivotMap[pivotKey] : null;
+  const minLevel =
+    pivot?.constraints?.minLevel ??
+    ((pivot?.constraints?.weightKg ?? 0) > 100 || (pivot?.constraints?.heightM ?? 0) > 3 ? "AUR" : null);
+  const requiresRental = Boolean(pivot?.constraints?.requiresRental);
+  const isConsumable = pivot?.kind === "CONSUMABLE" || pivot?.purchaseOnly;
+  const actions = isConsumable ? ["Cumpara"] : pivot?.actions ?? ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"];
+
+  const associatedServices = publicServiceCatalog.filter((service) => {
+    if (!pivot) return false;
+    const label = pivot.label.toLowerCase();
+    return service.objectLabel?.toLowerCase().includes(label.split(" ")[0]);
+  });
+
+  const fallbackServices = associatedServices.length ? associatedServices : publicServiceCatalog.slice(0, 3);
+
+  return (
+    <PublicShell page={page}>
+      <section className="v3-panel-card">
+        <div className="v3-page-hero">
+          <div>
+            <div className="v3-eyebrow">Material</div>
+            <h1 className="v3-page-title">{material.name}</h1>
+            <p className="v3-page-description">{material.description ?? "Fisa material."}</p>
+            {pivot ? (
+              <div className="v3-inline-note">
+                Pivot: {pivot.label}. Actiuni: {actions.join(", ")}.
+              </div>
+            ) : null}
+            {minLevel || requiresRental ? (
+              <div className="v3-inline-note">
+                {minLevel ? `Nivel minim auto-selectat: ${minLevel}. ` : ""}
+                {requiresRental ? "Necesita utilaj rental (ex: nacela / transpalet)." : ""}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="v3-section-card">
+        <div className="v3-eyebrow">Actiuni disponibile</div>
+        <h2 className="v3-section-title">Material → Serviciu → Utilaj</h2>
+        <div className="v3-pivot-actions">
+          {actions.map((action) => (
+            <span key={action} className="v3-mini-badge v3-mini-badge-soft">
+              {action}
+            </span>
+          ))}
+        </div>
+        <div className="v3-tier-summary">
+          <span>Nivel selectat: {minLevel ?? "BRONZ"}</span>
+          <span>Bronz: manopera standard</span>
+          <span>Argint: transport + manipulare</span>
+          <span>Aur: utilaj rental</span>
+          <span>Platina: garantie + mentenanta 2 ani</span>
+        </div>
+        {isConsumable ? (
+          <div className="v3-inline-note">
+            Consumabil detectat: mentenanta si reparatia sunt dezactivate. Ramane doar fluxul de cumparare.
+          </div>
+        ) : null}
+      </section>
+
+      <section className="v3-section-card v3-section-card-soft">
+        <div className="v3-eyebrow">Servicii asociate</div>
+        <h2 className="v3-section-title">Fluxuri My Darrin recomandate pentru acest material</h2>
+        <div className="v3-catalog-grid">
+          {fallbackServices.map((service) => (
+            <article key={service.slug} className="v3-catalog-card">
+              <div className={`v3-catalog-media ${accentClass(service.accent)}`}>
+                <Pill>{service.mediaType}</Pill>
+                <span className="v3-rating-badge">{service.rating}</span>
+              </div>
+              <div className="v3-catalog-content">
+                <div className="v3-catalog-category">{service.category}</div>
+                <div className="v3-service-title">{service.title}</div>
+                <p>{service.summary}</p>
+                <div className="v3-service-meta">
+                  <Link href={`/services/${service.slug}`} className="v3-dark-button">
+                    Vezi serviciu
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="v3-section-card">
+        <div className="v3-technical-grid">
+          {(specs?.items ?? []).map((item) => (
+            <div key={item.resource_id} className="v3-technical-card">
+              <div className="v3-card-kicker">{item.resource_type}</div>
+              <strong>{item.resource_name}</strong>
+              <div className="v3-technical-list">
+                {Object.entries(item.technical_specs ?? {}).slice(0, 6).map(([key, value]) => (
+                  <div key={key} className="v3-technical-row">
+                    <span>{key}</span>
+                    <strong>{String(value)}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </PublicShell>
@@ -1660,27 +2006,91 @@ export function PublicServicePage({
   const pricePulseKey = placeId ?? targetAddress ?? null;
   const activeIntervention =
     service.availableInterventions?.find((item) => item.label === service.interventionType) ?? service.availableInterventions?.[0];
-    const checkoutHref = `/checkout?slug=${encodeURIComponent(slug)}${
+    const checkoutHref = `/finalizare-proiect?slug=${encodeURIComponent(slug)}${
       activeIntervention?.label ? `&intervention=${encodeURIComponent(activeIntervention.label)}` : ""
     }${targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""}${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}&escrow_note=${encodeURIComponent("5%")}`;
-    const cartHref = `/cart?slug=${encodeURIComponent(slug)}${targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""}${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}`;
-  const serviceHeadline = page.content.hero?.headline ?? service.title;
-  const serviceSubheadline = page.content.hero?.subheadline ?? service.description;
+    const cartHref = `/cos?slug=${encodeURIComponent(slug)}${targetAddress ? `&target_address=${encodeURIComponent(targetAddress)}` : ""}${placeId ? `&place_id=${encodeURIComponent(placeId)}` : ""}`;
+  const contentBlocks =
+    typeof catalogService?.level_attachments?.content_blocks === "object"
+      ? (catalogService?.level_attachments?.content_blocks as Record<string, string>)
+      : {};
+  const serviceHeadline = contentBlocks.hero_headline || page.content.hero?.headline || service.title;
+  const serviceSubheadline = contentBlocks.hero_subheadline || page.content.hero?.subheadline || service.description;
   const serviceBenefits = page.content.benefits?.length ? page.content.benefits : service.benefits?.length ? service.benefits : DEFAULT_SERVICE_BENEFITS;
-  const serviceTiers =
+  const baseTiers =
     page.content.serviceTiers?.length
       ? page.content.serviceTiers
       : [
-          { tierKey: "silver" as const, title: "Argint", marginMultiplier: 0, benefitsMarkdown: "- Configuratie standard\n- Executie eficienta" },
-          { tierKey: "gold" as const, title: "Aur", marginMultiplier: 12, benefitsMarkdown: "- Programare prioritara\n- Coordonare extinsa" },
-          { tierKey: "platinum" as const, title: "Platina", marginMultiplier: 20, benefitsMarkdown: "- Management dedicat\n- SLA premium" },
+          {
+            tierKey: "bronze" as const,
+            title: "Bronz",
+            marginMultiplier: 0,
+            benefitsMarkdown: "- Manopera standard\n- Evaluare rapida\n- Pret controlat",
+          },
+          {
+            tierKey: "silver" as const,
+            title: "Argint",
+            marginMultiplier: 6,
+            benefitsMarkdown: "- Bronz + Transport\n- Manipulare inclusa\n- Coordonare standard",
+          },
+          {
+            tierKey: "gold" as const,
+            title: "Aur",
+            marginMultiplier: 12,
+            benefitsMarkdown: "- Argint + Utilaj rental (Nacela)\n- Echipa extinsa\n- Programare prioritara",
+          },
+          {
+            tierKey: "platinum" as const,
+            title: "Platina",
+            marginMultiplier: 20,
+            benefitsMarkdown: "- Aur + Garantie extinsa\n- Mentenanta 24 luni\n- Management dedicat",
+          },
         ];
+  const serviceTiers = baseTiers.length < 4
+    ? [
+        {
+          tierKey: "bronze" as const,
+          title: "Bronz",
+          marginMultiplier: 0,
+          benefitsMarkdown: "- Manopera standard\n- Evaluare rapida\n- Pret controlat",
+        },
+        ...baseTiers,
+      ]
+    : baseTiers;
   const serviceSectionsOrder = page.content.serviceSectionsOrder?.length
     ? page.content.serviceSectionsOrder
-    : ["hero", "pricing", "technicalSpecs", "specialCatalog", "tiers", "benefits", "safety", "crossSell"];
+    : [
+        "hero",
+        "pivot",
+        "tiers",
+        "technicalSpecs",
+        "specialCatalog",
+        "pricing",
+        "rideshare",
+        "benefits",
+        "feedback",
+        "safety",
+        "crossSell",
+      ];
   const relatedServices = publicServiceCatalog.filter((item) => item.slug !== service.slug).slice(0, 4);
   const safetyChecklist = publicSafetyChecklist[service.slug];
+  const pricingNote = contentBlocks.pricing_note;
+  const safetyNote = contentBlocks.safety_note;
   const crossSellItems = publicCrossSellMap[service.slug] ?? [];
+  const pivotActions =
+    service.availableInterventions?.length
+      ? service.availableInterventions.map((item) => ({
+          label: item.label,
+          href: `/services/${item.serviceSlug}`,
+          detail: item.taskLabel,
+          meta: `${item.skill} · ${item.requiredPeople} oameni`,
+        }))
+      : (catalogService?.pivot_actions ?? ["Reparatie", "Mentenanta", "Inlocuire", "Montaj"]).map((label) => ({
+          label,
+          href: `/services/${service.slug}`,
+          detail: "Actiune recomandata",
+          meta: "Flux deviz sincronizat",
+        }));
 
   const serviceSectionContent: Record<string, ReactNode> = {
     hero: (
@@ -1724,23 +2134,19 @@ export function PublicServicePage({
                   Adauga in cos
                 </Link>
             </div>
+            {pricingNote ? <div className="v3-inline-note">{pricingNote}</div> : null}
             {deliveryBadge ? <div className="v3-inline-note">{deliveryBadge}</div> : null}
             {availabilityWarning ? <div className="v3-warning-note">{availabilityWarning}</div> : null}
-            {service.objectLabel && service.availableInterventions?.length ? (
+            {service.objectLabel ? (
               <div className="v3-object-recursion-card">
-                <div className="v3-card-kicker">Obiect inteligent</div>
+                <div className="v3-card-kicker">Pivot Material {"->"} Serviciu</div>
                 <div className="v3-object-recursion-title">{service.objectLabel}</div>
                 <div className="v3-object-recursion-grid">
-                  {service.availableInterventions.map((intervention) => (
-                    <Link
-                      key={intervention.label}
-                      href={`/services/${intervention.serviceSlug}`}
-                      className={`v3-object-recursion-item ${intervention.label === service.interventionType ? "v3-object-recursion-item-active" : ""}`}
-                    >
-                      <strong>{intervention.label}</strong>
-                      <span>{intervention.taskLabel}</span>
-                      <span>Skill: {intervention.skill} · {intervention.requiredPeople} oameni</span>
-                      <span>ESCO/NACE: {intervention.escoCodes.join(", ")} · {intervention.naceCodes.join(", ")}</span>
+                  {pivotActions.map((action) => (
+                    <Link key={action.label} href={action.href} className="v3-object-recursion-item">
+                      <strong>{action.label}</strong>
+                      <span>{action.detail}</span>
+                      <span>{action.meta}</span>
                     </Link>
                   ))}
                 </div>
@@ -1772,10 +2178,28 @@ export function PublicServicePage({
         </div>
         </section>
       ),
+    pivot: (
+      <article className="v3-section-card v3-section-card-soft" key="pivot">
+        <div className="v3-eyebrow">Pivot Material {"->"} Serviciu</div>
+        <h2 className="v3-section-title">Selectezi materialul, noi activam serviciul potrivit</h2>
+        <div className="v3-pivot-actions-grid">
+          {pivotActions.map((action) => (
+            <Link key={action.label} href={action.href} className="v3-pivot-action-card">
+              <div className="v3-pivot-action-title">{action.label}</div>
+              <div className="v3-pivot-action-copy">{action.detail}</div>
+              <div className="v3-pivot-action-meta">{action.meta}</div>
+            </Link>
+          ))}
+        </div>
+      </article>
+    ),
     pricing: (
       <article className="v3-section-card v3-section-card-soft" key="pricing">
         <div className="v3-eyebrow">Pret & disponibilitate</div>
         <h2 className="v3-section-title">Rezumatul comercial pentru serviciul selectat</h2>
+        <div className="v3-inline-note">
+          Formula deviz: (M+C) + (L+C) + (U+C) + T_p + T_i
+        </div>
         <div className="v3-level-grid">
           <div className="v3-level-card">
             <PriceLockup price={resolvedPrice} center pulseKey={pricePulseKey ? `${slug}:pricing:${pricePulseKey}` : null} />
@@ -1796,7 +2220,7 @@ export function PublicServicePage({
               <strong>{item.resource_name}</strong>
               <div className="v3-technical-table">
                 {Object.entries(item.technical_specs ?? {})
-                  .slice(0, 6)
+                  .slice(0, 8)
                   .map(([key, value]) => (
                     <div key={key} className="v3-technical-row">
                       <span className="v3-technical-key">
@@ -1995,6 +2419,7 @@ export function PublicServicePage({
       <article className="v3-section-card v3-section-card-soft" key="safety">
         <div className="v3-eyebrow">Siguranta & rezilienta</div>
         <h2 className="v3-section-title">Certificari si documente obligatorii</h2>
+        {safetyNote ? <p className="v3-page-description">{safetyNote}</p> : null}
         <div className="v3-benefits-grid">
           {(safetyChecklist?.certifications ?? ["eIDAS", "Asigurare malpraxis partener", "Declaratie conformitate"]).map((item) => (
             <div key={item} className="v3-benefit-card">
@@ -2009,6 +2434,78 @@ export function PublicServicePage({
             </Link>
           </div>
         ) : null}
+      </article>
+    ),
+    rideshare: (
+      <article className="v3-section-card" key="rideshare">
+        <div className="v3-eyebrow">Rideshare & logistica</div>
+        <h2 className="v3-section-title">Optimizare transport prin rideshare</h2>
+        <p className="v3-page-description">
+          Grupam livrarile similare pentru a reduce costul transportului si timpul de executie. Selecteaza preferinta ta
+          pentru rideshare inainte de comanda.
+        </p>
+        <div className="v3-benefits-grid">
+          {[
+            "Rute combinate pentru materiale si utilaje",
+            "Scadere costuri transport",
+            "Notificari automate pentru ETA",
+            "Prioritizare santiere AUR / PLATINA",
+          ].map((item) => (
+            <div key={item} className="v3-benefit-card">
+              {item}
+            </div>
+          ))}
+        </div>
+        <div className="v3-service-detail-actions">
+          <button type="button" className="v3-primary-button">
+            Activeaza rideshare
+          </button>
+          <button type="button" className="v3-dark-button">
+            Pastreaza livrare standard
+          </button>
+        </div>
+      </article>
+    ),
+    feedback: (
+      <article className="v3-section-card" key="feedback">
+        <div className="v3-eyebrow">Feedback System</div>
+        <h2 className="v3-section-title">Lasa un feedback dupa executie</h2>
+        <p className="v3-page-description">
+          Ratingul si comentariul tau se reflecta in scorul providerului si in deciziile de alocare pentru lucrari viitoare.
+        </p>
+        <div className="grid gap-4 lg:grid-cols-[0.6fr_0.4fr]">
+          <div className="v3-panel-card">
+            <div className="v3-card-kicker">Review client</div>
+            <div className="grid gap-3">
+              <select className="v3-form-control">
+                <option>5 - Excelent</option>
+                <option>4 - Foarte bun</option>
+                <option>3 - Bun</option>
+                <option>2 - Acceptabil</option>
+                <option>1 - Nesatisfacator</option>
+              </select>
+              <textarea className="v3-form-control min-h-28" placeholder="Descrie experienta ta cu serviciul..." />
+              <button className="v3-primary-button" type="button">
+                Trimite feedback
+              </button>
+            </div>
+          </div>
+          <div className="v3-section-card v3-section-card-soft">
+            <div className="v3-card-kicker">Ultimele evaluari</div>
+            <div className="v3-step-list">
+              {[
+                "Client - 5/5: executie rapida si curata",
+                "Client - 4/5: comunicare buna, timpul de sosire usor intarziat",
+                "Client - 5/5: recomand pentru mentenanta",
+              ].map((item, index) => (
+                <div key={item} className="v3-step-card v3-step-card-light">
+                  <div className="v3-step-index">{index + 1}</div>
+                  <div>{item}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </article>
     ),
     crossSell: (
@@ -2027,27 +2524,37 @@ export function PublicServicePage({
     tiers: (
       <article className="v3-section-card" key="tiers">
         <div className="v3-eyebrow">Pachete si niveluri</div>
-        <h2 className="v3-section-title">Alege nivelul potrivit cu un layout curat si comparabil</h2>
+        <h2 className="v3-section-title">Niveluri prezentate in carduri/tab-uri curate</h2>
         <div className="v3-tier-tabs">
-          {serviceTiers.map((tier, index) => (
-            <div key={tier.tierKey} className={`v3-tier-card ${index === 1 ? "v3-tier-card-featured" : ""}`}>
-              <div className="v3-tier-card-head">
-                <VisualEditableText slug="service-detail" path={`serviceTiers.${index}.title`} value={tier.title} as="div" className="v3-tier-card-title" />
-                <div className="v3-tier-card-price">
-                  {resolvedPrice.levels[index]?.price ?? resolvedPrice.levels[0]?.price ?? resolvedPrice.startingPrice}
+          <div className="v3-tier-tab-row">
+            {serviceTiers.map((tier, index) => (
+              <div key={tier.tierKey} className={`v3-tier-tab ${index === 0 ? "v3-tier-tab-active" : ""}`}>
+                <span>{tier.title}</span>
+                <strong>{resolvedPrice.levels[index]?.price ?? resolvedPrice.startingPrice}</strong>
+              </div>
+            ))}
+          </div>
+          <div className="v3-tier-tab-content">
+            {serviceTiers.map((tier, index) => (
+              <div key={tier.tierKey} className={`v3-tier-card ${index === 1 ? "v3-tier-card-featured" : ""}`}>
+                <div className="v3-tier-card-head">
+                  <VisualEditableText slug="service-detail" path={`serviceTiers.${index}.title`} value={tier.title} as="div" className="v3-tier-card-title" />
+                  <div className="v3-tier-card-price">
+                    {resolvedPrice.levels[index]?.price ?? resolvedPrice.startingPrice}
+                  </div>
+                </div>
+                <div className="v3-tier-card-meta">Marja +{tier.marginMultiplier ?? 0}% ? Vizibil public dupa aprobare</div>
+                <div className="v3-tier-card-list">
+                  {parseBenefits(tier.benefitsMarkdown ?? "Pachet configurabil din Backoffice.").map((benefit) => (
+                    <div key={benefit} className="v3-tier-card-item">
+                      <span className="v3-tier-card-icon" aria-hidden />
+                      <span>{benefit}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="v3-tier-card-meta">Marja +{tier.marginMultiplier ?? 0}% · Vizibil public dupa aprobare</div>
-              <div className="v3-tier-card-list">
-                {parseBenefits(tier.benefitsMarkdown ?? "Pachet configurabil din Backoffice.").map((benefit) => (
-                  <div key={benefit} className="v3-tier-card-item">
-                    <span className="v3-tier-card-icon" aria-hidden />
-                    <span>{benefit}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </article>
     ),
@@ -2068,45 +2575,50 @@ export function PublicServicePage({
 
   return (
     <PublicShell page={page}>
-      {serviceSectionContent.hero}
-      <section className="v3-split-highlight">
-        {serviceSectionsOrder.filter((sectionKey) => sectionKey !== "hero").map((sectionKey) => serviceSectionContent[sectionKey] ?? null)}
-      </section>
-      <section className="v3-section-card">
-        <div className="v3-eyebrow">Poate te intereseaza si</div>
-        <h2 className="v3-section-title">Servicii complementare promovate sub pagina dedicata</h2>
-        <div className="v3-catalog-grid">
-          {relatedServices.map((related) => {
-            const relatedPrice = resolveServicePrice(related);
-            return (
-              <article key={related.slug} className="v3-catalog-card">
-                <div className={`v3-catalog-media ${accentClass(related.accent)}`}>
-                  <Pill>{related.mediaType}</Pill>
-                  <span className="v3-rating-badge">{related.rating}</span>
-                </div>
-                <div className="v3-catalog-content">
-                  <div className="v3-catalog-category">{related.category}</div>
-                  <div className="v3-service-title">{related.title}</div>
-                  <p>{related.summary}</p>
-                  <div className="v3-service-badges">
-                    {related.badges.slice(0, 3).map((badge) => (
-                      <span key={badge} className="v3-mini-badge">
-                        {badge}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="v3-service-meta">
-                    <PriceLockup price={relatedPrice} compact />
-                    <Link href={`/services/${related.slug}`} className="v3-dark-button">
-                      Vezi serviciul
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+      <div className="v3-grid-layout v3-grid-layout-tight">
+        <PublicSidebar catalogServices={catalogService ? [catalogService] : undefined} />
+        <div className="v3-page-stack">
+          {serviceSectionContent.hero}
+          <div className="v3-page-stack">
+            {serviceSectionsOrder.filter((sectionKey) => sectionKey !== "hero").map((sectionKey) => serviceSectionContent[sectionKey] ?? null)}
+          </div>
+          <section className="v3-section-card">
+            <div className="v3-eyebrow">Poate te intereseaza si</div>
+            <h2 className="v3-section-title">Servicii complementare promovate sub pagina dedicata</h2>
+            <div className="v3-catalog-grid">
+              {relatedServices.map((related) => {
+                const relatedPrice = resolveServicePrice(related);
+                return (
+                  <article key={related.slug} className="v3-catalog-card">
+                    <div className={`v3-catalog-media ${accentClass(related.accent)}`}>
+                      <Pill>{related.mediaType}</Pill>
+                      <span className="v3-rating-badge">{related.rating}</span>
+                    </div>
+                    <div className="v3-catalog-content">
+                      <div className="v3-catalog-category">{related.category}</div>
+                      <div className="v3-service-title">{related.title}</div>
+                      <p>{related.summary}</p>
+                      <div className="v3-service-badges">
+                        {related.badges.slice(0, 3).map((badge) => (
+                          <span key={badge} className="v3-mini-badge">
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="v3-service-meta">
+                        <PriceLockup price={relatedPrice} compact />
+                        <Link href={`/services/${related.slug}`} className="v3-dark-button">
+                          Vezi serviciul
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
     </PublicShell>
   );
 }
@@ -2307,6 +2819,66 @@ export function PublicLegalPage({ page }: { page: HomepageContent }) {
   );
 }
 
+export function PublicMarketplaceProviderPage({ page }: { page: HomepageContent }) {
+  return (
+    <GenericPublicLanding
+      page={page}
+      eyebrow="Marketplace Providers"
+      title="Providerii My Darrin isi pot crea cont si publica materiale / utilaje"
+      description="Dupa aprobarea SuperAdmin, produsele si utilajele devin vizibile public in Marketplace, cu comisioane configurabile."
+      leftTitle="Pentru furnizori materiale"
+      leftItems={[
+        "Cont dedicat marketplace materiale",
+        "Publicare produse si stocuri",
+        "Aprobari si validari SuperAdmin",
+        "Vizibilitate automata in catalog",
+      ]}
+      rightTitle="Pentru inchirieri utilaje"
+      rightItems={[
+        "Publicare utilaje si disponibilitate",
+        "Calendar de inchiriere sincronizat",
+        "Contracte si asigurari optionale",
+        "Pachet standard de comisioane",
+      ]}
+      primaryHref="/partners/join"
+      primaryLabel="Devino provider"
+      secondaryHref="/materials"
+      secondaryLabel="Vezi marketplace"
+    />
+  );
+}
+
+export function PublicHowItWorksPage({ page }: { page: HomepageContent }) {
+  return (
+    <GenericPublicLanding
+      page={page}
+      eyebrow="Cum functioneaza"
+      title="Rapid, clar si fara pasi inutili"
+      description="Platforma My Darrin urmeaza un flux standardizat: alegi, primesti deviz, alocam actorii si executia, apoi plata si garantia sunt securizate."
+      leftTitle="Pasii principali"
+      leftItems={[
+        "Pasul 1: Descrii / Alegi",
+        "Pasul 2: Primesti / selectezi serviciul si nivelele aferente",
+        "Pasul 3: Primesti deviz",
+        "Pasul 4: Alocare actori (serviciu, materiale, utilaje, transport, asigurare optional)",
+        "Pasul 5: Executie",
+        "Pasul 6: Plata securizata + garantie",
+      ]}
+      rightTitle="Ce primesti"
+      rightItems={[
+        "Proces clar, fara pasi inutili",
+        "Preturi standardizate si transparente",
+        "Alocare automata a resurselor",
+        "Siguranta si garantie la final",
+      ]}
+      primaryHref="/catalog"
+      primaryLabel="Vezi servicii"
+      secondaryHref="/account"
+      secondaryLabel="Vorbeste cu AI Darrin"
+    />
+  );
+}
+
 export function PublicAccountPage({ page }: { page: HomepageContent }) {
   return (
     <PublicShell page={page} hideFooter>
@@ -2340,6 +2912,10 @@ export function PublicAccountPage({ page }: { page: HomepageContent }) {
               <span>sau identifica-te prin email</span>
             </div>
             <PublicAccountLoginForm />
+
+            <div className="mt-8">
+              <PublicAiDarrinChat defaultServiceSlug={publicServiceCatalog[0]?.slug} />
+            </div>
 
             <Link href="/account/create" className="v3-auth-forgot-link">
               Ai uitat parola sau nu ai cont? Continua cu inregistrarea.
@@ -2493,6 +3069,7 @@ function PublicRoleCompletionPage({
   page,
   leadId,
   role,
+  subrole,
   eyebrow,
   title,
   description,
@@ -2502,7 +3079,8 @@ function PublicRoleCompletionPage({
 }: {
   page: HomepageContent;
   leadId: number;
-  role: "CLIENT" | "PARTNER" | "INVESTOR";
+  role: "CLIENT" | "PARTNER" | "INVESTOR" | "ADMIN";
+  subrole?: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -2525,7 +3103,7 @@ function PublicRoleCompletionPage({
       </section>
 
       <section className="v3-section-card">
-        <PublicRoleCompletionForm leadId={leadId} role={role} />
+        <PublicRoleCompletionForm leadId={leadId} role={role} subrole={subrole} />
       </section>
 
       <section className="v3-split-highlight">
@@ -2583,26 +3161,138 @@ export function PublicClientAccountCompletionPage({ page, leadId }: { page: Home
   );
 }
 
-export function PublicPartnerAccountCompletionPage({ page, leadId }: { page: HomepageContent; leadId: number }) {
+export function PublicPartnerAccountCompletionPage({
+  page,
+  leadId,
+  subrole,
+}: {
+  page: HomepageContent;
+  leadId: number;
+  subrole?: string;
+}) {
+  const context = (subrole ?? "services").toLowerCase();
+  const contextConfig: Record<
+    string,
+    { eyebrow: string; title: string; description: string; roleBenefits: string[]; nextSteps: string[] }
+  > = {
+    services: {
+      eyebrow: "Pasul 3 - Partener servicii",
+      title: "Finalizeaza contul de partener servicii",
+      description: "Contul partener este separat de client si intra in fluxul de aprobare operationala dupa finalizarea parolei.",
+      roleBenefits: [
+        "Traseu dedicat pentru prestatori verificati",
+        "Documentele si disponibilitatea raman pe profilul partener",
+        "Nu se amesteca cu datele clientului",
+        "Accesul operational se deschide dupa aprobare",
+      ],
+      nextSteps: [
+        "Datele intra in validarea operationala",
+        "Super Admin sau echipa de verificare aproba accesul relevant",
+        "Dupa aprobare, partenerul continua in dashboardul dedicat",
+      ],
+    },
+    "materials-marketplace": {
+      eyebrow: "Pasul 3 - Provider materiale",
+      title: "Finalizeaza contul de provider materiale",
+      description: "Contul de provider materiale intra in verificare pentru activarea marketplace-ului si a stocurilor.",
+      roleBenefits: [
+        "Catalog de materiale sincronizat",
+        "Stocuri, livrare si SLA urmarite in timp real",
+        "Comenzi marketplace direct din My Darrin",
+        "Flux separat de partenerii de servicii",
+      ],
+      nextSteps: [
+        "Documentele sunt validate de Super Admin",
+        "Dupa aprobare, marketplace-ul devine activ",
+        "Primesti acces la modulul de stocuri si livrare",
+      ],
+    },
+    "materials-ip": {
+      eyebrow: "Pasul 3 - Integrare IP",
+      title: "Finalizeaza contul pentru integrare IP",
+      description: "Integrarea IP necesita aprobare si verificarea conectarii la sistemul propriu de stocuri.",
+      roleBenefits: [
+        "Sincronizare automata prin API",
+        "Acces la monitorizarea feed-urilor",
+        "Validari tehnice aprobate de Super Admin",
+        "Flux separat de marketplace manual",
+      ],
+      nextSteps: [
+        "Se valideaza documentatia tehnica",
+        "Se activeaza tokenul de integrare",
+        "Stocurile se sincronizeaza automat",
+      ],
+    },
+    rental: {
+      eyebrow: "Pasul 3 - Provider rental",
+      title: "Finalizeaza contul de provider inchirieri utilaje",
+      description: "Contul de rental activeaza gestiunea flotei de utilaje si tarifele orare/zi.",
+      roleBenefits: [
+        "Flota utilaje vizibila pentru servicii AUR/PLATINA",
+        "Tarife si disponibilitate gestionate centralizat",
+        "Alocari rapide pentru santiere",
+        "Flux separat de marketplace materiale",
+      ],
+      nextSteps: [
+        "Se valideaza documentele utilajelor",
+        "Se aproba accesul la centrul rental",
+        "Utilajele devin vizibile in devize",
+      ],
+    },
+    concrete: {
+      eyebrow: "Pasul 3 - Provider betoane",
+      title: "Finalizeaza contul de furnizor betoane",
+      description: "Acces pentru livrari beton, clase comerciale si logistica programata.",
+      roleBenefits: [
+        "Catalog betoane cu niveluri Bronz-Platina",
+        "Optiuni logistice si transport programat",
+        "Comenzi directe din platforma",
+        "Flux separat de partenerii de servicii",
+      ],
+      nextSteps: [
+        "Se valideaza documentele statiei",
+        "Se aproba accesul la catalogul betoanelor",
+        "Intri in fluxul de livrari programate",
+      ],
+    },
+  };
+  const config = contextConfig[context] ?? contextConfig.services;
   return (
     <PublicRoleCompletionPage
       page={page}
       leadId={leadId}
       role="PARTNER"
-      eyebrow="Pasul 3 - Partener"
-      title="Finalizeaza contul de partener"
-      description="Contul partener este separat de client si intra in fluxul de aprobare operationala dupa finalizarea parolei."
+      subrole={subrole}
+      eyebrow={config.eyebrow}
+      title={config.title}
+      description={config.description}
+      backHref={`/account/create/select-role?lead=${leadId}`}
+      roleBenefits={config.roleBenefits}
+      nextSteps={config.nextSteps}
+    />
+  );
+}
+
+export function PublicAdminAccountCompletionPage({ page, leadId }: { page: HomepageContent; leadId: number }) {
+  return (
+    <PublicRoleCompletionPage
+      page={page}
+      leadId={leadId}
+      role="ADMIN"
+      eyebrow="Pasul 3 - Admin"
+      title="Finalizeaza contul de administrare"
+      description="Contul Admin intra automat in verificare. Super Admin aloca permisiunile finale dupa audit."
       backHref={`/account/create/select-role?lead=${leadId}`}
       roleBenefits={[
-        "Traseu dedicat pentru prestatori verificati",
-        "Documentele si disponibilitatea raman pe profilul partener",
-        "Nu se amesteca cu datele clientului",
-        "Accesul operational se deschide dupa aprobare",
+        "Acces controlat in Backoffice doar dupa aprobare",
+        "Permisiuni alocate granular pe module",
+        "Audit complet pe actiuni administrative",
+        "Flux separat de Client, Partener si Investitor",
       ]}
       nextSteps={[
-        "Datele intra in validarea operationala",
-        "Super Admin sau echipa de verificare aproba accesul relevant",
-        "Dupa aprobare, partenerul continua in dashboardul dedicat",
+        "Cererea este trimisa automat catre Super Admin",
+        "Se verifica datele si documentele necesare",
+        "Permisiunile se activeaza doar dupa aprobare",
       ]}
     />
   );
@@ -2769,8 +3459,8 @@ export function PublicCartPage({
   const resolvedCheckoutHref =
     checkoutHref ??
     (resolvedItems[0]?.service.slug
-      ? `/checkout?slug=${encodeURIComponent(resolvedItems[0].service.slug)}`
-      : "/checkout");
+      ? `/finalizare-proiect?slug=${encodeURIComponent(resolvedItems[0].service.slug)}`
+      : "/finalizare-proiect");
 
   return (
     <PublicShell page={page}>
@@ -2793,19 +3483,17 @@ export function PublicCartPage({
         {resolvedItems.length === 0 ? (
           <div className="v3-inline-note">Nu exista servicii in cos. Revino in catalog pentru selectie.</div>
         ) : null}
-        <div className="v3-cart-grid">
-          {resolvedItems.map((item) => (
-            <article key={item.service.slug} className="v3-cart-card">
-              <div className={`v3-cart-media ${accentClass(item.service.accent)}`}>[{item.service.mediaType}]</div>
-              <div>
-                <div className="v3-service-title">{item.service.title}</div>
-                <p>{item.service.summary}</p>
-                {item.deliveryBadge ? <div className="v3-inline-note">{item.deliveryBadge}</div> : null}
-              </div>
-              <div className="v3-price-text">{item.price.startingPrice}</div>
-            </article>
-          ))}
-        </div>
+        <PublicCartClient
+          fallbackItems={resolvedItems.map((item) => ({
+            slug: item.service.slug,
+            title: item.service.title,
+            category: item.service.category ?? item.service.domain ?? "General",
+            summary: item.service.summary,
+            mediaType: item.service.mediaType,
+            accent: item.service.accent,
+            startingPrice: item.price.startingPrice,
+          }))}
+        />
         {resolvedItems.length ? (
           <div className="v3-checkout-summary">
             <div>
@@ -2861,15 +3549,8 @@ export function PublicCheckoutPage({
 
       <section className="v3-split-highlight">
         <article className="v3-section-card">
-          <div className="v3-form-grid">
-            <GeoAddressAutocomplete helperText="Autocomplete-ul trimite place_id catre backend pentru calcul fiscal si geografic exact." />
-            {["Persoana de contact", "Telefon", "Fereastra de executie", "Observatii"].map((field) => (
-              <label key={field} className="v3-form-field">
-                <span>{field}</span>
-                <div className="v3-form-input" />
-              </label>
-            ))}
-          </div>
+          <GeoAddressAutocomplete helperText="Autocomplete-ul trimite place_id catre backend pentru calcul fiscal si geografic exact." />
+          <PublicCheckoutFields />
         </article>
         <article className="v3-section-card v3-section-card-soft">
           <div className="v3-eyebrow">Rezumat</div>
@@ -2890,6 +3571,8 @@ export function PublicCheckoutPage({
           {context?.targetAddress ? (
             <div className="v3-inline-note">Adresa selectata: {context.targetAddress}</div>
           ) : null}
+          <PublicCheckoutDraftSummary />
+          <div className="v3-inline-note">Rideshare: doar furnizori validati & integrati (placeholder logic).</div>
           <div className="v3-object-recursion-card">
             <div className="v3-card-kicker">Pachetul de Siguranta My Darrin</div>
             <div className="v3-muted-copy">
@@ -3027,13 +3710,21 @@ export function PublicClientAccountDashboardPage({ page }: { page: HomepageConte
   );
 }
 
-export function PublicPartnerAccountDashboardPage({ page }: { page: HomepageContent }) {
+export function PublicPartnerAccountDashboardPage({ page, pending }: { page: HomepageContent; pending?: boolean }) {
   return (
     <AccountDashboardShell
       page={page}
       roleLabel="Cont partener / provider"
       title="Dashboard partener - lucrari, executie si validari"
       description="Structura urmeaza Backoffice: meniu lateral cu module, statusuri de lucru si actiuni rapide."
+      statusNote={
+        pending
+          ? {
+              title: "Cont in verificare",
+              description: "Accesul operational se activeaza dupa aprobarea Super Admin.",
+            }
+          : undefined
+      }
       headerStats={[
         { label: "Comenzi alocate", value: "6", hint: "Active" },
         { label: "Rata finalizare", value: "93%", hint: "Ultimele 30 zile" },
@@ -3100,36 +3791,245 @@ export function PublicPartnerAccountDashboardPage({ page }: { page: HomepageCont
   );
 }
 
-export function PublicProviderAccountDashboardPage({ page }: { page: HomepageContent }) {
-  return (
-    <AccountDashboardShell
-      page={page}
-      roleLabel="Cont provider"
-      title="Dashboard provider - stocuri, livrari si SLA"
-      description="Providerii gestioneaza resursele si materialele sincronizate cu Backoffice."
-      headerStats={[
-        { label: "Comenzi livrare", value: "12", hint: "Saptamana curenta" },
-        { label: "Disponibilitate", value: "OK", hint: "Stoc raportat" },
-        { label: "SLA", value: "96%", hint: "Performanta" },
-      ]}
-      sidebar={[
+export function PublicProviderAccountDashboardPage({
+  page,
+  pending,
+  providerType,
+}: {
+  page: HomepageContent;
+  pending?: boolean;
+  providerType?: string;
+}) {
+  const contextKey = (providerType ?? "").toLowerCase();
+  const contexts: Record<
+    string,
+    {
+      roleLabel: string;
+      title: string;
+      description: string;
+      sidebar: AccountSidebarSection[];
+      headerStats: Array<{ label: string; value: string; hint?: string }>;
+    }
+  > = {
+    materials: {
+      roleLabel: "Provider materiale",
+      title: "Marketplace materiale - stocuri, livrari si SLA",
+      description: "Gestionezi catalogul de produse si sincronizezi stocurile cu marketplace-ul My Darrin.",
+      headerStats: [
+        { label: "Comenzi materiale", value: "14", hint: "Saptamana curenta" },
+        { label: "Stoc sincronizat", value: "OK", hint: "Ultimul sync" },
+        { label: "SLA", value: "97%", hint: "Performanta" },
+      ],
+      sidebar: [
         {
-          title: "Logistica",
+          title: "Catalog materiale",
           items: [
-            { label: "Livrari active", href: "/providers/account" },
-            { label: "Stocuri raportate", href: "/providers/account" },
-            { label: "Programari", href: "/providers/account" },
+            { label: "Produse active", href: "/marketplace/providers/materials" },
+            { label: "Stocuri & livrari", href: "/marketplace/providers/materials" },
+            { label: "Comenzi marketplace", href: "/marketplace/providers/materials" },
           ],
         },
         {
           title: "Profil provider",
           items: [
-            { label: "Contracte", href: "/providers/account" },
-            { label: "Documente & conformitate", href: "/providers/account" },
-            { label: "Setari cont", href: "/providers/account" },
+            { label: "Documente & conformitate", href: "/marketplace/providers/materials" },
+            { label: "Setari integrare", href: "/marketplace/providers/materials" },
           ],
         },
-      ]}
+      ],
+    },
+    "materials-ip": {
+      roleLabel: "Provider materiale (Integrare IP)",
+      title: "Integrare IP - sincronizare stocuri si feed",
+      description: "Conectezi sistemul propriu de inventar cu platforma pentru actualizari automate.",
+      headerStats: [
+        { label: "Feed activ", value: "1", hint: "Integrare" },
+        { label: "Sincronizari", value: "4/zi", hint: "Ritm" },
+        { label: "SLA", value: "99%", hint: "Performanta" },
+      ],
+      sidebar: [
+        {
+          title: "Integrare",
+          items: [
+            { label: "Token API", href: "/marketplace/providers/materials/ip" },
+            { label: "Endpoint-uri", href: "/marketplace/providers/materials/ip" },
+            { label: "Log sincronizare", href: "/marketplace/providers/materials/ip" },
+          ],
+        },
+        {
+          title: "Conformitate",
+          items: [
+            { label: "Documente", href: "/marketplace/providers/materials/ip" },
+            { label: "Audit securitate", href: "/marketplace/providers/materials/ip" },
+          ],
+        },
+      ],
+    },
+    rental: {
+      roleLabel: "Provider inchirieri utilaje",
+      title: "Centru Rental - utilaje, tarife si disponibilitate",
+      description: "Administrezi flota de utilaje si aloci resursele pentru lucrarile de nivel AUR/PLATINA.",
+      headerStats: [
+        { label: "Utilaje active", value: "9", hint: "Disponibile" },
+        { label: "Rezervari", value: "5", hint: "Saptamana" },
+        { label: "SLA", value: "95%", hint: "Performanta" },
+      ],
+      sidebar: [
+        {
+          title: "Flota utilaje",
+          items: [
+            { label: "Utilaje disponibile", href: "/marketplace/providers/rental" },
+            { label: "Tarife & pachete", href: "/marketplace/providers/rental" },
+            { label: "Rezervari", href: "/marketplace/providers/rental" },
+          ],
+        },
+        {
+          title: "Profil provider",
+          items: [
+            { label: "Documente utilaje", href: "/marketplace/providers/rental" },
+            { label: "Asigurari", href: "/marketplace/providers/rental" },
+          ],
+        },
+      ],
+    },
+    concrete: {
+      roleLabel: "Provider betoane",
+      title: "Livrare betoane - clase, transport si programari",
+      description: "Configurezi clasele de beton, livrarile si optiunile logistice pentru santiere.",
+      headerStats: [
+        { label: "Comenzi beton", value: "7", hint: "Saptamana" },
+        { label: "Capacitate", value: "85%", hint: "Utilizare" },
+        { label: "SLA", value: "96%", hint: "Performanta" },
+      ],
+      sidebar: [
+        {
+          title: "Catalog betoane",
+          items: [
+            { label: "Clase active", href: "/marketplace/providers/concrete" },
+            { label: "Livrari programate", href: "/marketplace/providers/concrete" },
+            { label: "Tarife transport", href: "/marketplace/providers/concrete" },
+          ],
+        },
+        {
+          title: "Profil furnizor",
+          items: [
+            { label: "Documente statie", href: "/marketplace/providers/concrete" },
+            { label: "Certificari", href: "/marketplace/providers/concrete" },
+          ],
+        },
+      ],
+    },
+  };
+
+  const fallbackContext = {
+    roleLabel: "Cont provider",
+    title: "Dashboard provider - stocuri, livrari si SLA",
+    description: "Providerii gestioneaza resursele si materialele sincronizate cu Backoffice.",
+    headerStats: [
+      { label: "Comenzi livrare", value: "12", hint: "Saptamana curenta" },
+      { label: "Disponibilitate", value: "OK", hint: "Stoc raportat" },
+      { label: "SLA", value: "96%", hint: "Performanta" },
+    ],
+    sidebar: [
+      {
+        title: "Logistica",
+        items: [
+          { label: "Livrari active", href: "/providers/account" },
+          { label: "Stocuri raportate", href: "/providers/account" },
+          { label: "Programari", href: "/providers/account" },
+        ],
+      },
+      {
+        title: "Profil provider",
+        items: [
+          { label: "Contracte", href: "/providers/account" },
+          { label: "Documente & conformitate", href: "/providers/account" },
+          { label: "Setari cont", href: "/providers/account" },
+        ],
+      },
+    ],
+  };
+
+  const context = contexts[contextKey] ?? fallbackContext;
+  const resourceCards: Record<string, Array<{ kicker: string; title: string; description: string }>> = {
+    materials: [
+      {
+        kicker: "Stocuri",
+        title: "Gestiune produse & disponibilitate",
+        description: "Actualizezi rapid stocurile si statusul produselor listate in marketplace.",
+      },
+      {
+        kicker: "Livrare",
+        title: "Comenzi marketplace",
+        description: "Vizualizezi comenzile active si confirmi livrarile catre santiere.",
+      },
+    ],
+    "materials-ip": [
+      {
+        kicker: "Integrare IP",
+        title: "Flux API sincronizat",
+        description: "Monitorizezi feed-urile si validezi ultimele sincronizari automate.",
+      },
+      {
+        kicker: "Audit",
+        title: "Log sincronizare",
+        description: "Ai vizibilitate completa asupra erorilor si a statusului de integrare.",
+      },
+    ],
+    rental: [
+      {
+        kicker: "Flota",
+        title: "Utilaje disponibile",
+        description: "Administrezi disponibilitatea utilajelor pentru lucrari AUR/PLATINA.",
+      },
+      {
+        kicker: "Tarife",
+        title: "Pachete orare / zi",
+        description: "Actualizezi tarifele si conditiile de inchiriere pentru santiere.",
+      },
+    ],
+    concrete: [
+      {
+        kicker: "Catalog",
+        title: "Clase beton & cantitati",
+        description: "Gestionezi clasele de beton, volumele si nivelurile comerciale.",
+      },
+      {
+        kicker: "Logistica",
+        title: "Transport & programari",
+        description: "Setezi intervalele de livrare si optiunile logistice pe santier.",
+      },
+    ],
+    default: [
+      {
+        kicker: "Operare",
+        title: "Stocuri si livrari",
+        description: "Gestionezi resursele si confirmarile livrarilor active.",
+      },
+      {
+        kicker: "Conformitate",
+        title: "Documente & SLA",
+        description: "Pastrezi documentele active si indicatorii SLA la zi.",
+      },
+    ],
+  };
+  const cards = resourceCards[contextKey] ?? resourceCards.default;
+  return (
+    <AccountDashboardShell
+      page={page}
+      roleLabel={context.roleLabel}
+      title={context.title}
+      description={context.description}
+      statusNote={
+        pending
+          ? {
+              title: "Cont in verificare",
+              description: "Accesul operational se activeaza dupa aprobarea Super Admin.",
+            }
+          : undefined
+      }
+      headerStats={context.headerStats}
+      sidebar={context.sidebar}
       action={
         <Link href="/account" className="v3-primary-button">
           Autentifica-te
@@ -3153,17 +4053,34 @@ export function PublicProviderAccountDashboardPage({ page }: { page: HomepageCon
           ))}
         </div>
       </section>
+      <section className="v3-account-grid">
+        {cards.map((card) => (
+          <div key={card.title} className="v3-account-card">
+            <div className="v3-card-kicker">{card.kicker}</div>
+            <h3 className="v3-section-title">{card.title}</h3>
+            <p className="v3-page-description">{card.description}</p>
+          </div>
+        ))}
+      </section>
     </AccountDashboardShell>
   );
 }
 
-export function PublicInvestorAccountDashboardPage({ page }: { page: HomepageContent }) {
+export function PublicInvestorAccountDashboardPage({ page, pending }: { page: HomepageContent; pending?: boolean }) {
   return (
     <AccountDashboardShell
       page={page}
       roleLabel="Cont investitor"
       title="Dashboard investitor - portofoliu si rapoarte"
       description="Datele investitorilor sunt centralizate in zona securizata, cu acces la rapoarte si comunicari."
+      statusNote={
+        pending
+          ? {
+              title: "Cont in verificare",
+              description: "Accesul investitional se activeaza dupa validarea administrativa.",
+            }
+          : undefined
+      }
       headerStats={[
         { label: "Portofoliu", value: "Activ", hint: "Seed + follow-on" },
         { label: "Rapoarte", value: "4", hint: "Ultimele 90 zile" },
@@ -3214,13 +4131,21 @@ export function PublicInvestorAccountDashboardPage({ page }: { page: HomepageCon
   );
 }
 
-export function PublicAdminAccountDashboardPage({ page }: { page: HomepageContent }) {
+export function PublicAdminAccountDashboardPage({ page, pending }: { page: HomepageContent; pending?: boolean }) {
   return (
     <AccountDashboardShell
       page={page}
       roleLabel="Administrare"
       title="Dashboard admin invitati"
       description="Accesul administrativ ramane controlat prin invitatii si permisiuni bifate de Super Admin."
+      statusNote={
+        pending
+          ? {
+              title: "Cont in verificare",
+              description: "Permisiunile de administrare se activeaza dupa aprobarea Super Admin.",
+            }
+          : undefined
+      }
       headerStats={[
         { label: "Permisiuni", value: "RBAC", hint: "Catalog complet" },
         { label: "Invitatii", value: "Active", hint: "Flux controlat" },
