@@ -165,7 +165,6 @@ export function PublicAccountRegisterForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showFinalizePassword, setShowFinalizePassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
@@ -529,6 +528,7 @@ export function PublicRoleCompletionForm({
 }) {
   const normalizedSubrole = normalizeSubrole(subrole);
   const [lead, setLead] = useState<SignupLeadResponse | null>(null);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [partnerFiles, setPartnerFiles] = useState<File[]>([]);
@@ -642,7 +642,7 @@ export function PublicRoleCompletionForm({
             <div className="relative">
               <input
                 className="v3-form-control pr-12"
-                type={showFinalizePassword ? "text" : "password"}
+                type={showSignupPassword ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Parola sigura"
@@ -651,9 +651,9 @@ export function PublicRoleCompletionForm({
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold uppercase tracking-wide text-orange-600"
-                onClick={() => setShowFinalizePassword((value) => !value)}
+                onClick={() => setShowSignupPassword((value) => !value)}
               >
-                {showFinalizePassword ? "Ascunde" : "Afiseaza"}
+                {showSignupPassword ? "Ascunde" : "Afiseaza"}
               </button>
             </div>
           </label>

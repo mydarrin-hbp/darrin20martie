@@ -331,7 +331,7 @@ export function PublicCartClient({
               slug,
               title: service?.title ?? slug,
               item_type: "SERVICE",
-              category: service?.category ?? service?.domain ?? "Servicii",
+              category: service?.category ?? "Servicii",
             });
           }
         }
@@ -526,7 +526,7 @@ export function PublicCartClient({
                               slug: installationService.slug,
                               title: installationService.title,
                               item_type: "SERVICE",
-                              category: installationService.category ?? installationService.domain ?? "Servicii",
+                              category: installationService.category ?? "Servicii",
                             });
                           }}
                         >

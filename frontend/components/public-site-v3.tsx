@@ -3487,7 +3487,7 @@ export function PublicCartPage({
           fallbackItems={resolvedItems.map((item) => ({
             slug: item.service.slug,
             title: item.service.title,
-            category: item.service.category ?? item.service.domain ?? "General",
+            category: item.service.category ?? "General",
             summary: item.service.summary,
             mediaType: item.service.mediaType,
             accent: item.service.accent,
