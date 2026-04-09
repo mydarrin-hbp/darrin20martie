@@ -1,0 +1,15 @@
+{
+  "output_file": "C:\\Users\\admin\\Desktop\\mydarrin-platform\\notes\\esco_integration_ro.json",
+  "statistics": {
+    "total_skills": 13939,
+    "digital": 1289,
+    "green": 629,
+    "research": 40,
+    "transversal": 95,
+    "language": 359,
+    "broader_relations": 20992,
+    "occupations_mapped": 3039,
+    "merged_duplicate_rows": 2453,
+    "dictionary_reference_rows": 153
+  }
+}

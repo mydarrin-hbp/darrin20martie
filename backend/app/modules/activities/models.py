@@ -25,6 +25,7 @@ class Activity(Base):
 
     name = Column(String(255), nullable=False)
     code = Column(String(50), nullable=True, index=True)  # cod intern / CAEN mapping ulterior
+    esco_concept_uri = Column(String(255), nullable=True, index=True)
 
     unit_id = Column(Integer, ForeignKey("units.id"), nullable=False, index=True)
 

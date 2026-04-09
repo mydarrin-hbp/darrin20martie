@@ -1,0 +1,28 @@
+{
+  "projectId": "mydarrin-platform",
+  "region": "europe-west3",
+  "domains": {
+    "publicStage": "mydarrin.homebestpal.com",
+    "publicProd": "www.mydarrin.com",
+    "admin": "admin.mydarrin.homebestpal.com",
+    "api": "api.mydarrin.homebestpal.com"
+  },
+  "frontend": {
+    "apiBaseUrlPublic": "https://api.mydarrin.homebestpal.com",
+    "revalidateSeconds": 0
+  },
+  "backoffice": {
+    "apiBaseUrl": "https://api.mydarrin.homebestpal.com",
+    "homepageBuilderEndpoint": "/api/v1/backoffice/site-content/homepage"
+  },
+  "backend": {
+    "database": "cloudsql-postgres",
+    "attachmentsBucket": "mydarrin-secure-attachments",
+    "publicAssetsBucket": "mydarrin-public-assets"
+  },
+  "sync": {
+    "homepageSource": "site_content_pages.homepage",
+    "publishMode": "save-to-live",
+    "cacheStrategy": "no-store"
+  }
+}

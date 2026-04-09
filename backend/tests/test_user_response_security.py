@@ -7,14 +7,20 @@ from app.schemas.user import UserResponse
 def make_user(
     *,
     user_id: int = 1,
+    full_name: str | None = None,
     email: str = "user@example.com",
+    phone: str | None = None,
+    city: str | None = None,
     role: str = "CLIENT",
     verification_status: str = "PENDING",
     hashed_password: str = "super-secret-hash",
 ):
     return SimpleNamespace(
         id=user_id,
+        full_name=full_name,
         email=email,
+        phone=phone,
+        city=city,
         role=role,
         verification_status=verification_status,
         hashed_password=hashed_password,
@@ -58,9 +64,13 @@ def test_user_response_from_user_excludes_hashed_password():
 
     assert response.model_dump() == {
         "id": 1,
+        "full_name": None,
         "email": "user@example.com",
+        "phone": None,
+        "city": None,
         "role": "CLIENT",
         "verification_status": "PENDING",
+        "permissions": ["orders:create", "orders:view_own", "account:update_own", "media:upload_own"],
     }
     assert "hashed_password" not in response.model_dump()
 
@@ -75,15 +85,23 @@ def test_get_all_users_returns_only_public_fields():
     assert payload == [
         {
             "id": 1,
+            "full_name": None,
             "email": "user@example.com",
+            "phone": None,
+            "city": None,
             "role": "CLIENT",
             "verification_status": "PENDING",
+            "permissions": ["orders:create", "orders:view_own", "account:update_own", "media:upload_own"],
         },
         {
             "id": 2,
+            "full_name": None,
             "email": "second@example.com",
+            "phone": None,
+            "city": None,
             "role": "CLIENT",
             "verification_status": "PENDING",
+            "permissions": ["orders:create", "orders:view_own", "account:update_own", "media:upload_own"],
         },
     ]
     assert all("hashed_password" not in item for item in payload)
@@ -99,8 +117,12 @@ def test_activate_user_returns_public_fields_and_updates_status():
     assert db.refreshed == [user]
     assert response.model_dump() == {
         "id": 1,
+        "full_name": None,
         "email": "user@example.com",
+        "phone": None,
+        "city": None,
         "role": "CLIENT",
         "verification_status": "APPROVED",
+        "permissions": ["orders:create", "orders:view_own", "account:update_own", "media:upload_own"],
     }
     assert "hashed_password" not in response.model_dump()

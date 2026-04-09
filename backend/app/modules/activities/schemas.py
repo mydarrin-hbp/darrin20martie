@@ -15,6 +15,7 @@ class ActivityResponse(BaseModel):
     name: str
     subcategory_id: int
     unit_id: int
+    esco_concept_uri: str | None = None
 
     class Config:
         from_attributes = True

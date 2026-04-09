@@ -18,13 +18,14 @@ def make_session():
 
 
 def seed_catalog(db):
-    domain = Domain(name="Constructii", slug="constructii", is_active=True)
+    domain = Domain(name_ro="Constructii", name_en="Construction", slug="constructii", is_active=True)
     db.add(domain)
     db.flush()
 
     category = Category(
         domain_id=domain.id,
-        name="Instalatii",
+        name_ro="Instalatii",
+        name_en="Installations",
         slug="instalatii",
         is_active=True,
     )
@@ -33,19 +34,22 @@ def seed_catalog(db):
 
     subcategory_one = SubCategory(
         category_id=category.id,
-        name="Sanitare",
+        name_ro="Sanitare",
+        name_en="Sanitary",
         slug="sanitare",
         is_active=True,
     )
     subcategory_two = SubCategory(
         category_id=category.id,
-        name="Termice",
+        name_ro="Termice",
+        name_en="Thermal",
         slug="termice",
         is_active=True,
     )
     subcategory_three = SubCategory(
         category_id=category.id,
-        name="Electrice",
+        name_ro="Electrice",
+        name_en="Electrical",
         slug="electrice",
         is_active=True,
     )
@@ -74,7 +78,6 @@ def test_create_service_links_multiple_subcategories():
         )
 
         assert isinstance(created, Service)
-        assert created.legacy_subcategory_id == sub_one.id
         assert created.subcategory_ids == [sub_one.id, sub_two.id]
     finally:
         db.close()
@@ -102,7 +105,6 @@ def test_update_service_replaces_subcategory_links():
         )
 
         assert isinstance(updated, Service)
-        assert updated.legacy_subcategory_id == sub_three.id
         assert updated.subcategory_ids == [sub_three.id]
     finally:
         db.close()
@@ -131,7 +133,13 @@ def test_service_response_serializes_many_to_many_ids():
             "name": "Montaj centrala",
             "slug": "montaj-centrala",
             "description": "Serviciu complex",
+            "description_extended": None,
             "is_active": True,
+            "esco_concept_uri": None,
+            "images": [],
+            "documents": [],
+            "videos": [],
+            "level_attachments": {},
             "subcategory_ids": [sub_one.id, sub_two.id],
         }
     finally:

@@ -1,0 +1,12 @@
+.git
+.next
+node_modules
+npm-debug.log
+.env
+.env.local
+.env.example
+.env.local.example
+README-BACKOFFICE.md
+tsconfig.tsbuildinfo
+.dev.err.log
+.dev.out.log

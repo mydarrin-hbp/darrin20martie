@@ -1,0 +1,59 @@
+substitutions:
+  _REGION: europe-west3
+  _AR_REPO: mydarrin
+  _FRONTEND_SERVICE: mydarrin-frontend
+  _API_BASE_URL: https://api.mydarrin.homebestpal.com
+  _BACKEND_GATE_AUTHORIZATION: Basic CHANGE_ME
+  _FRONTEND_CANONICAL_HOST: www.mydarrin.com
+  _FRONTEND_FORCE_HTTPS: "true"
+  _FRONTEND_SITE_URL: https://www.mydarrin.com
+  _PUBLIC_SITE_URL: https://mydarrin.homebestpal.com
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    id: build-frontend
+    dir: frontend
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID
+      - --build-arg
+      - NEXT_PUBLIC_API_BASE_URL=${_API_BASE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}
+      - --build-arg
+      - API_BASE_URL_PUBLIC=${_API_BASE_URL}
+      - --build-arg
+      - BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}
+      - --build-arg
+      - NEXT_PUBLIC_CANONICAL_HOST=${_FRONTEND_CANONICAL_HOST}
+      - --build-arg
+      - NEXT_PUBLIC_FORCE_HTTPS=${_FRONTEND_FORCE_HTTPS}
+      - --build-arg
+      - NEXT_PUBLIC_SITE_URL=${_FRONTEND_SITE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_PUBLIC_SITE_URL=${_PUBLIC_SITE_URL}
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    id: push-frontend
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-frontend
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_FRONTEND_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID
+      - --region=${_REGION}
+      - --platform=managed
+      - --min-instances=1
+      - --set-env-vars=NEXT_PUBLIC_API_BASE_URL=${_API_BASE_URL},API_BASE_URL_PUBLIC=${_API_BASE_URL},NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION},BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}
+      - --allow-unauthenticated
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID

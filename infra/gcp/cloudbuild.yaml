@@ -1,0 +1,174 @@
+substitutions:
+  _REGION: europe-west3
+  _AR_REPO: mydarrin
+  _BACKEND_SERVICE: mydarrin-backend
+  _FRONTEND_SERVICE: mydarrin-frontend
+  _BACKOFFICE_SERVICE: mydarrin-backoffice
+  _API_BASE_URL: https://api.mydarrin.homebestpal.com
+  _BACKEND_GATE_AUTHORIZATION: Basic CHANGE_ME
+  _GATE_USERNAME: SET_IN_SECRET_MANAGER_OR_ENV
+  _GATE_PASSWORD: SET_IN_SECRET_MANAGER_OR_ENV
+  _DATABASE_URL_CLOUD_RUN: postgresql+psycopg://USER:PASSWORD@/mydarrin?host=/cloudsql/PROJECT:REGION:INSTANCE
+  _CLOUD_SQL_INSTANCE: mydarrin-platform:europe-west9:mydarrin-db
+  _JWT_SECRET: CHANGE_ME
+  _BACKEND_CORS_ORIGINS: https://mydarrin.homebestpal.com,https://admin.mydarrin.homebestpal.com
+  _ENABLE_BASIC_AUTH_GATE: "true"
+  _BASIC_AUTH_GATE_USERNAME: SET_IN_SECRET_MANAGER_OR_ENV
+  _BASIC_AUTH_GATE_PASSWORD: SET_IN_SECRET_MANAGER_OR_ENV
+  _ATTACHMENTS_STORAGE_BACKEND: gcs
+  _GCS_ATTACHMENTS_BUCKET: mydarrin-secure-attachments
+  _GCS_ATTACHMENTS_PREFIX: attachments
+  _SMTP_HOST: smtp.example.com
+  _SMTP_PORT: "587"
+  _SMTP_USERNAME: smtp-user
+  _SMTP_PASSWORD: smtp-pass
+  _SMTP_SENDER: noreply@mydarrin.com
+  _SMTP_FROM_NAME: "My Darrin"
+  _SMTP_USE_TLS: "true"
+  _FRONTEND_CANONICAL_HOST: www.mydarrin.com
+  _FRONTEND_FORCE_HTTPS: "true"
+  _FRONTEND_SITE_URL: https://www.mydarrin.com
+  _BACKOFFICE_CANONICAL_HOST: admin.mydarrin.homebestpal.com
+  _BACKOFFICE_FORCE_HTTPS: "true"
+  _PUBLIC_SITE_URL: https://mydarrin.homebestpal.com
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    id: build-backend
+    dir: backend
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backend:$BUILD_ID
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    id: push-backend
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backend:$BUILD_ID
+
+  - name: gcr.io/cloud-builders/docker
+    id: build-frontend
+    dir: frontend
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID
+      - --build-arg
+      - NEXT_PUBLIC_API_BASE_URL=${_API_BASE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}
+      - --build-arg
+      - API_BASE_URL_PUBLIC=${_API_BASE_URL}
+      - --build-arg
+      - BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}
+      - --build-arg
+      - NEXT_PUBLIC_CANONICAL_HOST=${_FRONTEND_CANONICAL_HOST}
+      - --build-arg
+      - NEXT_PUBLIC_FORCE_HTTPS=${_FRONTEND_FORCE_HTTPS}
+      - --build-arg
+      - NEXT_PUBLIC_SITE_URL=${_FRONTEND_SITE_URL}
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    id: push-frontend
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID
+
+  - name: gcr.io/cloud-builders/docker
+    id: build-backoffice
+    dir: backoffice
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backoffice:$BUILD_ID
+      - --build-arg
+      - NEXT_PUBLIC_API_BASE_URL=${_API_BASE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_GATE_USERNAME=${_GATE_USERNAME}
+      - --build-arg
+      - NEXT_PUBLIC_GATE_PASSWORD=${_GATE_PASSWORD}
+      - --build-arg
+      - NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}
+      - --build-arg
+      - NEXT_PUBLIC_CANONICAL_HOST=${_BACKOFFICE_CANONICAL_HOST}
+      - --build-arg
+      - NEXT_PUBLIC_FORCE_HTTPS=${_BACKOFFICE_FORCE_HTTPS}
+      - --build-arg
+      - NEXT_PUBLIC_PUBLIC_SITE_URL=${_PUBLIC_SITE_URL}
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    id: push-backoffice
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backoffice:$BUILD_ID
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-backend
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        cat > /workspace/backend-env.yaml <<EOF
+        DATABASE_URL: "${_DATABASE_URL_CLOUD_RUN}"
+        JWT_SECRET: "${_JWT_SECRET}"
+        BACKEND_CORS_ORIGINS: "${_BACKEND_CORS_ORIGINS}"
+        ENABLE_BASIC_AUTH_GATE: "${_ENABLE_BASIC_AUTH_GATE}"
+        BASIC_AUTH_GATE_USERNAME: "${_BASIC_AUTH_GATE_USERNAME}"
+        BASIC_AUTH_GATE_PASSWORD: "${_BASIC_AUTH_GATE_PASSWORD}"
+        ATTACHMENTS_STORAGE_BACKEND: "${_ATTACHMENTS_STORAGE_BACKEND}"
+        GCS_ATTACHMENTS_BUCKET: "${_GCS_ATTACHMENTS_BUCKET}"
+        GCS_ATTACHMENTS_PREFIX: "${_GCS_ATTACHMENTS_PREFIX}"
+        SMTP_HOST: "${_SMTP_HOST}"
+        SMTP_PORT: "${_SMTP_PORT}"
+        SMTP_USERNAME: "${_SMTP_USERNAME}"
+        SMTP_PASSWORD: "${_SMTP_PASSWORD}"
+        SMTP_SENDER: "${_SMTP_SENDER}"
+        SMTP_FROM_NAME: "${_SMTP_FROM_NAME}"
+        SMTP_USE_TLS: "${_SMTP_USE_TLS}"
+        EOF
+
+        gcloud run deploy "${_BACKEND_SERVICE}" \
+          --image="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backend:$BUILD_ID" \
+          --region="${_REGION}" \
+          --platform=managed \
+          --min-instances=1 \
+          --add-cloudsql-instances="${_CLOUD_SQL_INSTANCE}" \
+          --env-vars-file=/workspace/backend-env.yaml \
+          --allow-unauthenticated
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-frontend
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_FRONTEND_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID
+      - --region=${_REGION}
+      - --platform=managed
+      - --min-instances=1
+      - --set-env-vars=^@^NEXT_PUBLIC_API_BASE_URL=${_API_BASE_URL}@API_BASE_URL_PUBLIC=${_API_BASE_URL}@NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}@BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}
+      - --allow-unauthenticated
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-backoffice
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_BACKOFFICE_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backoffice:$BUILD_ID
+      - --region=${_REGION}
+      - --platform=managed
+      - --min-instances=1
+      - --set-env-vars=^@^NEXT_PUBLIC_API_BASE_URL=${_API_BASE_URL}@NEXT_PUBLIC_GATE_USERNAME=${_GATE_USERNAME}@NEXT_PUBLIC_GATE_PASSWORD=${_GATE_PASSWORD}@NEXT_PUBLIC_BACKEND_GATE_AUTHORIZATION=${_BACKEND_GATE_AUTHORIZATION}@NEXT_PUBLIC_PUBLIC_SITE_URL=${_PUBLIC_SITE_URL}
+      - --allow-unauthenticated
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backend:$BUILD_ID
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/frontend:$BUILD_ID
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/backoffice:$BUILD_ID

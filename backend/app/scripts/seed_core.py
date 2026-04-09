@@ -12,7 +12,8 @@ def seed():
 
     # DOMAIN
     domain = Domain(
-        name="Home Services",
+        name_ro="Home Services",
+        name_en="Home Services",
         slug="home-services",
     )
     db.add(domain)
@@ -20,7 +21,8 @@ def seed():
 
     # CATEGORY
     category = Category(
-        name="Lucrari santier",
+        name_ro="Lucrari santier",
+        name_en="Site Works",
         slug="lucrari-santier",
         domain_id=domain.id,
     )
@@ -29,7 +31,8 @@ def seed():
 
     # SUBCATEGORY
     subcategory = SubCategory(
-        name="Excavatii",
+        name_ro="Excavatii",
+        name_en="Excavations",
         slug="excavatii",
         category_id=category.id,
     )
@@ -41,7 +44,6 @@ def seed():
         name="Montaj instalatie apa",
         slug="montaj-instalatie-apa",
         description="Serviciu demo",
-        legacy_subcategory_id=subcategory.id,
     )
     service.subcategories = [subcategory]
     db.add(service)
